@@ -50,7 +50,7 @@ Display_ST7789_320x240 displayProvider;
 // Display_SH1106 displayProvider;
 
 void setup() {
-  Serial.begin(500000);
+  Serial.begin(115200);
 
   Model1.begin(2);  // Setup Timer 2
   M1Shield.begin(displayProvider);
@@ -59,10 +59,10 @@ void setup() {
   // Uncomment to allow joystick control of menus and screens
   //   M1Shield.activateJoystick();
 
-  Globals.logger.info(F("=== TRS-80 Model 1 Testharness ==="));
+  Globals.logger.infoF(F("=== TRS-80 Model 1 Testharness %d ==="), 15);
 
   // Start with the welcome console
-  M1Shield.setScreen(new WelcomeConsole());
+  // M1Shield.setScreen(new WelcomeConsole());
 }
 
 ISR(TIMER2_COMPA_vect) {

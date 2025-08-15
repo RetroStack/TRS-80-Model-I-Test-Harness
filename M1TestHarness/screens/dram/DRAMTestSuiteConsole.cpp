@@ -6,15 +6,15 @@
 #include "./DRAMMenu.h"
 
 DRAMTestSuiteConsole::DRAMTestSuiteConsole() : RAMTestSuiteConsole() {
-  setTitle((const char *)F("DRAM Tests"));
+  setTitleF(F("DRAM Tests"));
   setConsoleBackground(0x0000);
   setTextColor(0xFFFF, 0x0000);
 
   // Set button labels
-  const char *buttons[] = {(const char *)F("M:Menu")};
-  setButtonItems(buttons, 1);
+  const __FlashStringHelper *buttons[] = {F("M:Menu")};
+  setButtonItemsF(buttons, 1);
 
-  Globals.logger.info(F("DRAM Test Suite initialized"));
+  Globals.logger.infoF(F("DRAM Test Suite initialized"));
 }
 
 void DRAMTestSuiteConsole::_executeOnce() {
@@ -69,7 +69,7 @@ void DRAMTestSuiteConsole::_executeOnce() {
 
 Screen *DRAMTestSuiteConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.info(F("Returning to main menu from DRAM Tests"));
+    Globals.logger.infoF(F("Returning to main menu from DRAM Tests"));
     return new DRAMMenu();
   }
 

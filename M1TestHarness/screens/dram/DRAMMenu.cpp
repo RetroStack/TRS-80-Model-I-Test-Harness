@@ -7,23 +7,23 @@
 #include "./DRAMTestSuiteConsole.h"
 
 DRAMMenu::DRAMMenu() : MenuScreen() {
-  setTitle((const char *)F("DRAM"));
+  setTitleF(F("DRAM"));
 
   // Create menu items for DRAM features - copy from PROGMEM
-  const char *menuItems[] = {(const char *)F("Memory Size"), (const char *)F("DRAM Test Suite")};
-  setMenuItems(menuItems, 2);
+  const __FlashStringHelper *menuItems[] = {F("Memory Size"), F("DRAM Test Suite")};
+  setMenuItemsF(menuItems, 2);
 
-  Globals.logger.info(F("DRAM Menu screen initialized"));
+  Globals.logger.infoF(F("DRAM Menu screen initialized"));
 }
 
 Screen *DRAMMenu::_getSelectedMenuItemScreen(int index) {
   switch (index) {
     case 0:  // Memory Size - Disabled config menu
-      Globals.logger.info(F("Memory Size - Configuration disabled"));
+      Globals.logger.infoF(F("Memory Size - Configuration disabled"));
       return nullptr;
 
     case 1:  // DRAM Test Suite
-      Globals.logger.info(F("Opening DRAM Test Suite"));
+      Globals.logger.infoF(F("Opening DRAM Test Suite"));
       return new DRAMTestSuiteConsole();
 
     case -1:  // Back

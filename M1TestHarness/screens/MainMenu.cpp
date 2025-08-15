@@ -21,46 +21,46 @@ MainMenu::MainMenu() {
                              (const char*)F("About")};
   setMenuItems(menuItems, 9);
 
-  Globals.logger.info(F("Main Menu initialized"));
+  Globals.logger.infoF(F("Main Menu initialized"));
 }
 
 Screen* MainMenu::_getSelectedMenuItemScreen(int index) {
   switch (index) {
     case 0:  // Board Revision
-      Globals.logger.info(F("Opening Board Revision Menu"));
+      Globals.logger.infoF(F("Opening Board Revision Menu"));
       return new BoardRevisionMenu(BoardRevisionSource::MAIN_MENU);
 
     case 1:  // One-Step Tests
-      Globals.logger.info(F("Opening One-Step Tests Console"));
+      Globals.logger.infoF(F("Opening One-Step Tests Console"));
       return nullptr;
       // return new OneStepTestsScreen();
 
     case 2:  // DRAM
-      Globals.logger.info(F("Opening DRAM Menu"));
+      Globals.logger.infoF(F("Opening DRAM Menu"));
       return new DRAMMenu();
 
     case 3:  // ROM
-      Globals.logger.info(F("Opening ROM Menu"));
+      Globals.logger.infoF(F("Opening ROM Menu"));
       return new ROMMenu();
 
     case 4:  // Cassette
-      Globals.logger.info(F("Opening Cassette Menu"));
+      Globals.logger.infoF(F("Opening Cassette Menu"));
       return new CassetteMenu();
 
     case 5:  // Video
-      Globals.logger.info(F("Opening Video Menu"));
+      Globals.logger.infoF(F("Opening Video Menu"));
       return new VideoMenu();
 
     case 6:  // Keyboard
-      Globals.logger.info(F("Opening Keyboard Menu"));
+      Globals.logger.infoF(F("Opening Keyboard Menu"));
       return new KeyboardTester();
 
     case 7:  // Advanced
-      Globals.logger.info(F("Opening Advanced Menu"));
+      Globals.logger.infoF(F("Opening Advanced Menu"));
       return new AdvancedMenu();
 
     case 8:  // About
-      Globals.logger.info(F("Opening About Screen"));
+      Globals.logger.infoF(F("Opening About Screen"));
       return new AboutConsole();
 
     default:

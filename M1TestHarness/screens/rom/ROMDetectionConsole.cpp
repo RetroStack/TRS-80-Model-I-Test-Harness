@@ -6,15 +6,15 @@
 #include "./ROMMenu.h"
 
 ROMDetectionConsole::ROMDetectionConsole() : ConsoleScreen() {
-  setTitle((const char *)F("ROM Detection"));
+  setTitleF(F("ROM Detection"));
   setConsoleBackground(0x0000);
   setTextColor(0xFFFF, 0x0000);
 
   // Set button labels
-  const char *buttons[] = {(const char *)F("M:Back")};
-  setButtonItems(buttons, 1);
+  const __FlashStringHelper *buttons[] = {F("M:Back")};
+  setButtonItemsF(buttons, 1);
 
-  Globals.logger.info(F("ROM Detection Demo initialized"));
+  Globals.logger.infoF(F("ROM Detection Demo initialized"));
 }
 
 void ROMDetectionConsole::_executeOnce() {
@@ -72,7 +72,7 @@ void ROMDetectionConsole::_executeOnce() {
 
 Screen *ROMDetectionConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.info(F("Returning to ROM Menu"));
+    Globals.logger.infoF(F("Returning to ROM Menu"));
     return new ROMMenu();
   }
 

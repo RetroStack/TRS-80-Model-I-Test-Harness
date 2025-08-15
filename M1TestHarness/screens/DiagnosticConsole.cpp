@@ -6,14 +6,14 @@
 #include "./BoardRevisionMenu.h"
 
 DiagnosticConsole::DiagnosticConsole() : ConsoleScreen() {
-  setTitle((const char *)F("Diagnostic"));
+  setTitleF(F("Diagnostic"));
   setConsoleBackground(0x0000);
   setTextColor(0xFFFF, 0x0000);
   setTextSize(2);
 
   clearButtonItems();
 
-  Globals.logger.info(F("Diagnostic Screen initialized"));
+  Globals.logger.infoF(F("Diagnostic Screen initialized"));
 }
 
 void DiagnosticConsole::_executeOnce() {

@@ -6,18 +6,17 @@
 #include "./ROMMenu.h"
 
 ROMContentViewerConsole::ROMContentViewerConsole() : ConsoleScreen() {
-  setTitle((const char *)F("ROM Viewer"));
+  setTitleF(F("ROM Viewer"));
   setConsoleBackground(0x0000);
   setTextColor(0xFFFF, 0x0000);
 
   _currentAddress = 0x0000;
 
   // Set button labels for navigation
-  const char *buttons[] = {(const char *)F("M:Exit"), (const char *)F("UP:Prev"),
-                           (const char *)F("DN:Next")};
-  setButtonItems(buttons, 3);
+  const __FlashStringHelper *buttons[] = {F("M:Exit"), F("UP:Prev"), F("DN:Next")};
+  setButtonItemsF(buttons, 3);
 
-  Globals.logger.info(F("ROM Content Viewer initialized"));
+  Globals.logger.infoF(F("ROM Content Viewer initialized"));
 }
 
 void ROMContentViewerConsole::_executeOnce() {
@@ -99,7 +98,7 @@ void ROMContentViewerConsole::displayROMContent() {
 
 Screen *ROMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.info(F("Returning to ROM Menu"));
+    Globals.logger.infoF(F("Returning to ROM Menu"));
     return new ROMMenu();
   }
 

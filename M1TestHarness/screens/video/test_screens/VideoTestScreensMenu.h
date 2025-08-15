@@ -12,7 +12,7 @@ class VideoTestScreensMenu : public MenuScreen {
 
  protected:
   Screen *_getSelectedMenuItemScreen(int index) override;
-  const char *_getMenuItemConfigValue(uint8_t index) override;
+  const __FlashStringHelper *_getMenuItemConfigValueF(uint8_t index) override;
 };
 
 #endif  // VIDEO_TEST_SCREENS_MENU_H

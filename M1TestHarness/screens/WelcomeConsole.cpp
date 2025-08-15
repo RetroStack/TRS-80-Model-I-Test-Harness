@@ -6,14 +6,14 @@
 #include "./DiagnosticConsole.h"
 
 WelcomeConsole::WelcomeConsole() : ConsoleScreen() {
-  setTitle((const char *)F("Welcome"));
+  setTitleF(F("Welcome"));
   setConsoleBackground(0x0000);
   setTextColor(0xFFFF, 0x0000);
   setTextSize(2);
 
   clearButtonItems();
 
-  Globals.logger.info(F("Welcome Screen initialized"));
+  Globals.logger.infoF(F("Welcome Screen initialized"));
 }
 
 void WelcomeConsole::_executeOnce() {

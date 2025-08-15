@@ -21,9 +21,8 @@ KeyboardTester::KeyboardTester()
       _needsFullRedraw(true),
       _spaceHighlightTime(0) {
   updateModeTitle();
-  const char *buttons[] = {(const char *)F("M:Menu"), (const char *)F("RT:Reset"),
-                           (const char *)F("UP:Prev"), (const char *)F("DN:Next")};
-  setButtonItems(buttons, 4);
+  const __FlashStringHelper *buttons[] = {F("M:Menu"), F("RT:Reset"), F("UP:Prev"), F("DN:Next")};
+  setButtonItemsF(buttons, 4);
 
   // Initialize key testing tracking arrays
   for (int i = 0; i < 8; i++) {
@@ -140,14 +139,14 @@ void KeyboardTester::displayKeyboardStatus() {
     // Log key activity
     if (it.wasJustPressed()) {
       String keyName = getKeyName(keyValue);
-      Globals.logger.info((const char *)F("Key pressed: %s (0x%s) at row %d, col %d"), keyName,
-                          String(keyValue, HEX), row, col);
+      Globals.logger.infoF(F("Key pressed: %s (0x%s) at row %d, col %d"), keyName,
+                           String(keyValue, HEX), row, col);
     }
 
     if (it.wasReleased()) {
       String keyName = getKeyName(keyValue);
-      Globals.logger.info((const char *)F("Key released: %s (0x%s) at row %d, col %d"), keyName,
-                          String(keyValue, HEX), row, col);
+      Globals.logger.infoF(F("Key released: %s (0x%s) at row %d, col %d"), keyName,
+                           String(keyValue, HEX), row, col);
     }
   }
 
@@ -476,10 +475,10 @@ String KeyboardTester::getKeyName(uint8_t keyValue) {
 void KeyboardTester::updateModeTitle() {
   switch (_currentMode) {
     case MODE_GRAPHICAL:
-      setTitle((const char *)F("Graphical Keyboard Test"));
+      setTitleF(F("Graphical Keyboard Test"));
       break;
     case MODE_MATRIX:
-      setTitle((const char *)F("Matrix Keyboard Test"));
+      setTitleF(F("Matrix Keyboard Test"));
       break;
   }
 }
@@ -569,13 +568,13 @@ void KeyboardTester::drawMatrixCell(int x, int y, int width, int height, uint8_t
 
 Screen *KeyboardTester::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.info(F("Returning to main menu from Keyboard Tester"));
+    Globals.logger.infoF(F("Returning to main menu from Keyboard Tester"));
     return new MainMenu();
   }
 
   if (action & BUTTON_RIGHT) {
     // Reset all key testing status
-    Globals.logger.info(F("Resetting key test status"));
+    Globals.logger.infoF(F("Resetting key test status"));
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
         _keyTested[i][j] = false;

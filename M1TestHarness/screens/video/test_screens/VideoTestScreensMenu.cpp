@@ -7,32 +7,31 @@
 #include "../VideoMenu.h"
 
 VideoTestScreensMenu::VideoTestScreensMenu() : MenuScreen() {
-  setTitle((const char *)F("Test Screens"));
+  setTitleF(F("Test Screens"));
 
   _currentTestScreen = -1;  // Non selected
 
-  const char *menuItems[] = {(const char *)F("All Characters"), (const char *)F("Frame"),
-                             (const char *)F("White"),          (const char *)F("Black"),
-                             (const char *)F("All @"),          (const char *)F("All 1st Char")};
-  setMenuItems(menuItems, 6);
+  const __FlashStringHelper *menuItems[] = {F("All Characters"), F("Frame"), F("White"),
+                                            F("Black"),          F("All @"), F("All 1st Char")};
+  setMenuItemsF(menuItems, 6);
 
-  Globals.logger.info(F("Test Screens Menu initialized"));
+  Globals.logger.infoF(F("Test Screens Menu initialized"));
 }
 
 Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
   if (index == -1) {
-    Globals.logger.info(F("Returning to Video Menu from Test Screens Menu"));
+    Globals.logger.infoF(F("Returning to Video Menu from Test Screens Menu"));
     return new VideoMenu();
   }
 
   // Briefly activate test signal for video operations
   Model1.activateTestSignal();
-  Globals.logger.info(F("Test signal activated for character mode toggle"));
+  Globals.logger.infoF(F("Test signal activated for character mode toggle"));
 
   uint16_t videoAddress;
   switch (index) {
     case 0: {  // All Characters
-      Globals.logger.info(F("Opening All Characters Test Screen"));
+      Globals.logger.infoF(F("Opening All Characters Test Screen"));
 
       videoAddress = Globals.video.getAddress(0, 0);
       for (uint16_t i = 0; i < 1024; i++) {
@@ -42,7 +41,7 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
     }
 
     case 1: {  // Frame
-      Globals.logger.info(F("Opening Frame Test Screen"));
+      Globals.logger.infoF(F("Opening Frame Test Screen"));
 
       Globals.video.cls();
       for (uint16_t i = 0; i < 64; i++) {
@@ -57,25 +56,25 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
     }
 
     case 2: {  // White
-      Globals.logger.info(F("Opening White Test Screen"));
+      Globals.logger.infoF(F("Opening White Test Screen"));
       Globals.video.cls((char)0xFF);
       break;
     }
 
     case 3: {  // Black
-      Globals.logger.info(F("Opening Black Test Screen"));
+      Globals.logger.infoF(F("Opening Black Test Screen"));
       Globals.video.cls();
       break;
     }
 
     case 4: {  // All @
-      Globals.logger.info(F("Opening All @ Test Screen"));
+      Globals.logger.infoF(F("Opening All @ Test Screen"));
       Globals.video.cls((char)0x40);
       break;
     }
 
     case 5: {  // All 1st Char
-      Globals.logger.info(F("Opening All 1st Char Test Screen"));
+      Globals.logger.infoF(F("Opening All 1st Char Test Screen"));
       Globals.video.cls((char)0x00);
       break;
     }
@@ -83,7 +82,7 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
 
   // Deactivate test signal after operation
   Model1.deactivateTestSignal();
-  Globals.logger.info(F("Test signal deactivated after character mode toggle"));
+  Globals.logger.infoF(F("Test signal deactivated after character mode toggle"));
 
   // Remember the test screen selected to highlight it
   _currentTestScreen = index;
@@ -94,9 +93,9 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
   return nullptr;
 }
 
-const char *VideoTestScreensMenu::_getMenuItemConfigValue(uint8_t index) {
+const __FlashStringHelper *VideoTestScreensMenu::_getMenuItemConfigValueF(uint8_t index) {
   if (index == _currentTestScreen) {
-    return (const char *)F("*");
+    return F("*");
   }
   return nullptr;  // No config value for other indices
 }

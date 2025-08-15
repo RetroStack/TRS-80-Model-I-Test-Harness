@@ -6,9 +6,9 @@
 #include "./CassetteMenu.h"
 
 CassetteTestSuiteConsole::CassetteTestSuiteConsole() : ConsoleScreen() {
-  setTitle((const char *)F("Cassette Test Suite"));
+  setTitleF(F("Cassette Test Suite"));
 
-  Globals.logger.info(F("Cassette Test Suite screen initialized"));
+  Globals.logger.infoF(F("Cassette Test Suite screen initialized"));
 }
 
 void CassetteTestSuiteConsole::_executeOnce() {

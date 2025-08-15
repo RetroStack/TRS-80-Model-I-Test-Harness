@@ -6,9 +6,9 @@
 #include "../MainMenu.h"
 
 AboutConsole::AboutConsole() : ConsoleScreen() {
-  setTitle((const char *)F("About TRS-80 Test Harness"));
+  setTitleF(F("About TRS-80 Test Harness"));
 
-  Globals.logger.info(F("About screen initialized"));
+  Globals.logger.infoF(F("About screen initialized"));
 }
 
 void AboutConsole::_executeOnce() {

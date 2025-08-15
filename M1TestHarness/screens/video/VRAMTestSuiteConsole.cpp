@@ -6,15 +6,15 @@
 #include "../MainMenu.h"
 
 VRAMTestSuiteConsole::VRAMTestSuiteConsole() : RAMTestSuiteConsole() {
-  setTitle((const char *)F("VRAM Tests"));
+  setTitleF(F("VRAM Tests"));
   setConsoleBackground(0x0000);
   setTextColor(0xFFFF, 0x0000);
 
   // Set button labels
-  const char *buttons[] = {(const char *)F("M:Menu")};
-  setButtonItems(buttons, 1);
+  const __FlashStringHelper *buttons[] = {F("M:Menu")};
+  setButtonItemsF(buttons, 1);
 
-  Globals.logger.info(F("VRAM Test Suite initialized"));
+  Globals.logger.infoF(F("VRAM Test Suite initialized"));
 }
 
 void VRAMTestSuiteConsole::_executeOnce() {
@@ -74,7 +74,7 @@ void VRAMTestSuiteConsole::_executeOnce() {
 
 Screen *VRAMTestSuiteConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.info(F("Returning to main menu from VRAM Tests"));
+    Globals.logger.infoF(F("Returning to main menu from VRAM Tests"));
     return new MainMenu();
   }
 

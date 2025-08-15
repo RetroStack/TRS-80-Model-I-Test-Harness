@@ -8,23 +8,22 @@
 #include "./CassetteSongPlayerMenu.h"
 
 CassetteMenu::CassetteMenu() : MenuScreen() {
-  setTitle((const char *)F("Cassette Interface"));
+  setTitleF(F("Cassette Interface"));
 
   // Create menu items dynamically - they'll be copied by _setMenuItems and these will be freed
   // automatically
-  const char *menuItems[] = {(const char *)F("Test Suite"), (const char *)F("Song Player"),
-                             (const char *)F("Remote Control")};
-  setMenuItems(menuItems, 2);
+  const __FlashStringHelper *menuItems[] = {F("Test Suite"), F("Song Player"), F("Remote Control")};
+  setMenuItemsF(menuItems, 3);
 
   _remoteActive = false;  // Initialize remote as inactive
 
-  Globals.logger.info(F("Cassette Menu initialized"));
+  Globals.logger.infoF(F("Cassette Menu initialized"));
 }
 
 void CassetteMenu::close() {
   // Deactivate remote if it's currently active when leaving the menu
   if (_remoteActive) {
-    Globals.logger.info(F("Deactivating remote control before leaving cassette menu..."));
+    Globals.logger.infoF(F("Deactivating remote control before leaving cassette menu..."));
 
     // Briefly activate test signal for the deactivation operation
     Model1.activateTestSignal();
@@ -32,10 +31,10 @@ void CassetteMenu::close() {
     _remoteActive = false;
     Model1.deactivateTestSignal();
 
-    Globals.logger.info(F("Remote control deactivated"));
+    Globals.logger.infoF(F("Remote control deactivated"));
   }
 
-  Globals.logger.info(F("Cassette Interface closed"));
+  Globals.logger.infoF(F("Cassette Interface closed"));
 
   Screen::close();
 }
@@ -43,7 +42,7 @@ void CassetteMenu::close() {
 Screen *CassetteMenu::_getSelectedMenuItemScreen(int index) {
   switch (index) {
     case 0:  // Song Player
-      Globals.logger.info(F("Opening Song Player"));
+      Globals.logger.infoF(F("Opening Song Player"));
       return new CassetteSongPlayerMenu();
 
     case 1:  // Remote Control (toggle)
@@ -51,7 +50,7 @@ Screen *CassetteMenu::_getSelectedMenuItemScreen(int index) {
       return nullptr;  // Stay on this screen
 
     case -1:  // Back to Main
-      Globals.logger.info(F("Returning to main menu from Cassette Menu"));
+      Globals.logger.infoF(F("Returning to main menu from Cassette Menu"));
       return new MainMenu();
 
     default:
@@ -59,10 +58,10 @@ Screen *CassetteMenu::_getSelectedMenuItemScreen(int index) {
   }
 }
 
-const char *CassetteMenu::_getMenuItemConfigValue(uint8_t index) {
+const __FlashStringHelper *CassetteMenu::_getMenuItemConfigValueF(uint8_t index) {
   switch (index) {
     case 1:  // Remote Control
-      return _remoteActive ? (const char *)F("Active") : (const char *)F("Inactive");
+      return _remoteActive ? F("Active") : F("Inactive");
     default:
       return nullptr;
   }
@@ -71,23 +70,23 @@ const char *CassetteMenu::_getMenuItemConfigValue(uint8_t index) {
 void CassetteMenu::toggleRemote() {
   // Briefly activate test signal for cassette operations
   Model1.activateTestSignal();
-  Globals.logger.info(F("Test signal activated for remote toggle"));
+  Globals.logger.infoF(F("Test signal activated for remote toggle"));
 
   if (_remoteActive) {
-    Globals.logger.info(F("Deactivating cassette remote control..."));
+    Globals.logger.infoF(F("Deactivating cassette remote control..."));
     Globals.cassette.deactivateRemote();
     _remoteActive = false;
-    Globals.logger.info(F("Cassette remote control deactivated"));
+    Globals.logger.infoF(F("Cassette remote control deactivated"));
   } else {
-    Globals.logger.info(F("Activating cassette remote control..."));
+    Globals.logger.infoF(F("Activating cassette remote control..."));
     Globals.cassette.activateRemote();
     _remoteActive = true;
-    Globals.logger.info(F("Cassette remote control activated"));
+    Globals.logger.infoF(F("Cassette remote control activated"));
   }
 
   // Deactivate test signal after operation
   Model1.deactivateTestSignal();
-  Globals.logger.info(F("Test signal deactivated after remote toggle"));
+  Globals.logger.infoF(F("Test signal deactivated after remote toggle"));
 
   // Redraw the menu to show updated config value
   _drawContent();

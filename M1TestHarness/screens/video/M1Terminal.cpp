@@ -302,15 +302,15 @@ M1Terminal::M1Terminal() : ContentScreen() {
   _contentHeight = 0;
 
   // Configure ContentScreen interface
-  setTitle((const char *)F("TRS-80 Terminal"));
+  setTitleF(F("TRS-80 Terminal"));
   setProgressValue(0);
 
   // Configure control buttons for terminal operations
-  const char *buttonItems[2] = {
-      (const char *)F("[M] Exit"),    // Return to menu
-      (const char *)F("[<&>] Font"),  // Cycle fonts (Left + Right)
+  const __FlashStringHelper *buttonItems[2] = {
+      F("[M] Exit"),    // Return to menu
+      F("[<&>] Font"),  // Cycle fonts (Left + Right)
   };
-  setButtonItems(buttonItems, 2);
+  setButtonItemsF(buttonItems, 2);
 }
 
 /**

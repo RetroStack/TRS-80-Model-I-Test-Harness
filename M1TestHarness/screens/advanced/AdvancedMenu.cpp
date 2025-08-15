@@ -8,7 +8,7 @@
 #include "../MainMenu.h"
 
 AdvancedMenu::AdvancedMenu() : MenuScreen() {
-  setTitle((const char *)F("Advanced"));
+  setTitleF(F("Advanced"));
 
   // Initialize state variables
   _addressMode = 0;           // Default to 0x00
@@ -34,16 +34,14 @@ AdvancedMenu::AdvancedMenu() : MenuScreen() {
 
   // Create menu items dynamically - they'll be copied by _setMenuItems and these will be freed
   // automatically
-  const char *menuItems[] = {(const char *)F("Test Signal"),   (const char *)F("Address"),
-                             (const char *)F("Address Count"), (const char *)F("Data"),
-                             (const char *)F("Data Count"),    (const char *)F("RAS Signal"),
-                             (const char *)F("CAS Signal"),    (const char *)F("MUX Signal"),
-                             (const char *)F("Read Signal"),   (const char *)F("Write Signal"),
-                             (const char *)F("In Signal"),     (const char *)F("Out Signal"),
-                             (const char *)F("Wait Signal"),   (const char *)F("Interrupt Signal")};
-  setMenuItems(menuItems, 14);
+  const __FlashStringHelper *menuItems[] = {
+      F("Test Signal"), F("Address"),         F("Address Count"), F("Data"),
+      F("Data Count"),  F("RAS Signal"),      F("CAS Signal"),    F("MUX Signal"),
+      F("Read Signal"), F("Write Signal"),    F("In Signal"),     F("Out Signal"),
+      F("Wait Signal"), F("Interrupt Signal")};
+  setMenuItemsF(menuItems, 14);
 
-  Globals.logger.info(F("Advanced Menu initialized"));
+  Globals.logger.infoF(F("Advanced Menu initialized"));
 }
 
 bool AdvancedMenu::open() {
@@ -160,7 +158,7 @@ Screen *AdvancedMenu::_getSelectedMenuItemScreen(int index) {
       return nullptr;
 
     case -1:  // Back to Main
-      Globals.logger.info(F("Returning to main menu from Advanced Menu"));
+      Globals.logger.infoF(F("Returning to main menu from Advanced Menu"));
       return new MainMenu();
 
     default:
@@ -168,92 +166,92 @@ Screen *AdvancedMenu::_getSelectedMenuItemScreen(int index) {
   }
 }
 
-const char *AdvancedMenu::_getMenuItemConfigValue(uint8_t index) {
+const __FlashStringHelper *AdvancedMenu::_getMenuItemConfigValueF(uint8_t index) {
   switch (index) {
     case 0:  // Test Signal
-      return _testSignalActive ? (const char *)F("On") : (const char *)F("Off");
+      return _testSignalActive ? F("On") : F("Off");
     case 1:  // Address
       switch (_addressMode) {
         case 0:
-          return (const char *)F("0x00");
+          return F("0x00");
         case 1:
-          return (const char *)F("0x55");
+          return F("0x55");
         case 2:
-          return (const char *)F("0xAA");
+          return F("0xAA");
         case 3:
-          return (const char *)F("0xFF");
+          return F("0xFF");
         case 4:
-          return (const char *)F("Count");
+          return F("Count");
         default:
-          return (const char *)F("0x00");
+          return F("0x00");
       }
     case 2:  // Address Count
       if (_addressMode != 4)
-        return (const char *)F("Off");  // Only active when Address is "Count"
+        return F("Off");  // Only active when Address is "Count"
       switch (_addressCountDuration) {
         case 0:
-          return (const char *)F("1s");
+          return F("1s");
         case 1:
-          return (const char *)F("5s");
+          return F("5s");
         case 2:
-          return (const char *)F("10s");
+          return F("10s");
         case 3:
-          return (const char *)F("30s");
+          return F("30s");
         case 4:
-          return (const char *)F("60s");
+          return F("60s");
         default:
-          return (const char *)F("1s");
+          return F("1s");
       }
     case 3:  // Data
       switch (_dataMode) {
         case 0:
-          return (const char *)F("0x00");
+          return F("0x00");
         case 1:
-          return (const char *)F("0x55");
+          return F("0x55");
         case 2:
-          return (const char *)F("0xAA");
+          return F("0xAA");
         case 3:
-          return (const char *)F("0xFF");
+          return F("0xFF");
         case 4:
-          return (const char *)F("Count");
+          return F("Count");
         default:
-          return (const char *)F("0x00");
+          return F("0x00");
       }
     case 4:  // Data Count
       if (_dataMode != 4)
-        return (const char *)F("Off");  // Only active when Data is "Count"
+        return F("Off");  // Only active when Data is "Count"
       switch (_dataCountDuration) {
         case 0:
-          return (const char *)F("1s");
+          return F("1s");
         case 1:
-          return (const char *)F("5s");
+          return F("5s");
         case 2:
-          return (const char *)F("10s");
+          return F("10s");
         case 3:
-          return (const char *)F("30s");
+          return F("30s");
         case 4:
-          return (const char *)F("60s");
+          return F("60s");
         default:
-          return (const char *)F("1s");
+          return F("1s");
       }
     case 5:  // RAS Signal
-      return _rasSignal ? (const char *)F("On") : (const char *)F("Off");
+      return _rasSignal ? F("On") : F("Off");
     case 6:  // CAS Signal
-      return _casSignal ? (const char *)F("On") : (const char *)F("Off");
+      return _casSignal ? F("On") : F("Off");
     case 7:  // MUX Signal
-      return _muxSignal ? (const char *)F("On") : (const char *)F("Off");
+      return _muxSignal ? F("On") : F("Off");
     case 8:  // Read Signal
-      return _readSignal ? (const char *)F("On") : (const char *)F("Off");
+      return _readSignal ? F("On") : F("Off");
     case 9:  // Write Signal
-      return _writeSignal ? (const char *)F("On") : (const char *)F("Off");
+      return _writeSignal ? F("On") : F("Off");
     case 10:  // In Signal
-      return _inSignal ? (const char *)F("On") : (const char *)F("Off");
+      return _inSignal ? F("On") : F("Off");
     case 11:  // Out Signal
-      return _outSignal ? (const char *)F("On") : (const char *)F("Off");
+      return _outSignal ? F("On") : F("Off");
     case 12:  // Wait Signal
-      return _waitSignal ? (const char *)F("On") : (const char *)F("Off");
+      return _waitSignal ? F("On") : F("Off");
     case 13:  // Interrupt Signal
-      return _interruptSignal ? (const char *)F("On") : (const char *)F("Off");
+      return _interruptSignal ? F("On") : F("Off");
     default:
       return nullptr;
   }
@@ -274,70 +272,69 @@ bool AdvancedMenu::_isMenuItemEnabled(uint8_t index) {
 // Toggle methods implementation
 void AdvancedMenu::_toggleAddressMode() {
   _addressMode = (_addressMode + 1) % 5;  // Cycle through 0-4 (0x00, 0x55, 0xAA, 0xFF, Count)
-  Globals.logger.info((const char *)F("Address mode toggled to %d"), _addressMode);
+  Globals.logger.infoF(F("Address mode toggled to %d"), _addressMode);
 }
 
 void AdvancedMenu::_toggleAddressCountDuration() {
   _addressCountDuration =
       (_addressCountDuration + 1) % 5;  // Cycle through 0-4 (1s, 5s, 10s, 30s, 60s)
-  Globals.logger.info((const char *)F("Address count duration toggled to %d"),
-                      _addressCountDuration);
+  Globals.logger.infoF(F("Address count duration toggled to %d"), _addressCountDuration);
 }
 
 void AdvancedMenu::_toggleDataMode() {
   _dataMode = (_dataMode + 1) % 5;  // Cycle through 0-4 (0x00, 0x55, 0xAA, 0xFF, Count)
-  Globals.logger.info((const char *)F("Data mode toggled to %d"), _dataMode);
+  Globals.logger.infoF(F("Data mode toggled to %d"), _dataMode);
 }
 
 void AdvancedMenu::_toggleDataCountDuration() {
   _dataCountDuration = (_dataCountDuration + 1) % 5;  // Cycle through 0-4 (1s, 5s, 10s, 30s, 60s)
-  Globals.logger.info((const char *)F("Data count duration toggled to %d"), _dataCountDuration);
+  Globals.logger.infoF(F("Data count duration toggled to %d"), _dataCountDuration);
 }
 
 void AdvancedMenu::_toggleRasSignal() {
   _rasSignal = !_rasSignal;
-  Globals.logger.info(_rasSignal ? F("RAS Signal enabled") : F("RAS Signal disabled"));
+  Globals.logger.infoF(_rasSignal ? F("RAS Signal enabled") : F("RAS Signal disabled"));
 }
 
 void AdvancedMenu::_toggleCasSignal() {
   _casSignal = !_casSignal;
-  Globals.logger.info(_casSignal ? F("CAS Signal enabled") : F("CAS Signal disabled"));
+  Globals.logger.infoF(_casSignal ? F("CAS Signal enabled") : F("CAS Signal disabled"));
 }
 
 void AdvancedMenu::_toggleMuxSignal() {
   _muxSignal = !_muxSignal;
-  Globals.logger.info(_muxSignal ? F("MUX Signal enabled") : F("MUX Signal disabled"));
+  Globals.logger.infoF(_muxSignal ? F("MUX Signal enabled") : F("MUX Signal disabled"));
 }
 
 void AdvancedMenu::_toggleReadSignal() {
   _readSignal = !_readSignal;
-  Globals.logger.info(_readSignal ? F("Read Signal enabled") : F("Read Signal disabled"));
+  Globals.logger.infoF(_readSignal ? F("Read Signal enabled") : F("Read Signal disabled"));
 }
 
 void AdvancedMenu::_toggleWriteSignal() {
   _writeSignal = !_writeSignal;
-  Globals.logger.info(_writeSignal ? F("Write Signal enabled") : F("Write Signal disabled"));
+  Globals.logger.infoF(_writeSignal ? F("Write Signal enabled") : F("Write Signal disabled"));
 }
 
 void AdvancedMenu::_toggleInSignal() {
   _inSignal = !_inSignal;
-  Globals.logger.info(_inSignal ? F("In Signal enabled") : F("In Signal disabled"));
+  Globals.logger.infoF(_inSignal ? F("In Signal enabled") : F("In Signal disabled"));
 }
 
 void AdvancedMenu::_toggleOutSignal() {
   _outSignal = !_outSignal;
-  Globals.logger.info(_outSignal ? F("Out Signal enabled") : F("Out Signal disabled"));
+  Globals.logger.infoF(_outSignal ? F("Out Signal enabled") : F("Out Signal disabled"));
 }
 
 void AdvancedMenu::_toggleWaitSignal() {
   _waitSignal = !_waitSignal;
-  Globals.logger.info(_waitSignal ? F("Wait Signal enabled") : F("Wait Signal disabled"));
+  Globals.logger.infoF(_waitSignal ? F("Wait Signal enabled") : F("Wait Signal disabled"));
 }
 
 void AdvancedMenu::_toggleInterruptSignal() {
   _interruptSignal = !_interruptSignal;
-  Globals.logger.info(_interruptSignal ? F("Interrupt Signal enabled")
-                                       : F("Interrupt Signal disabled"));
+  Globals.logger.infoF(_interruptSignal ? F("Interrupt Signal enabled")
+                                        : F("Interrupt Signal disabled"));
 }
 
 void AdvancedMenu::_toggleTestSignal() {
@@ -345,13 +342,13 @@ void AdvancedMenu::_toggleTestSignal() {
 
   if (_testSignalActive) {
     Model1LowLevel::writeTEST(LOW);
-    Globals.logger.info(F("Test signal activated - hardware controls enabled"));
+    Globals.logger.infoF(F("Test signal activated - hardware controls enabled"));
     // Reset timing when activating
     _lastAddressUpdate = 0;
     _lastDataUpdate = 0;
   } else {
     Model1LowLevel::writeTEST(HIGH);
-    Globals.logger.info(F("Test signal deactivated - only Wait and Interrupt signals available"));
+    Globals.logger.infoF(F("Test signal deactivated - only Wait and Interrupt signals available"));
   }
 }
 
@@ -424,5 +421,5 @@ void AdvancedMenu::_applySignalsToModel1() {
   Model1LowLevel::writeINT(_interruptSignal);
 
   // For now, just log the applied values for debugging
-  Globals.logger.info(F("Applied signals to Model1"));
+  Globals.logger.infoF(F("Applied signals to Model1"));
 }
