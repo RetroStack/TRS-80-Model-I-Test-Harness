@@ -28,3 +28,5 @@ fp-info-cache
 *.ses
 
 .theia
+.pio
+.vscode
