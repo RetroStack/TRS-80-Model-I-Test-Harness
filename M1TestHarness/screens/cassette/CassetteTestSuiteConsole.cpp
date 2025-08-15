@@ -1,9 +1,9 @@
-#include "CassetteTestSuiteConsole.h"
+#include "./CassetteTestSuiteConsole.h"
 
 #include <Arduino.h>
 
 #include "../../globals.h"
-#include "CassetteMenu.h"
+#include "./CassetteMenu.h"
 
 CassetteTestSuiteConsole::CassetteTestSuiteConsole() : ConsoleScreen() {
   setTitle((const char *)F("Cassette Test Suite"));

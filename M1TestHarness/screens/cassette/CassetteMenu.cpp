@@ -1,11 +1,11 @@
-#include "CassetteMenu.h"
+#include "./CassetteMenu.h"
 
 #include <Arduino.h>
 #include <Model1.h>
 
 #include "../../globals.h"
 #include "../MainMenu.h"
-#include "CassetteSongPlayerMenu.h"
+#include "./CassetteSongPlayerMenu.h"
 
 CassetteMenu::CassetteMenu() : MenuScreen() {
   setTitle((const char *)F("Cassette Interface"));

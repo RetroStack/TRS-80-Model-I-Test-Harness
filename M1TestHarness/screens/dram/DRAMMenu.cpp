@@ -1,10 +1,10 @@
-#include "DRAMMenu.h"
+#include "./DRAMMenu.h"
 
 #include <Arduino.h>
 
 #include "../../globals.h"
 #include "../MainMenu.h"
-#include "DRAMTestSuiteConsole.h"
+#include "./DRAMTestSuiteConsole.h"
 
 DRAMMenu::DRAMMenu() : MenuScreen() {
   setTitle((const char *)F("DRAM"));

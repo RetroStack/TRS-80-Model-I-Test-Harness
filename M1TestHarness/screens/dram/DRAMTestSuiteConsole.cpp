@@ -1,9 +1,9 @@
-#include "DRAMTestSuiteConsole.h"
+#include "./DRAMTestSuiteConsole.h"
 
 #include <Arduino.h>
 
 #include "../../globals.h"
-#include "DRAMMenu.h"
+#include "./DRAMMenu.h"
 
 DRAMTestSuiteConsole::DRAMTestSuiteConsole() : RAMTestSuiteConsole() {
   setTitle((const char *)F("DRAM Tests"));

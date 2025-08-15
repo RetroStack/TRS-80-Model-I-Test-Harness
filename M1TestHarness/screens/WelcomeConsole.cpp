@@ -1,9 +1,9 @@
-#include "WelcomeConsole.h"
+#include "./WelcomeConsole.h"
 
 #include <Arduino.h>
 
 #include "../globals.h"
-#include "DiagnosticConsole.h"
+#include "./DiagnosticConsole.h"
 
 WelcomeConsole::WelcomeConsole() : ConsoleScreen() {
   setTitle((const char *)F("Welcome"));

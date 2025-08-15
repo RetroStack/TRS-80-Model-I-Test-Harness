@@ -1,10 +1,10 @@
-#include "BoardRevisionMenu.h"
+#include "./BoardRevisionMenu.h"
 
 #include <Arduino.h>
 
 #include "../globals.h"
-#include "DiagnosticConsole.h"
-#include "MainMenu.h"
+#include "./DiagnosticConsole.h"
+#include "./MainMenu.h"
 
 BoardRevisionMenu::BoardRevisionMenu(BoardRevisionSource source) : MenuScreen(), _source(source) {
   setTitle((const char *)F("Board Revision"));

@@ -4,10 +4,10 @@
  * Released under the MIT License.
  */
 
-#include "M1Terminal.h"
+#include "./M1Terminal.h"
 
-#include "M1Shield.h"
-#include "Model1.h"
+#include <M1Shield.h>
+#include <Model1.h>
 
 // ============================================================================
 // Colors

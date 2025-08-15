@@ -1,9 +1,9 @@
-#include "ROMDetectionConsole.h"
+#include "./ROMDetectionConsole.h"
 
 #include <Arduino.h>
 
 #include "../../globals.h"
-#include "ROMMenu.h"
+#include "./ROMMenu.h"
 
 ROMDetectionConsole::ROMDetectionConsole() : ConsoleScreen() {
   setTitle((const char *)F("ROM Detection"));

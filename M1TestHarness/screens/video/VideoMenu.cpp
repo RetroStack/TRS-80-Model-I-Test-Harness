@@ -1,13 +1,13 @@
-#include "VideoMenu.h"
+#include "./VideoMenu.h"
 
 #include <Arduino.h>
 #include <Model1.h>
 
 #include "../../globals.h"
 #include "../MainMenu.h"
-#include "M1Terminal.h"
-#include "VRAMTestSuiteConsole.h"
-#include "test_screens/VideoTestScreensMenu.h"
+#include "./M1Terminal.h"
+#include "./VRAMTestSuiteConsole.h"
+#include "./test_screens/VideoTestScreensMenu.h"
 
 VideoMenu::VideoMenu() : MenuScreen() {
   setTitle((const char *)F("Video"));

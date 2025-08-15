@@ -1,9 +1,9 @@
-#include "ROMContentViewerConsole.h"
+#include "./ROMContentViewerConsole.h"
 
 #include <Arduino.h>
 
 #include "../../globals.h"
-#include "ROMMenu.h"
+#include "./ROMMenu.h"
 
 ROMContentViewerConsole::ROMContentViewerConsole() : ConsoleScreen() {
   setTitle((const char *)F("ROM Viewer"));

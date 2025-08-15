@@ -1,8 +1,8 @@
 
 #include <Arduino.h>
 
-#include "globals.h"
-#include "screens/WelcomeConsole.h"
+#include "./globals.h"
+#include "./screens/WelcomeConsole.h"
 
 // First, tell the system which display you have
 // For ST7789 240x320 displays (most common, landscape becomes 320x240)

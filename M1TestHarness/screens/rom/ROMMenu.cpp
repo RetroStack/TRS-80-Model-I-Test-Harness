@@ -1,11 +1,11 @@
-#include "ROMMenu.h"
+#include "./ROMMenu.h"
 
 #include <Arduino.h>
 
 #include "../../globals.h"
 #include "../MainMenu.h"
-#include "ROMContentViewerConsole.h"
-#include "ROMDetectionConsole.h"
+#include "./ROMContentViewerConsole.h"
+#include "./ROMDetectionConsole.h"
 
 ROMMenu::ROMMenu() : MenuScreen() {
   setTitle((const char *)F("ROM"));

@@ -1,4 +1,4 @@
-#include "globals.h"
+#include "./globals.h"
 
 // Store version string in PROGMEM to save RAM
 const char GlobalsClass::VERSION[] PROGMEM = "1.0.0";

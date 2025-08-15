@@ -1,16 +1,16 @@
-#include "MainMenu.h"
+#include "./MainMenu.h"
 
 #include <Arduino.h>
 
 #include "../globals.h"
-#include "BoardRevisionMenu.h"
-#include "about/AboutConsole.h"
-#include "advanced/AdvancedMenu.h"
-#include "cassette/CassetteMenu.h"
-#include "dram/DRAMMenu.h"
-#include "keyboard/KeyboardTester.h"
-#include "rom/ROMMenu.h"
-#include "video/VideoMenu.h"
+#include "./BoardRevisionMenu.h"
+#include "./about/AboutConsole.h"
+#include "./advanced/AdvancedMenu.h"
+#include "./cassette/CassetteMenu.h"
+#include "./dram/DRAMMenu.h"
+#include "./keyboard/KeyboardTester.h"
+#include "./rom/ROMMenu.h"
+#include "./video/VideoMenu.h"
 
 MainMenu::MainMenu() {
   setTitle((const char*)F("Main Menu"));

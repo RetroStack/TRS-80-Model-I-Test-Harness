@@ -1,9 +1,9 @@
-#include "DiagnosticConsole.h"
+#include "./DiagnosticConsole.h"
 
 #include <Arduino.h>
 
 #include "../globals.h"
-#include "BoardRevisionMenu.h"
+#include "./BoardRevisionMenu.h"
 
 DiagnosticConsole::DiagnosticConsole() : ConsoleScreen() {
   setTitle((const char *)F("Diagnostic"));

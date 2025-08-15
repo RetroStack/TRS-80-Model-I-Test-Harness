@@ -1,10 +1,10 @@
-#include "CassetteSongPlayerMenu.h"
+#include "./CassetteSongPlayerMenu.h"
 
 #include <Arduino.h>
 
 #include "../../globals.h"
-#include "CassetteMenu.h"
-#include "CassetteSongData.h"
+#include "./CassetteMenu.h"
+#include "./CassetteSongData.h"
 
 CassetteSongPlayerMenu::CassetteSongPlayerMenu() : MenuScreen() {
   setTitle((const char *)F("Song Player"));
