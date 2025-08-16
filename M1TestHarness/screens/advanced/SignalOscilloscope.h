@@ -48,8 +48,8 @@ class SignalOscilloscope : public ContentScreen {
   uint16_t getSignalColor(int signalIndex, bool state);
   bool extractSignalFromState(uint64_t stateData, int signalIndex);
 
-  // Paging helper methods
-  int getSignalsOnCurrentPage();
+  // Page management
+  int getSignalsOnCurrentPage() const;
   int getFirstSignalOnCurrentPage();
 };
 

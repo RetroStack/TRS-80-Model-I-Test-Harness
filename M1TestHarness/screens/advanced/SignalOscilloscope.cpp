@@ -6,6 +6,7 @@
 
 #include "../../globals.h"
 #include "./AdvancedMenu.h"
+#include "./AdvancedSignalController.h"
 
 SignalOscilloscope::SignalOscilloscope() : ContentScreen() {
   setTitleF(F("Oscilloscope"));
@@ -30,6 +31,9 @@ SignalOscilloscope::SignalOscilloscope() : ContentScreen() {
 }
 
 void SignalOscilloscope::loop() {
+  // Let the global signal controller handle signal updates
+  AdvancedSignals.loop();
+
   unsigned long currentTime = millis();
 
   // Update signal states at regular intervals
@@ -376,7 +380,7 @@ uint16_t SignalOscilloscope::getSignalColor(int signalIndex, bool state) {
   return M1Shield.convertColor(0xFFFF);  // White
 }
 
-int SignalOscilloscope::getSignalsOnCurrentPage() {
+int SignalOscilloscope::getSignalsOnCurrentPage() const {
   if (_currentPage == 0) {
     // First page shows all signals (overview)
     return SIGNAL_COUNT;

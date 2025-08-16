@@ -7,6 +7,10 @@ class AdvancedMenu : public MenuScreen {
  public:
   AdvancedMenu();
 
+  bool open() override;
+  void close() override;
+  void loop() override;
+
  protected:
   Screen *_getSelectedMenuItemScreen(int index) override;
 };
