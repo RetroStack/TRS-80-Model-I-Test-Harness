@@ -1,5 +1,6 @@
 #include "./SignalOscilloscope.h"
 
+#include <Adafruit_GFX.h>
 #include <Arduino.h>
 #include <Model1.h>
 #include <Model1LowLevel.h>
@@ -221,53 +222,39 @@ void SignalOscilloscope::drawSignalColumn(int x, uint64_t stateData) {
 }
 
 bool SignalOscilloscope::extractSignalFromState(uint64_t stateData, int signalIndex) {
-  // Extract signal from packed state data - organized by pages
-  // Page 1 (0-7): Address bus high A15-A08 (bits 63-56)
-  // Page 2 (8-15): Address bus low A07-A00 (bits 55-48)
-  // Page 3 (16-23): Data bus D7-D0 (bits 47-40)
-  // Page 4 (24-31): Memory control RD,WR,IN,OUT,RAS,CAS,MUX + padding (bits 39-33)
-  // Page 5 (32-35): System signals RST,IAK,INT,TST (bits 31-28)
-  // Total: 36 signals
+  // Extract signal from packed state data - matches getStateData() layout:
+  // Bits 63-48: Address bus A15-A0 (16 bits)
+  // Bits 47-40: Data bus D7-D0 (8 bits)
+  // Bits 39-32: Memory control RD,WR,IN,OUT,RAS,CAS,MUX,reserved (8 bits)
+  // Bits 31-24: System signals SYS_RES,INT_ACK,INT,TEST,WAIT,reserved (8 bits)
+  // Bits 23-0:  Reserved for future expansion
+  // Total displayed: 37 signals (Address + Data + Memory + padding + System)
 
   if (signalIndex < 16) {
-    // Address bus A15-A0 (bits 63-48) - Pages 1&2
+    // Address bus A15-A0 (bits 63-48) - indices 0-15
     return (stateData >> (63 - signalIndex)) & 1;
   } else if (signalIndex < 24) {
-    // Data bus D7-D0 (bits 47-40) - Page 3
+    // Data bus D7-D0 (bits 47-40) - indices 16-23
     return (stateData >> (47 - (signalIndex - 16))) & 1;
-  } else if (signalIndex < 32) {
-    // Memory control + padding - Page 4
-    switch (signalIndex) {
-      case 24:
-        return (stateData >> 39) & 1;  // RD
-      case 25:
-        return (stateData >> 38) & 1;  // WR
-      case 26:
-        return (stateData >> 37) & 1;  // IN
-      case 27:
-        return (stateData >> 36) & 1;  // OUT
-      case 28:
-        return (stateData >> 35) & 1;  // RAS
-      case 29:
-        return (stateData >> 34) & 1;  // CAS
-      case 30:
-        return (stateData >> 33) & 1;  // MUX
-      case 31:
-        return false;  // Padding "---"
-      default:
-        return false;
-    }
-  } else if (signalIndex < 36) {
-    // System signals - Page 5
+  } else if (signalIndex < 31) {
+    // Memory control signals - indices 24-30 (RD, WR, IN, OUT, RAS, CAS, MUX)
+    return (stateData >> (39 - (signalIndex - 24))) & 1;
+  } else if (signalIndex == 31) {
+    // Padding/unused - index 31
+    return false;
+  } else if (signalIndex < 37) {
+    // System signals - indices 32-36 (RST, IACK, INT, TEST, WAIT)
     switch (signalIndex) {
       case 32:
-        return (stateData >> 31) & 1;  // RST
+        return (stateData >> 31) & 1;  // RST (SYS_RES)
       case 33:
-        return (stateData >> 30) & 1;  // IAK
+        return (stateData >> 30) & 1;  // IACK (INT_ACK)
       case 34:
         return (stateData >> 29) & 1;  // INT
       case 35:
-        return (stateData >> 28) & 1;  // TST
+        return (stateData >> 28) & 1;  // TEST
+      case 36:
+        return (stateData >> 27) & 1;  // WAIT
       default:
         return false;
     }
@@ -281,18 +268,8 @@ void SignalOscilloscope::drawSignalLabels() {
   uint16_t contentTop = _getContentTop();
   uint16_t contentHeight = _getContentHeight();
 
-  // Signal names organized for perfect page alignment - all 36 signals
-  const char* signalNames[36] = {
-      "A15", "A14", "A13", "A12",
-      "A11", "A10", "A09", "A08",  // Page 1: Address high (bits 63-56)
-      "A07", "A06", "A05", "A04",
-      "A03", "A02", "A01", "A00",  // Page 2: Address low (bits 55-48)
-      "D7",  "D6",  "D5",  "D4",
-      "D3",  "D2",  "D1",  "D0",  // Page 3: Data bus (bits 47-40)
-      "RD",  "WR",  "IN",  "OUT",
-      "RAS", "CAS", "MUX", "---",  // Page 4: Memory control (bits 39-33) + padding
-      "RST", "IAK", "INT", "TST"   // Page 5: System signals (bits 31-28)
-  };
+  // Use the class member signal names array
+  const char* const* signalNames = _signalNames;
 
   gfx.setTextSize(1);
   int plotHeight = contentHeight - 20;
@@ -378,8 +355,8 @@ uint16_t SignalOscilloscope::getSignalColor(int signalIndex, bool state) {
   } else if (signalIndex < 32) {
     // Memory control signals (page 4) - cyan
     return M1Shield.convertColor(0x07FF);
-  } else if (signalIndex < 36) {
-    // System signals (page 5) - magenta
+  } else if (signalIndex <= 36) {
+    // System signals (page 5) including WAIT - magenta
     return M1Shield.convertColor(0xF81F);
   }
 

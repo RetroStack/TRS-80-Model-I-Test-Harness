@@ -14,19 +14,21 @@ class SignalOscilloscope : public ContentScreen {
 
  private:
   // Signal definitions - ALL available signals from getStateData()
-  static const int SIGNAL_COUNT = 36;     // 16 addr + 8 data + 7 memory + 5 system = 36 total
+  static const int SIGNAL_COUNT = 37;     // Now includes WAIT as a separate system signal
   static const int UPDATE_INTERVAL = 20;  // ms between updates - faster for responsiveness
   static const int SIGNALS_PER_PAGE = 8;  // Max signals per page (except first page shows all)
 
   // Signal names and their current states
   const char* _signalNames[SIGNAL_COUNT] = {
-      "A15", "A14",  "A13", "A12",   // Address bus high bits
-      "A3",  "A2",   "A1",  "A0",    // Address bus low bits
-      "D7",  "D6",   "D5",  "D4",    // Data bus high bits
-      "D3",  "D2",   "D1",  "D0",    // Data bus low bits
-      "RD",  "WR",   "IN",  "OUT",   // Memory control signals
-      "RAS", "CAS",  "MUX", "WAIT",  // System control signals
-      "RST", "IACK", "INT", "TEST"   // System status signals
+      "A15", "A14",  "A13", "A12",  "A11",
+      "A10", "A9",   "A8",  // Address bus high bits (0-7)
+      "A7",  "A6",   "A5",  "A4",   "A3",
+      "A2",  "A1",   "A0",  // Address bus low bits (8-15)
+      "D7",  "D6",   "D5",  "D4",   "D3",
+      "D2",  "D1",   "D0",  // Data bus (16-23)
+      "RD",  "WR",   "IN",  "OUT",  "RAS",
+      "CAS", "MUX",  "---",                 // Memory control (24-30) + padding (31)
+      "RST", "IACK", "INT", "TEST", "WAIT"  // System signals (32-36)
   };
 
   // Current position in the rolling display
