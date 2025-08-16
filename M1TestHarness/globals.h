@@ -41,7 +41,7 @@ class GlobalsClass {
 
   BOARD_REVISION getBoardRevision() const;
   void setBoardRevision(BOARD_REVISION rev);
-  const char* getBoardRevisionString(BOARD_REVISION rev) const;
+  const __FlashStringHelper* getBoardRevisionString(BOARD_REVISION rev) const;
 };
 
 extern GlobalsClass Globals;

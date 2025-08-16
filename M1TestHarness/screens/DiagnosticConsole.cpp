@@ -19,7 +19,7 @@ DiagnosticConsole::DiagnosticConsole() : ConsoleScreen() {
 void DiagnosticConsole::_executeOnce() {
   cls();
 
-  setTextSize(2);
+  setTextSize(1);
   setTextColor(0xFFFF, 0x0000);  // White
   println(F("Nothing to do at the moment"));
 

@@ -2,7 +2,8 @@
 #include <Arduino.h>
 
 #include "./globals.h"
-#include "./screens/WelcomeConsole.h"
+// #include "./screens/WelcomeConsole.h"
+#include "./screens/keyboard/KeyboardTester.h"
 
 // First, tell the system which display you have
 // For ST7789 240x320 displays (most common, landscape becomes 320x240)
@@ -52,17 +53,17 @@ Display_ST7789_320x240 displayProvider;
 void setup() {
   Serial.begin(115200);
 
-  Model1.begin(2);  // Setup Timer 2
+  Model1.begin(-1);  // 2);  // Setup Timer 2
   M1Shield.begin(displayProvider);
 
   // Enable joystick input for navigation
   // Uncomment to allow joystick control of menus and screens
   //   M1Shield.activateJoystick();
 
-  Globals.logger.infoF(F("=== TRS-80 Model 1 Testharness %d ==="), 15);
+  Globals.logger.infoF(F("=== TRS-80 Model 1 Testharness ==="));
 
   // Start with the welcome console
-  // M1Shield.setScreen(new WelcomeConsole());
+  M1Shield.setScreen(new KeyboardTester());
 }
 
 ISR(TIMER2_COMPA_vect) {

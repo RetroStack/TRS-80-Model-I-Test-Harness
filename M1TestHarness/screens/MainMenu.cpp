@@ -13,13 +13,11 @@
 #include "./video/VideoMenu.h"
 
 MainMenu::MainMenu() {
-  setTitle((const char*)F("Main Menu"));
-  const char* menuItems[] = {(const char*)F("Board Revision"), (const char*)F("One-Step Tests"),
-                             (const char*)F("DRAM"),           (const char*)F("ROM"),
-                             (const char*)F("Cassette"),       (const char*)F("Video"),
-                             (const char*)F("Keyboard"),       (const char*)F("Advanced"),
-                             (const char*)F("About")};
-  setMenuItems(menuItems, 9);
+  setTitleF(F("Main Menu"));
+  const __FlashStringHelper* menuItems[] = {
+      F("Board Revision"), F("One-Step Tests"), F("DRAM"),     F("ROM"),  F("Cassette"),
+      F("Video"),          F("Keyboard"),       F("Advanced"), F("About")};
+  setMenuItemsF(menuItems, 9);
 
   Globals.logger.infoF(F("Main Menu initialized"));
 }
@@ -69,7 +67,7 @@ Screen* MainMenu::_getSelectedMenuItemScreen(int index) {
   }
 }
 
-const char* MainMenu::_getMenuItemConfigValue(uint8_t index) {
+const __FlashStringHelper* MainMenu::_getMenuItemConfigValueF(uint8_t index) {
   switch (index) {
     case 0:  // Board Revision
       return Globals.getBoardRevisionString(Globals.getBoardRevision());

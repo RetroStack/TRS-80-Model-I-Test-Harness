@@ -34,10 +34,10 @@ Screen *DRAMMenu::_getSelectedMenuItemScreen(int index) {
   }
 }
 
-const char *DRAMMenu::_getMenuItemConfigValue(uint8_t index) {
+const __FlashStringHelper *DRAMMenu::_getMenuItemConfigValueF(uint8_t index) {
   switch (index) {
-    case 0:          // Memory Size
-      return "16K";  // TODO: Get actual memory size detection
+    case 0:             // Memory Size
+      return F("16K");  // TODO: Get actual memory size detection
     default:
       return nullptr;
   }

@@ -3,14 +3,13 @@
 #include <Arduino.h>
 
 #include "../globals.h"
-#include "./DiagnosticConsole.h"
 #include "./MainMenu.h"
 
 BoardRevisionMenu::BoardRevisionMenu(BoardRevisionSource source) : MenuScreen(), _source(source) {
   setTitleF(F("Board Revision"));
 
   // Create menu items using the global board revision strings
-  const char *menuItems[10];
+  const __FlashStringHelper *menuItems[10];
   menuItems[0] = Globals.getBoardRevisionString(UNKNOWN);
   menuItems[1] = Globals.getBoardRevisionString(REV_A);
   menuItems[2] = Globals.getBoardRevisionString(REV_D);
@@ -21,7 +20,7 @@ BoardRevisionMenu::BoardRevisionMenu(BoardRevisionSource source) : MenuScreen(),
   menuItems[7] = Globals.getBoardRevisionString(REV_TEC_30);
   menuItems[8] = Globals.getBoardRevisionString(REV_TEC_40);
   menuItems[9] = Globals.getBoardRevisionString(REV_TEC_50);
-  setMenuItems(menuItems, 10);
+  setMenuItemsF(menuItems, 10);
 
   Globals.logger.infoF(F("Board Revision screen initialized"));
 }
@@ -31,7 +30,7 @@ Screen *BoardRevisionMenu::_getSelectedMenuItemScreen(int index) {
 
   // Determine the return screen based on source
   if (_source == BoardRevisionSource::DIAGNOSTICS) {
-    returnScreen = new DiagnosticConsole();
+    returnScreen = new MainMenu();
   } else {
     returnScreen = new MainMenu();
   }

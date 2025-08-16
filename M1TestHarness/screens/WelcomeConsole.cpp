@@ -19,14 +19,13 @@ WelcomeConsole::WelcomeConsole() : ConsoleScreen() {
 void WelcomeConsole::_executeOnce() {
   cls();
   setTextColor(0x07E0, 0x0000);  // Green
-  setTextSize(3);
-  println(F("TRS-80 MODEL 1"));
-  println(F("TEST HARNESS"));
+  setTextSize(2);
+  println(F("TRS-80 MODEL 1 TEST HARNESS"));
   println();
 
-  setTextSize(2);
+  setTextSize(1);
   setTextColor(0xFFFF, 0x0000);  // White
-  println(F("This testharness tests individual"));
+  println(F("This test harness tests individual"));
   println(F("features of the TRS-80 Model 1."));
   println();
 

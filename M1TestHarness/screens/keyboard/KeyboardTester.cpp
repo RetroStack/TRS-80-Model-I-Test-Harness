@@ -35,10 +35,10 @@ KeyboardTester::KeyboardTester() : ContentScreen() {
 void KeyboardTester::updateModeTitle() {
   switch (_currentMode) {
     case MODE_GRAPHICAL:
-      setTitleF(F("Graphical Keyboard Test"));
+      setTitleF(F("Graphical Test"));
       break;
     case MODE_MATRIX:
-      setTitleF(F("Matrix Keyboard Test"));
+      setTitleF(F("Matrix Test"));
       break;
   }
 }
@@ -50,6 +50,9 @@ bool KeyboardTester::open() {
   // Activate test signal to allow keyboard access
   Model1.activateTestSignal();
   Globals.keyboard.update();  // Keep keyboard state current
+
+  // Force a full redraw when opening
+  _needsFullRedraw = true;
 
   return result;
 }
@@ -63,10 +66,19 @@ void KeyboardTester::close() {
 }
 
 void KeyboardTester::loop() {
+  unsigned long currentTime = millis();
+
   // Update keyboard status every CHECK_DELAY ms for responsive key detection
-  if (millis() - _lastUpdate > CHECK_DELAY) {
-    _lastUpdate = millis();
+  if (currentTime - _lastUpdate > CHECK_DELAY) {
+    _lastUpdate = currentTime;
+    M1Shield.setLEDColor(COLOR_OFF);
     displayKeyboardStatus();  // Update status display and track key presses
+  }
+
+  // If we need a redraw, call _drawContent directly here in the loop
+  // This seems to be the pattern that works with the framework
+  if (_needsFullRedraw) {
+    _drawContent();
   }
 }
 
@@ -80,11 +92,12 @@ void KeyboardTester::displayKeyboardStatus() {
     }
   }
 
+  Globals.logger.info("Key checked");
+
   // Use keyboard iterator to get all key changes
   KeyboardChangeIterator it = Globals.keyboard.changes();
+  bool anyPressed = false;
   while (it.hasNext()) {
-    it.next();  // Move to the next changed key first
-
     uint8_t row = it.row();
     uint8_t col = it.column();
     uint8_t keyValue = it.keyValue();
@@ -93,6 +106,8 @@ void KeyboardTester::displayKeyboardStatus() {
     if (row < 8 && col < 8) {
       bool isPressed = it.isPressed();
       if (isPressed) {
+        Globals.logger.info("Key pressed");
+        anyPressed = true;
         _keyHighlightTime[row][col] = currentTime;
       } else {
         if (currentTime - _keyHighlightTime[row][col] > HIGHLIGHT_DURATION) {
@@ -118,13 +133,25 @@ void KeyboardTester::displayKeyboardStatus() {
       Globals.logger.infoF(F("Key released: %s (0x%s) at row %d, col %d"), keyName,
                            String(keyValue, HEX), row, col);
     }
+
+    it.next();
   }
 
-  // Update the display with only changed keys
+  if (anyPressed) {
+    M1Shield.setLEDColor(COLOR_WHITE);
+  }
+
   _drawContent();
 }
 
 void KeyboardTester::_drawContent() {
+  // Only draw when screen is active
+  if (!isActive())
+    return;
+
+  Adafruit_GFX &gfx = M1Shield.getGFX();
+  gfx.startWrite();
+
   if (_needsFullRedraw) {
     // Clear content area before full redraw
     uint16_t contentLeft = _getContentLeft();
@@ -132,10 +159,6 @@ void KeyboardTester::_drawContent() {
     uint16_t contentWidth = _getContentWidth();
     uint16_t contentHeight = _getContentHeight();
 
-    Adafruit_GFX &gfx = M1Shield.getGFX();
-
-    // Wrap entire screen redraw in single SPI transaction for better performance
-    gfx.startWrite();
     gfx.fillRect(contentLeft, contentTop, contentWidth, contentHeight,
                  M1Shield.convertColor(0x0000));
 
@@ -147,7 +170,6 @@ void KeyboardTester::_drawContent() {
         processMatrixView(true);
         break;
     }
-    gfx.endWrite();
 
     _needsFullRedraw = false;
   } else {
@@ -161,6 +183,8 @@ void KeyboardTester::_drawContent() {
         break;
     }
   }
+
+  gfx.endWrite();
 }
 
 // -----------------------------------------------
@@ -191,22 +215,21 @@ void KeyboardTester::processGraphicalKeyboard(bool fullDraw) {
   bool anyKeyChanged = false;
 
   if (fullDraw) {
-    drawKeyboardRow(row1, 13, keyMatrix1, startX + 30, startY, keyWidth, keyHeight);
-    drawKeyboardRow(row2, 14, keyMatrix2, startX + 5, startY + 25, keyWidth, keyHeight);
-    drawKeyboardRow(row3, 13, keyMatrix3, startX + 15, startY + 50, keyWidth, keyHeight);
-    drawKeyboardRow(row4, 12, keyMatrix4, startX + 15, startY + 75, keyWidth, keyHeight);
-    drawKeyboardRow(row4, 12, keyMatrix4, startX + 15, startY + 75, keyWidth, keyHeight);
+    drawKeyboardRow(row1, 13, keyMatrix1, startX + 25, startY, keyWidth, keyHeight);
+    drawKeyboardRow(row2, 14, keyMatrix2, startX + 0, startY + 25, keyWidth, keyHeight);
+    drawKeyboardRow(row3, 13, keyMatrix3, startX + 10, startY + 50, keyWidth, keyHeight);
+    drawKeyboardRow(row4, 12, keyMatrix4, startX + 10, startY + 75, keyWidth, keyHeight);
     drawKeyboardRow(row5, 1, keyMatrix5, startX + 100, startY + 100, 120, keyHeight);
     M1Shield.display();
 
   } else {  // Only changes
-    updateKeyboardRow(row1, 13, keyMatrix1, startX + 30, startY, keyWidth, keyHeight,
+    updateKeyboardRow(row1, 13, keyMatrix1, startX + 25, startY, keyWidth, keyHeight,
                       anyKeyChanged);
-    updateKeyboardRow(row2, 14, keyMatrix2, startX + 5, startY + 25, keyWidth, keyHeight,
+    updateKeyboardRow(row2, 14, keyMatrix2, startX + 0, startY + 25, keyWidth, keyHeight,
                       anyKeyChanged);
-    updateKeyboardRow(row3, 13, keyMatrix3, startX + 15, startY + 50, keyWidth, keyHeight,
+    updateKeyboardRow(row3, 13, keyMatrix3, startX + 10, startY + 50, keyWidth, keyHeight,
                       anyKeyChanged);
-    updateKeyboardRow(row4, 12, keyMatrix4, startX + 15, startY + 75, keyWidth, keyHeight,
+    updateKeyboardRow(row4, 12, keyMatrix4, startX + 10, startY + 75, keyWidth, keyHeight,
                       anyKeyChanged);
     updateKeyboardRow(row5, 1, keyMatrix5, startX + 100, startY + 100, 120, keyHeight,
                       anyKeyChanged);
@@ -225,9 +248,10 @@ void KeyboardTester::calculateGraphicalLayout(int &startX, int &startY, int &key
   uint16_t contentWidth = _getContentWidth();
   uint16_t contentHeight = _getContentHeight();
 
-  // Define key dimensions and spacing
-  keyWidth = 22;
-  keyHeight = 20;
+  // Define key dimensions and spacing - sized to fit in available space
+  // Available width: 318px, need to fit 14 keys max
+  keyWidth = 20;
+  keyHeight = 18;
   const int keySpacing = 2;
 
   // Calculate keyboard dimensions for centering
@@ -236,8 +260,12 @@ void KeyboardTester::calculateGraphicalLayout(int &startX, int &startY, int &key
   const int totalKeyboardHeight = 5 * (keyHeight + 5) + 20;  // 4 rows + spacebar + spacing
 
   // Center the keyboard in the content area
-  startX = contentLeft + (contentWidth - totalKeyboardWidth) / 2;
-  startY = contentTop + (contentHeight - totalKeyboardHeight) / 2;
+  int tempStartX = contentLeft + (contentWidth - totalKeyboardWidth) / 2;
+  int tempStartY = contentTop + (contentHeight - totalKeyboardHeight) / 2;
+
+  // Safety check: ensure coordinates are not negative
+  startX = (tempStartX < (int)contentLeft) ? contentLeft : tempStartX;
+  startY = (tempStartY < (int)contentTop) ? contentTop : tempStartY;
 }
 
 void KeyboardTester::drawKeyboardRow(const char *keys[], int keyCount, int keyMatrix[][2],
@@ -450,17 +478,21 @@ void KeyboardTester::calculateMatrixLayout(int &startX, int &startY, int &cellWi
   uint16_t contentHeight = _getContentHeight();
 
   // Matrix grid dimensions
-  cellWidth = 35;
-  cellHeight = 20;
-  const int headerSpace = 20;  // Space for row/column headers
+  cellWidth = 30;
+  cellHeight = 15;
+  const int headerSpace = 18;  // Space for row/column headers
 
   // Calculate matrix dimensions for centering
   const int totalMatrixWidth = 8 * cellWidth + headerSpace;
   const int totalMatrixHeight = 8 * cellHeight + headerSpace;
 
   // Center the matrix in the content area
-  startX = contentLeft + (contentWidth - totalMatrixWidth) / 2 + headerSpace;
-  startY = contentTop + (contentHeight - totalMatrixHeight) / 2 + headerSpace;
+  int tempStartX = contentLeft + (contentWidth - totalMatrixWidth + headerSpace) / 2;
+  int tempStartY = contentTop + (contentHeight - totalMatrixHeight + headerSpace) / 2;
+
+  // Safety check: ensure coordinates are not negative
+  startX = (tempStartX < (int)contentLeft) ? contentLeft : tempStartX;
+  startY = (tempStartY < (int)contentTop) ? contentTop : tempStartY;
 }
 
 void KeyboardTester::drawMatrixCell(int x, int y, int width, int height, uint8_t row, uint8_t col,
