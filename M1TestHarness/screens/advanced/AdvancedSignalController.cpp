@@ -75,8 +75,11 @@ void AdvancedSignalController::loop() {
   unsigned long currentTime = millis();
   bool updateNeeded = false;
 
-  // Handle address pattern cycling if in Count mode
-  if (_addressMode == 4) {  // Count mode
+  // Address bus: mode 0 = floating, do not drive or update value
+  if (_addressMode == 0) {
+    // Set to floating, do not update value
+    // (Handled in _applySignalsToModel1)
+  } else if (_addressMode == 5) {  // Count mode
     unsigned long addressInterval = _getDurationMs(_addressCountDuration);
     if (currentTime - _lastAddressUpdate >= addressInterval) {
       _currentAddressValue = _getPatternValue16Bit(_addressMode, _currentAddressValue);
@@ -92,8 +95,11 @@ void AdvancedSignalController::loop() {
     }
   }
 
-  // Handle data pattern cycling if in Count mode
-  if (_dataMode == 4) {  // Count mode
+  // Data bus: mode 0 = floating, do not drive or update value
+  if (_dataMode == 0) {
+    // Set to floating, do not update value
+    // (Handled in _applySignalsToModel1)
+  } else if (_dataMode == 5) {  // Count mode
     unsigned long dataInterval = _getDurationMs(_dataCountDuration);
     if (currentTime - _lastDataUpdate >= dataInterval) {
       _currentDataValue = _getPatternValue8Bit(_dataMode, _currentDataValue);
@@ -373,7 +379,7 @@ void AdvancedSignalController::toggleTestSignal() {
 }
 
 void AdvancedSignalController::toggleAddressMode() {
-  setAddressMode((_addressMode + 1) % 5);  // Cycle through 0-4
+  setAddressMode((_addressMode + 1) % 6);  // Cycle through 0-5 (now includes floating)
 }
 
 void AdvancedSignalController::toggleAddressCountDuration() {
@@ -381,7 +387,7 @@ void AdvancedSignalController::toggleAddressCountDuration() {
 }
 
 void AdvancedSignalController::toggleDataMode() {
-  setDataMode((_dataMode + 1) % 5);  // Cycle through 0-4
+  setDataMode((_dataMode + 1) % 6);  // Cycle through 0-5 (now includes floating)
 }
 
 void AdvancedSignalController::toggleDataCountDuration() {
@@ -437,23 +443,25 @@ void AdvancedSignalController::toggleDataBusWriteMode() {
 const __FlashStringHelper* AdvancedSignalController::getAddressModeString() const {
   switch (_addressMode) {
     case 0:
-      return F("0x00");
+      return F("Floating");
     case 1:
-      return F("0x55");
+      return F("0x00");
     case 2:
-      return F("0xAA");
+      return F("0x55");
     case 3:
-      return F("0xFF");
+      return F("0xAA");
     case 4:
+      return F("0xFF");
+    case 5:
       return F("Count");
     default:
-      return F("0x00");
+      return F("Floating");
   }
 }
 
 const __FlashStringHelper* AdvancedSignalController::getAddressCountDurationString() const {
-  if (_addressMode != 4)
-    return F("Off");  // Only active when Address is "Count"
+  if (_addressMode != 5)
+    return F("Off");  // Only active when Address is "Count" (mode 5)
 
   switch (_addressCountDuration) {
     case 0:
@@ -474,23 +482,25 @@ const __FlashStringHelper* AdvancedSignalController::getAddressCountDurationStri
 const __FlashStringHelper* AdvancedSignalController::getDataModeString() const {
   switch (_dataMode) {
     case 0:
-      return F("0x00");
+      return F("Floating");
     case 1:
-      return F("0x55");
+      return F("0x00");
     case 2:
-      return F("0xAA");
+      return F("0x55");
     case 3:
-      return F("0xFF");
+      return F("0xAA");
     case 4:
+      return F("0xFF");
+    case 5:
       return F("Count");
     default:
-      return F("0x00");
+      return F("Floating");
   }
 }
 
 const __FlashStringHelper* AdvancedSignalController::getDataCountDurationString() const {
-  if (_dataMode != 4)
-    return F("Off");  // Only active when Data is "Count"
+  if (_dataMode != 5)
+    return F("Off");  // Only active when Data is "Count" (mode 5)
 
   switch (_dataCountDuration) {
     case 0:
@@ -523,9 +533,9 @@ const __FlashStringHelper* AdvancedSignalController::getRasSignalModeString() co
     case 0:
       return F("Float");
     case 1:
-      return F("Off");
-    case 2:
       return F("On");
+    case 2:
+      return F("Off");
     default:
       return F("Float");
   }
@@ -536,9 +546,9 @@ const __FlashStringHelper* AdvancedSignalController::getCasSignalModeString() co
     case 0:
       return F("Float");
     case 1:
-      return F("Off");
-    case 2:
       return F("On");
+    case 2:
+      return F("Off");
     default:
       return F("Float");
   }
@@ -549,9 +559,9 @@ const __FlashStringHelper* AdvancedSignalController::getMuxSignalModeString() co
     case 0:
       return F("Float");
     case 1:
-      return F("Off");
-    case 2:
       return F("On");
+    case 2:
+      return F("Off");
     default:
       return F("Float");
   }
@@ -562,9 +572,9 @@ const __FlashStringHelper* AdvancedSignalController::getReadSignalModeString() c
     case 0:
       return F("Float");
     case 1:
-      return F("Off");
-    case 2:
       return F("On");
+    case 2:
+      return F("Off");
     default:
       return F("Float");
   }
@@ -575,9 +585,9 @@ const __FlashStringHelper* AdvancedSignalController::getWriteSignalModeString() 
     case 0:
       return F("Float");
     case 1:
-      return F("Off");
-    case 2:
       return F("On");
+    case 2:
+      return F("Off");
     default:
       return F("Float");
   }
@@ -588,9 +598,9 @@ const __FlashStringHelper* AdvancedSignalController::getInSignalModeString() con
     case 0:
       return F("Float");
     case 1:
-      return F("Off");
-    case 2:
       return F("On");
+    case 2:
+      return F("Off");
     default:
       return F("Float");
   }
@@ -601,9 +611,9 @@ const __FlashStringHelper* AdvancedSignalController::getOutSignalModeString() co
     case 0:
       return F("Float");
     case 1:
-      return F("Off");
-    case 2:
       return F("On");
+    case 2:
+      return F("Off");
     default:
       return F("Float");
   }
@@ -614,9 +624,9 @@ const __FlashStringHelper* AdvancedSignalController::getWaitSignalModeString() c
     case 0:
       return F("Float");
     case 1:
-      return F("Off");
-    case 2:
       return F("On");
+    case 2:
+      return F("Off");
     default:
       return F("Float");
   }
@@ -627,9 +637,9 @@ const __FlashStringHelper* AdvancedSignalController::getInterruptSignalModeStrin
     case 0:
       return F("Float");
     case 1:
-      return F("Off");
-    case 2:
       return F("On");
+    case 2:
+      return F("Off");
     default:
       return F("Float");
   }
@@ -655,15 +665,15 @@ unsigned long AdvancedSignalController::_getDurationMs(uint8_t durationIndex) {
 
 uint8_t AdvancedSignalController::_getPatternValue8Bit(uint8_t mode, uint8_t currentValue) {
   switch (mode) {
-    case 0:
-      return 0x00;
     case 1:
-      return 0x55;
+      return 0x00;
     case 2:
-      return 0xAA;
+      return 0x55;
     case 3:
+      return 0xAA;
+    case 4:
       return 0xFF;
-    case 4:                     // Count mode - increment from 0x00 to 0xFF, then wrap to 0x00
+    case 5:                     // Count mode - increment from 0x00 to 0xFF, then wrap to 0x00
       return currentValue + 1;  // uint8_t will automatically wrap from 0xFF to 0x00
     default:
       return 0x00;
@@ -672,15 +682,15 @@ uint8_t AdvancedSignalController::_getPatternValue8Bit(uint8_t mode, uint8_t cur
 
 uint16_t AdvancedSignalController::_getPatternValue16Bit(uint8_t mode, uint16_t currentValue) {
   switch (mode) {
-    case 0:
-      return 0x0000;
     case 1:
-      return 0x5555;
+      return 0x0000;
     case 2:
-      return 0xAAAA;
+      return 0x5555;
     case 3:
+      return 0xAAAA;
+    case 4:
       return 0xFFFF;
-    case 4:                     // Count mode - increment from 0x0000 to 0xFFFF, then wrap to 0x0000
+    case 5:                     // Count mode - increment from 0x0000 to 0xFFFF, then wrap to 0x0000
       return currentValue + 1;  // uint16_t will automatically wrap from 0xFFFF to 0x0000
     default:
       return 0x0000;
@@ -724,22 +734,20 @@ void AdvancedSignalController::_applySignalsToModel1() {
 }
 
 void AdvancedSignalController::_configureSignalDirections() {
-  // Configure address bus direction (all 16 pins together)
-  if (_addressBusWriteMode) {
-    // Set address bus as output for writing/driving
-    Model1LowLevel::configWriteAddressBus(0xFFFF);  // All pins as OUTPUT
+  // Address bus: floating if mode 0, otherwise output
+  if (_addressMode == 0) {
+    Model1LowLevel::configWriteAddressBus(0x0000);  // All pins as INPUT (floating)
   } else {
-    // Set address bus as input for reading/floating
-    Model1LowLevel::configWriteAddressBus(0x0000);  // All pins as INPUT
+    Model1LowLevel::configWriteAddressBus(0xFFFF);  // All pins as OUTPUT
+    Model1LowLevel::writeAddressBus(_currentAddressValue);
   }
 
-  // Configure data bus direction (all 8 pins together)
-  if (_dataBusWriteMode) {
-    // Set data bus as output for writing/driving
-    Model1LowLevel::configWriteDataBus(0xFF);  // All pins as OUTPUT
+  // Data bus: floating if mode 0, otherwise output
+  if (_dataMode == 0) {
+    Model1LowLevel::configWriteDataBus(0x00);  // All pins as INPUT (floating)
   } else {
-    // Set data bus as input for reading/floating
-    Model1LowLevel::configWriteDataBus(0x00);  // All pins as INPUT
+    Model1LowLevel::configWriteDataBus(0xFF);  // All pins as OUTPUT
+    Model1LowLevel::writeDataBus(_currentDataValue);
   }
 
   // Configure individual signal directions based on mode

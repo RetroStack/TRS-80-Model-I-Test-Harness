@@ -114,7 +114,8 @@ class AdvancedSignalController {
   uint8_t _dataMode;           // 0=0x00, 1=0x55, 2=0xAA, 3=0xFF, 4=Count
   uint8_t _dataCountDuration;  // 0=1s, 1=5s, 2=10s, 3=30s, 4=60s
 
-  // Signal controls - individual signal modes (0=floating, 1=off/low, 2=on/high)
+  // Signal controls - individual signal modes (0=floating, 1=on/low (active), 2=off/high
+  // (inactive))
   uint8_t _rasSignalMode;
   uint8_t _casSignalMode;
   uint8_t _muxSignalMode;

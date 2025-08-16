@@ -145,11 +145,11 @@ bool AdvancedChangeSignalsMenu::_isMenuItemEnabled(uint8_t index) const {
     case 2:
       if (!AdvancedSignals.isTestSignalActive())
         return false;
-      return AdvancedSignals.getAddressMode() == 4;
+      return AdvancedSignals.getAddressMode() == 5;  // Count mode is now 5
     case 4:
       if (!AdvancedSignals.isTestSignalActive())
         return false;
-      return AdvancedSignals.getDataMode() == 4;
+      return AdvancedSignals.getDataMode() == 5;  // Count mode is now 5
     default:
       // All other items require test signal to be active
       return AdvancedSignals.isTestSignalActive();
