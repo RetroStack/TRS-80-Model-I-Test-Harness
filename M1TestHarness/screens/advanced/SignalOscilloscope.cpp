@@ -43,8 +43,8 @@ void SignalOscilloscope::loop() {
 
     // Calculate plot dimensions from content size
     uint16_t contentWidth = _getContentWidth();
-    int labelWidth = 70;  // Increased space for 4-column staggered labels
-    int plotWidth = contentWidth - labelWidth - 10;  // Leave margin
+    int labelWidth = 70;                            // Increased space for 4-column staggered labels
+    int plotWidth = contentWidth - labelWidth - 2;  // Leave margin
 
     // Read state data once per update cycle for efficiency
     uint64_t stateData = Model1.getStateData();
@@ -111,9 +111,9 @@ Screen* SignalOscilloscope::actionTaken(ActionTaken action, uint8_t offsetX, uin
     uint16_t contentHeight = _getContentHeight();
     int labelWidth = 70;
     int plotX = contentLeft + labelWidth;
-    int plotY = contentTop + 10;
-    int plotWidth = contentWidth - labelWidth - 10;
-    int plotHeight = contentHeight - 20;
+    int plotY = contentTop + 2;
+    int plotWidth = contentWidth - labelWidth - 2;
+    int plotHeight = contentHeight - 2;
 
     Adafruit_GFX& gfx = M1Shield.getGFX();
     gfx.fillRect(plotX, plotY, plotWidth, plotHeight, M1Shield.convertColor(0x0000));
@@ -163,8 +163,8 @@ void SignalOscilloscope::clearPlotColumn(int x, bool clearGap) {
 
   int labelWidth = 70;  // Updated to match loop()
   int plotX = contentLeft + labelWidth + x;
-  int plotY = contentTop + 10;
-  int plotHeight = contentHeight - 20;
+  int plotY = contentTop + 2;
+  int plotHeight = contentHeight - 2;
 
   // Clear only this single vertical column (creates the gap)
   if (clearGap) {
@@ -182,8 +182,8 @@ void SignalOscilloscope::drawSignalColumn(int x, uint64_t stateData) {
 
   int labelWidth = 70;  // Updated to 70 for 4-column staggering
   int plotX = contentLeft + labelWidth + x;
-  int plotY = contentTop + 10;
-  int plotHeight = contentHeight - 20;
+  int plotY = contentTop + 2;
+  int plotHeight = contentHeight - 2;
 
   // Draw signal values for this column
   int signalsOnPage = getSignalsOnCurrentPage();
@@ -191,9 +191,9 @@ void SignalOscilloscope::drawSignalColumn(int x, uint64_t stateData) {
 
   int signalHeight, signalSpacing;
   if (_currentPage == 0) {
-    // First page: compact view with gaps
-    signalHeight = (plotHeight - 10) / signalsOnPage;
-    signalSpacing = signalHeight + 1;
+    // First page: compact view, fit all signals exactly
+    signalHeight = plotHeight / signalsOnPage;
+    signalSpacing = signalHeight;  // No extra gap, fits perfectly
   } else {
     // Other pages: larger view with more space
     signalHeight = (plotHeight - 20) / signalsOnPage;
@@ -272,16 +272,16 @@ void SignalOscilloscope::drawSignalLabels() {
   const char* const* signalNames = _signalNames;
 
   gfx.setTextSize(1);
-  int plotHeight = contentHeight - 20;
+  int plotHeight = contentHeight - 2;
 
   int signalsOnPage = getSignalsOnCurrentPage();
   int firstSignal = getFirstSignalOnCurrentPage();
 
   int signalHeight, signalSpacing;
   if (_currentPage == 0) {
-    // First page: compact view with gaps
-    signalHeight = (plotHeight - 10) / signalsOnPage;
-    signalSpacing = signalHeight + 1;
+    // First page: compact view, fit all signals exactly
+    signalHeight = plotHeight / signalsOnPage;
+    signalSpacing = signalHeight;  // No extra gap, fits perfectly
   } else {
     // Other pages: larger view with more space
     signalHeight = (plotHeight - 20) / signalsOnPage;
@@ -292,7 +292,7 @@ void SignalOscilloscope::drawSignalLabels() {
     int actualSignalIndex = firstSignal + i;
 
     // Calculate position for this signal on the page
-    int baseY = contentTop + 10 + (i * signalSpacing);
+    int baseY = contentTop + 2 + (i * signalSpacing);
 
     // Staggering logic based on page type
     int labelX, labelY;
@@ -304,7 +304,7 @@ void SignalOscilloscope::drawSignalLabels() {
     } else {
       // Other pages: larger text, simple left alignment with larger size
       gfx.setTextSize(2);  // Bigger text for individual pages
-      labelX = contentLeft + 2;
+      labelX = contentLeft + 15;
       labelY = baseY + (signalHeight / 2) - 6;  // Center for larger text
     }
 
