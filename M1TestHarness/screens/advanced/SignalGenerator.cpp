@@ -1,4 +1,4 @@
-#include "./AdvancedChangeSignalsMenu.h"
+#include "./SignalGenerator.h"
 
 #include <Arduino.h>
 #include <Model1.h>
@@ -8,8 +8,8 @@
 #include "./AdvancedMenu.h"
 #include "./AdvancedSignalController.h"
 
-AdvancedChangeSignalsMenu::AdvancedChangeSignalsMenu() : MenuScreen() {
-  setTitleF(F("Change Signals"));
+SignalGenerator::SignalGenerator() : MenuScreen() {
+  setTitleF(F("Signal Generator"));
 
   // Create menu items dynamically - they'll be copied by _setMenuItems and these will be freed
   // automatically
@@ -20,10 +20,10 @@ AdvancedChangeSignalsMenu::AdvancedChangeSignalsMenu() : MenuScreen() {
       F("Wait Signal"), F("Interrupt Signal")};
   setMenuItemsF(menuItems, 14);
 
-  Globals.logger.infoF(F("Change Signals Menu initialized"));
+  Globals.logger.infoF(F("Signal Generator Menu initialized"));
 }
 
-bool AdvancedChangeSignalsMenu::open() {
+bool SignalGenerator::open() {
   // Start the Advanced Signal Controller
   AdvancedSignals.begin();
 
@@ -31,7 +31,7 @@ bool AdvancedChangeSignalsMenu::open() {
   return MenuScreen::open();
 }
 
-void AdvancedChangeSignalsMenu::close() {
+void SignalGenerator::close() {
   // Call parent implementation
   MenuScreen::close();
 
@@ -39,7 +39,7 @@ void AdvancedChangeSignalsMenu::close() {
   // the signal configuration to persist across screens in the Advanced menu
 }
 
-void AdvancedChangeSignalsMenu::loop() {
+void SignalGenerator::loop() {
   // Call parent loop first
   MenuScreen::loop();
 
@@ -47,7 +47,7 @@ void AdvancedChangeSignalsMenu::loop() {
   AdvancedSignals.loop();
 }
 
-Screen *AdvancedChangeSignalsMenu::_getSelectedMenuItemScreen(int index) {
+Screen *SignalGenerator::_getSelectedMenuItemScreen(int index) {
   switch (index) {
     case 0:  // Test Signal
       _toggleTestSignal();
@@ -101,7 +101,7 @@ Screen *AdvancedChangeSignalsMenu::_getSelectedMenuItemScreen(int index) {
   }
 }
 
-const __FlashStringHelper *AdvancedChangeSignalsMenu::_getMenuItemConfigValueF(uint8_t index) {
+const __FlashStringHelper *SignalGenerator::_getMenuItemConfigValueF(uint8_t index) {
   switch (index) {
     case 0:  // Test Signal
       return AdvancedSignals.isTestSignalActive() ? F("On") : F("Off");
@@ -136,7 +136,7 @@ const __FlashStringHelper *AdvancedChangeSignalsMenu::_getMenuItemConfigValueF(u
   }
 }
 
-bool AdvancedChangeSignalsMenu::_isMenuItemEnabled(uint8_t index) const {
+bool SignalGenerator::_isMenuItemEnabled(uint8_t index) const {
   switch (index) {
     case 0:   // Test Signal - always enabled
     case 12:  // Wait Signal - always enabled
@@ -157,72 +157,72 @@ bool AdvancedChangeSignalsMenu::_isMenuItemEnabled(uint8_t index) const {
 }
 
 // Toggle methods implementation
-void AdvancedChangeSignalsMenu::_toggleAddressMode() {
+void SignalGenerator::_toggleAddressMode() {
   AdvancedSignals.toggleAddressMode();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleAddressCountDuration() {
+void SignalGenerator::_toggleAddressCountDuration() {
   AdvancedSignals.toggleAddressCountDuration();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleDataMode() {
+void SignalGenerator::_toggleDataMode() {
   AdvancedSignals.toggleDataMode();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleDataCountDuration() {
+void SignalGenerator::_toggleDataCountDuration() {
   AdvancedSignals.toggleDataCountDuration();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleRasSignal() {
+void SignalGenerator::_toggleRasSignal() {
   AdvancedSignals.toggleRasSignalMode();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleCasSignal() {
+void SignalGenerator::_toggleCasSignal() {
   AdvancedSignals.toggleCasSignalMode();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleMuxSignal() {
+void SignalGenerator::_toggleMuxSignal() {
   AdvancedSignals.toggleMuxSignalMode();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleReadSignal() {
+void SignalGenerator::_toggleReadSignal() {
   AdvancedSignals.toggleReadSignalMode();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleWriteSignal() {
+void SignalGenerator::_toggleWriteSignal() {
   AdvancedSignals.toggleWriteSignalMode();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleInSignal() {
+void SignalGenerator::_toggleInSignal() {
   AdvancedSignals.toggleInSignalMode();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleOutSignal() {
+void SignalGenerator::_toggleOutSignal() {
   AdvancedSignals.toggleOutSignalMode();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleWaitSignal() {
+void SignalGenerator::_toggleWaitSignal() {
   AdvancedSignals.toggleWaitSignalMode();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleInterruptSignal() {
+void SignalGenerator::_toggleInterruptSignal() {
   AdvancedSignals.toggleInterruptSignalMode();
   _drawContent();
 }
 
-void AdvancedChangeSignalsMenu::_toggleTestSignal() {
+void SignalGenerator::_toggleTestSignal() {
   AdvancedSignals.toggleTestSignal();
   _drawContent();
 }

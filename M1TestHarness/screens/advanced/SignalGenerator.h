@@ -1,13 +1,14 @@
-#ifndef ADVANCED_CHANGE_SIGNALS_MENU_H
-#define ADVANCED_CHANGE_SIGNALS_MENU_H
+
+#ifndef SIGNAL_GENERATOR_H
+#define SIGNAL_GENERATOR_H
 
 #include <MenuScreen.h>
 
 #include "./AdvancedSignalController.h"
 
-class AdvancedChangeSignalsMenu : public MenuScreen {
+class SignalGenerator : public MenuScreen {
  public:
-  AdvancedChangeSignalsMenu();
+  SignalGenerator();
 
   bool open() override;
   void close() override;
@@ -36,4 +37,4 @@ class AdvancedChangeSignalsMenu : public MenuScreen {
   void _toggleTestSignal();
 };
 
-#endif  // ADVANCED_CHANGE_SIGNALS_MENU_H
+#endif  // SIGNAL_GENERATOR_H

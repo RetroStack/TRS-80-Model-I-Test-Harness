@@ -6,14 +6,14 @@
 
 #include "../../globals.h"
 #include "../MainMenu.h"
-#include "./AdvancedChangeSignalsMenu.h"
 #include "./AdvancedSignalController.h"
+#include "./SignalGenerator.h"
 #include "./SignalOscilloscope.h"
 
 AdvancedMenu::AdvancedMenu() : MenuScreen() {
   setTitleF(F("Advanced"));
 
-  const __FlashStringHelper *menuItems[] = {F("Signal Oscilloscope"), F("Change Signals")};
+  const __FlashStringHelper *menuItems[] = {F("Oscilloscope"), F("Signal Generator")};
   setMenuItemsF(menuItems, 2);
 
   Globals.logger.infoF(F("Advanced Menu initialized"));
@@ -32,7 +32,7 @@ Screen *AdvancedMenu::_getSelectedMenuItemScreen(int index) {
     case 0:  // Signal Oscilloscope
       return new SignalOscilloscope();
     case 1:  // Change Signals
-      return new AdvancedChangeSignalsMenu();
+      return new SignalGenerator();
 
     case -1:  // Back to Main
       Globals.logger.infoF(F("Returning to main menu from Advanced Menu"));
