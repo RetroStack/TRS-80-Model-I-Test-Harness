@@ -9,6 +9,8 @@
 #include <M1Shield.h>
 #include <Model1.h>
 
+#include "./VideoMenu.h"
+
 // ============================================================================
 // Colors
 // ============================================================================
@@ -964,6 +966,10 @@ Screen *M1Terminal::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t off
   // Only process input when terminal is active
   if (!isActive()) {
     return nullptr;
+  }
+
+  if (action & BUTTON_MENU) {  // Go back to the menu
+    return new VideoMenu();
   }
 
   // Font switching (Left + Right combination)

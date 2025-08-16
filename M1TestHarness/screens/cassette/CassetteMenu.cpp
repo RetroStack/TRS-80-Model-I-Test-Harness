@@ -6,6 +6,7 @@
 #include "../../globals.h"
 #include "../MainMenu.h"
 #include "./CassetteSongPlayerMenu.h"
+#include "./CassetteTestSuiteConsole.h"
 
 CassetteMenu::CassetteMenu() : MenuScreen() {
   setTitleF(F("Cassette Interface"));
@@ -41,11 +42,15 @@ void CassetteMenu::close() {
 
 Screen *CassetteMenu::_getSelectedMenuItemScreen(int index) {
   switch (index) {
-    case 0:  // Song Player
+    case 0:  // Test Suite
+      Globals.logger.infoF(F("Opening Test Suite"));
+      return new CassetteTestSuiteConsole();
+
+    case 1:  // Song Player
       Globals.logger.infoF(F("Opening Song Player"));
       return new CassetteSongPlayerMenu();
 
-    case 1:  // Remote Control (toggle)
+    case 2:  // Remote Control (toggle)
       toggleRemote();
       return nullptr;  // Stay on this screen
 
@@ -60,7 +65,7 @@ Screen *CassetteMenu::_getSelectedMenuItemScreen(int index) {
 
 const __FlashStringHelper *CassetteMenu::_getMenuItemConfigValueF(uint8_t index) {
   switch (index) {
-    case 1:  // Remote Control
+    case 2:  // Remote Control
       return _remoteActive ? F("Active") : F("Inactive");
     default:
       return nullptr;

@@ -257,12 +257,20 @@ const __FlashStringHelper *AdvancedMenu::_getMenuItemConfigValueF(uint8_t index)
   }
 }
 
-bool AdvancedMenu::_isMenuItemEnabled(uint8_t index) {
+bool AdvancedMenu::_isMenuItemEnabled(uint8_t index) const {
   switch (index) {
     case 0:   // Test Signal - always enabled
     case 12:  // Wait Signal - always enabled
     case 13:  // Interrupt Signal - always enabled
       return true;
+    case 2:
+      if (!_testSignalActive)
+        return false;
+      return _addressMode == 4;
+    case 4:
+      if (!_testSignalActive)
+        return false;
+      return _dataMode == 4;
     default:
       // All other items require test signal to be active
       return _testSignalActive;
@@ -273,68 +281,81 @@ bool AdvancedMenu::_isMenuItemEnabled(uint8_t index) {
 void AdvancedMenu::_toggleAddressMode() {
   _addressMode = (_addressMode + 1) % 5;  // Cycle through 0-4 (0x00, 0x55, 0xAA, 0xFF, Count)
   Globals.logger.infoF(F("Address mode toggled to %d"), _addressMode);
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleAddressCountDuration() {
   _addressCountDuration =
       (_addressCountDuration + 1) % 5;  // Cycle through 0-4 (1s, 5s, 10s, 30s, 60s)
   Globals.logger.infoF(F("Address count duration toggled to %d"), _addressCountDuration);
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleDataMode() {
   _dataMode = (_dataMode + 1) % 5;  // Cycle through 0-4 (0x00, 0x55, 0xAA, 0xFF, Count)
   Globals.logger.infoF(F("Data mode toggled to %d"), _dataMode);
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleDataCountDuration() {
   _dataCountDuration = (_dataCountDuration + 1) % 5;  // Cycle through 0-4 (1s, 5s, 10s, 30s, 60s)
   Globals.logger.infoF(F("Data count duration toggled to %d"), _dataCountDuration);
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleRasSignal() {
   _rasSignal = !_rasSignal;
   Globals.logger.infoF(_rasSignal ? F("RAS Signal enabled") : F("RAS Signal disabled"));
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleCasSignal() {
   _casSignal = !_casSignal;
   Globals.logger.infoF(_casSignal ? F("CAS Signal enabled") : F("CAS Signal disabled"));
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleMuxSignal() {
   _muxSignal = !_muxSignal;
   Globals.logger.infoF(_muxSignal ? F("MUX Signal enabled") : F("MUX Signal disabled"));
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleReadSignal() {
   _readSignal = !_readSignal;
   Globals.logger.infoF(_readSignal ? F("Read Signal enabled") : F("Read Signal disabled"));
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleWriteSignal() {
   _writeSignal = !_writeSignal;
   Globals.logger.infoF(_writeSignal ? F("Write Signal enabled") : F("Write Signal disabled"));
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleInSignal() {
   _inSignal = !_inSignal;
   Globals.logger.infoF(_inSignal ? F("In Signal enabled") : F("In Signal disabled"));
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleOutSignal() {
   _outSignal = !_outSignal;
   Globals.logger.infoF(_outSignal ? F("Out Signal enabled") : F("Out Signal disabled"));
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleWaitSignal() {
   _waitSignal = !_waitSignal;
   Globals.logger.infoF(_waitSignal ? F("Wait Signal enabled") : F("Wait Signal disabled"));
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleInterruptSignal() {
   _interruptSignal = !_interruptSignal;
   Globals.logger.infoF(_interruptSignal ? F("Interrupt Signal enabled")
                                         : F("Interrupt Signal disabled"));
+  _drawContent();
 }
 
 void AdvancedMenu::_toggleTestSignal() {
@@ -350,6 +371,7 @@ void AdvancedMenu::_toggleTestSignal() {
     Model1LowLevel::writeTEST(HIGH);
     Globals.logger.infoF(F("Test signal deactivated - only Wait and Interrupt signals available"));
   }
+  _drawContent();
 }
 
 // Helper method implementations

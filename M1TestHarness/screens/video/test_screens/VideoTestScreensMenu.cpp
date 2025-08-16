@@ -45,7 +45,7 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
 
       Globals.video.cls();
       for (uint16_t i = 0; i < 64; i++) {
-        Model1.writeMemory(Globals.video.getAddress(i, 0) + i, 0xFF);
+        Model1.writeMemory(Globals.video.getAddress(i, 0), 0xFF);
         Model1.writeMemory(Globals.video.getAddress(i, 15), 0xFF);
       }
       for (uint16_t i = 1; i < 15; i++) {
@@ -57,25 +57,37 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
 
     case 2: {  // White
       Globals.logger.infoF(F("Opening White Test Screen"));
-      Globals.video.cls((char)0xFF);
+      uint16_t address = Globals.video.getAddress(0, 0);
+      for (uint16_t i = 0; i < 1024; i++) {
+        Model1.writeMemory(address + i, 0xFF);
+      }
       break;
     }
 
     case 3: {  // Black
       Globals.logger.infoF(F("Opening Black Test Screen"));
-      Globals.video.cls();
+      uint16_t address = Globals.video.getAddress(0, 0);
+      for (uint16_t i = 0; i < 1024; i++) {
+        Model1.writeMemory(address + i, 0x20);
+      }
       break;
     }
 
     case 4: {  // All @
       Globals.logger.infoF(F("Opening All @ Test Screen"));
-      Globals.video.cls((char)0x40);
+      uint16_t address = Globals.video.getAddress(0, 0);
+      for (uint16_t i = 0; i < 1024; i++) {
+        Model1.writeMemory(address + i, 0x40);
+      }
       break;
     }
 
     case 5: {  // All 1st Char
       Globals.logger.infoF(F("Opening All 1st Char Test Screen"));
-      Globals.video.cls((char)0x00);
+      uint16_t address = Globals.video.getAddress(0, 0);
+      for (uint16_t i = 0; i < 1024; i++) {
+        Model1.writeMemory(address + i, 0x00);
+      }
       break;
     }
   }
