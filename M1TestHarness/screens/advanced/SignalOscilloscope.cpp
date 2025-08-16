@@ -3,7 +3,6 @@
 #include <Adafruit_GFX.h>
 #include <Arduino.h>
 #include <Model1.h>
-#include <Model1LowLevel.h>
 
 #include "../../globals.h"
 #include "./AdvancedMenu.h"
