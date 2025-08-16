@@ -291,12 +291,6 @@ void SignalOscilloscope::drawSignalLabels() {
   for (int i = 0; i < signalsOnPage; i++) {
     int actualSignalIndex = firstSignal + i;
 
-    // Debug logging for system signals page
-    if (_currentPage >= 4) {
-      Globals.logger.infoF(F("Page %d, i=%d, actualSignalIndex=%d, signal=%s"), _currentPage, i,
-                           actualSignalIndex, signalNames[actualSignalIndex]);
-    }
-
     // Calculate position for this signal on the page
     int baseY = contentTop + 10 + (i * signalSpacing);
 
@@ -345,6 +339,10 @@ void SignalOscilloscope::drawSignalLabels() {
 }
 
 uint16_t SignalOscilloscope::getSignalColor(int signalIndex, bool state) {
+  // Special case: padding signal '---' (index 31)
+  if (signalIndex == 31) {
+    return M1Shield.convertColor(0x2104);  // Very dark gray
+  }
   // Use page-aligned colors for consistency
   if (signalIndex < 16) {
     // Address bus signals (pages 1&2) - yellow

@@ -190,31 +190,34 @@ bool AdvancedSignalController::getDataBusWriteMode() const {
 void AdvancedSignalController::setTestSignalActive(bool active) {
   _testSignalActive = active;
 
+  // Set default signal directions to read mode (floating) for input monitoring
+  _addressBusWriteMode = false;
+  _dataBusWriteMode = false;
+
+  // Set all individual signals to floating mode (0) by default
+  _rasSignalMode = 0;
+  _casSignalMode = 0;
+  _muxSignalMode = 0;
+  _readSignalMode = 0;
+  _writeSignalMode = 0;
+  _inSignalMode = 0;
+  _outSignalMode = 0;
+  _waitSignalMode = 0;
+  _interruptSignalMode = 0;
+
+  _addressMode = 0;
+  _dataMode = 0;
+
+  // Configure all signals as inputs (floating) by default
+  _configureSignalDirections();
+
+  // Reset timing when activating
+  _lastAddressUpdate = 0;
+  _lastDataUpdate = 0;
+
   if (_testSignalActive) {
     Model1LowLevel::writeTEST(LOW);
     Globals.logger.infoF(F("Test signal activated - hardware controls enabled"));
-
-    // Set default signal directions to read mode (floating) for input monitoring
-    _addressBusWriteMode = false;
-    _dataBusWriteMode = false;
-
-    // Set all individual signals to floating mode (0) by default
-    _rasSignalMode = 0;
-    _casSignalMode = 0;
-    _muxSignalMode = 0;
-    _readSignalMode = 0;
-    _writeSignalMode = 0;
-    _inSignalMode = 0;
-    _outSignalMode = 0;
-    _waitSignalMode = 0;
-    _interruptSignalMode = 0;
-
-    // Configure all signals as inputs (floating) by default
-    _configureSignalDirections();
-
-    // Reset timing when activating
-    _lastAddressUpdate = 0;
-    _lastDataUpdate = 0;
   } else {
     Model1LowLevel::writeTEST(HIGH);
     Globals.logger.infoF(F("Test signal deactivated - only Wait and Interrupt signals available"));
@@ -531,117 +534,117 @@ const __FlashStringHelper* AdvancedSignalController::getDataBusWriteModeString()
 const __FlashStringHelper* AdvancedSignalController::getRasSignalModeString() const {
   switch (_rasSignalMode) {
     case 0:
-      return F("Float");
+      return F("Floating");
     case 1:
-      return F("On");
+      return F("Active");
     case 2:
-      return F("Off");
+      return F("Inactive");
     default:
-      return F("Float");
+      return F("Floating");
   }
 }
 
 const __FlashStringHelper* AdvancedSignalController::getCasSignalModeString() const {
   switch (_casSignalMode) {
     case 0:
-      return F("Float");
+      return F("Floating");
     case 1:
-      return F("On");
+      return F("Active");
     case 2:
-      return F("Off");
+      return F("Inactive");
     default:
-      return F("Float");
+      return F("Floating");
   }
 }
 
 const __FlashStringHelper* AdvancedSignalController::getMuxSignalModeString() const {
   switch (_muxSignalMode) {
     case 0:
-      return F("Float");
+      return F("Floating");
     case 1:
-      return F("On");
+      return F("Active");
     case 2:
-      return F("Off");
+      return F("Inactive");
     default:
-      return F("Float");
+      return F("Floating");
   }
 }
 
 const __FlashStringHelper* AdvancedSignalController::getReadSignalModeString() const {
   switch (_readSignalMode) {
     case 0:
-      return F("Float");
+      return F("Floating");
     case 1:
-      return F("On");
+      return F("Active");
     case 2:
-      return F("Off");
+      return F("Inactive");
     default:
-      return F("Float");
+      return F("Floating");
   }
 }
 
 const __FlashStringHelper* AdvancedSignalController::getWriteSignalModeString() const {
   switch (_writeSignalMode) {
     case 0:
-      return F("Float");
+      return F("Floating");
     case 1:
-      return F("On");
+      return F("Active");
     case 2:
-      return F("Off");
+      return F("Inactive");
     default:
-      return F("Float");
+      return F("Floating");
   }
 }
 
 const __FlashStringHelper* AdvancedSignalController::getInSignalModeString() const {
   switch (_inSignalMode) {
     case 0:
-      return F("Float");
+      return F("Floating");
     case 1:
-      return F("On");
+      return F("Active");
     case 2:
-      return F("Off");
+      return F("Inactive");
     default:
-      return F("Float");
+      return F("Floating");
   }
 }
 
 const __FlashStringHelper* AdvancedSignalController::getOutSignalModeString() const {
   switch (_outSignalMode) {
     case 0:
-      return F("Float");
+      return F("Floating");
     case 1:
-      return F("On");
+      return F("Active");
     case 2:
-      return F("Off");
+      return F("Inactive");
     default:
-      return F("Float");
+      return F("Floating");
   }
 }
 
 const __FlashStringHelper* AdvancedSignalController::getWaitSignalModeString() const {
   switch (_waitSignalMode) {
     case 0:
-      return F("Float");
+      return F("Floating");
     case 1:
-      return F("On");
+      return F("Active");
     case 2:
-      return F("Off");
+      return F("Inactive");
     default:
-      return F("Float");
+      return F("Floating");
   }
 }
 
 const __FlashStringHelper* AdvancedSignalController::getInterruptSignalModeString() const {
   switch (_interruptSignalMode) {
     case 0:
-      return F("Float");
+      return F("Floating");
     case 1:
-      return F("On");
+      return F("Active");
     case 2:
-      return F("Off");
+      return F("Inactive");
     default:
-      return F("Float");
+      return F("Floating");
   }
 }
 
@@ -737,6 +740,7 @@ void AdvancedSignalController::_configureSignalDirections() {
   // Address bus: floating if mode 0, otherwise output
   if (_addressMode == 0) {
     Model1LowLevel::configWriteAddressBus(0x0000);  // All pins as INPUT (floating)
+    Model1LowLevel::writeAddressBus(0x0000);
   } else {
     Model1LowLevel::configWriteAddressBus(0xFFFF);  // All pins as OUTPUT
     Model1LowLevel::writeAddressBus(_currentAddressValue);
@@ -745,6 +749,7 @@ void AdvancedSignalController::_configureSignalDirections() {
   // Data bus: floating if mode 0, otherwise output
   if (_dataMode == 0) {
     Model1LowLevel::configWriteDataBus(0x00);  // All pins as INPUT (floating)
+    Model1LowLevel::writeDataBus(0x00);
   } else {
     Model1LowLevel::configWriteDataBus(0xFF);  // All pins as OUTPUT
     Model1LowLevel::writeDataBus(_currentDataValue);
@@ -761,4 +766,14 @@ void AdvancedSignalController::_configureSignalDirections() {
   Model1LowLevel::configWriteOUT(_outSignalMode == 0 ? INPUT : OUTPUT);
   Model1LowLevel::configWriteWAIT(_waitSignalMode == 0 ? INPUT : OUTPUT);
   Model1LowLevel::configWriteINT(_interruptSignalMode == 0 ? INPUT : OUTPUT);
+
+  Model1LowLevel::writeRAS(LOW);
+  Model1LowLevel::writeCAS(LOW);
+  Model1LowLevel::writeMUX(LOW);
+  Model1LowLevel::writeRD(LOW);
+  Model1LowLevel::writeWR(LOW);
+  Model1LowLevel::writeIN(LOW);
+  Model1LowLevel::writeOUT(LOW);
+  Model1LowLevel::writeWAIT(LOW);
+  Model1LowLevel::writeINT(LOW);
 }

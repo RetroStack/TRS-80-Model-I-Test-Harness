@@ -104,7 +104,7 @@ Screen *SignalGenerator::_getSelectedMenuItemScreen(int index) {
 const __FlashStringHelper *SignalGenerator::_getMenuItemConfigValueF(uint8_t index) {
   switch (index) {
     case 0:  // Test Signal
-      return AdvancedSignals.isTestSignalActive() ? F("On") : F("Off");
+      return AdvancedSignals.isTestSignalActive() ? F("Active") : F("Inactive");
     case 1:  // Address
       return AdvancedSignals.getAddressModeString();
     case 2:  // Address Count
