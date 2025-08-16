@@ -114,23 +114,23 @@ const __FlashStringHelper *AdvancedChangeSignalsMenu::_getMenuItemConfigValueF(u
     case 4:  // Data Count
       return AdvancedSignals.getDataCountDurationString();
     case 5:  // RAS Signal
-      return AdvancedSignals.getRasSignal() ? F("On") : F("Off");
+      return AdvancedSignals.getRasSignalModeString();
     case 6:  // CAS Signal
-      return AdvancedSignals.getCasSignal() ? F("On") : F("Off");
+      return AdvancedSignals.getCasSignalModeString();
     case 7:  // MUX Signal
-      return AdvancedSignals.getMuxSignal() ? F("On") : F("Off");
+      return AdvancedSignals.getMuxSignalModeString();
     case 8:  // Read Signal
-      return AdvancedSignals.getReadSignal() ? F("On") : F("Off");
+      return AdvancedSignals.getReadSignalModeString();
     case 9:  // Write Signal
-      return AdvancedSignals.getWriteSignal() ? F("On") : F("Off");
+      return AdvancedSignals.getWriteSignalModeString();
     case 10:  // In Signal
-      return AdvancedSignals.getInSignal() ? F("On") : F("Off");
+      return AdvancedSignals.getInSignalModeString();
     case 11:  // Out Signal
-      return AdvancedSignals.getOutSignal() ? F("On") : F("Off");
+      return AdvancedSignals.getOutSignalModeString();
     case 12:  // Wait Signal
-      return AdvancedSignals.getWaitSignal() ? F("On") : F("Off");
+      return AdvancedSignals.getWaitSignalModeString();
     case 13:  // Interrupt Signal
-      return AdvancedSignals.getInterruptSignal() ? F("On") : F("Off");
+      return AdvancedSignals.getInterruptSignalModeString();
     default:
       return nullptr;
   }
@@ -178,47 +178,47 @@ void AdvancedChangeSignalsMenu::_toggleDataCountDuration() {
 }
 
 void AdvancedChangeSignalsMenu::_toggleRasSignal() {
-  AdvancedSignals.toggleRasSignal();
+  AdvancedSignals.toggleRasSignalMode();
   _drawContent();
 }
 
 void AdvancedChangeSignalsMenu::_toggleCasSignal() {
-  AdvancedSignals.toggleCasSignal();
+  AdvancedSignals.toggleCasSignalMode();
   _drawContent();
 }
 
 void AdvancedChangeSignalsMenu::_toggleMuxSignal() {
-  AdvancedSignals.toggleMuxSignal();
+  AdvancedSignals.toggleMuxSignalMode();
   _drawContent();
 }
 
 void AdvancedChangeSignalsMenu::_toggleReadSignal() {
-  AdvancedSignals.toggleReadSignal();
+  AdvancedSignals.toggleReadSignalMode();
   _drawContent();
 }
 
 void AdvancedChangeSignalsMenu::_toggleWriteSignal() {
-  AdvancedSignals.toggleWriteSignal();
+  AdvancedSignals.toggleWriteSignalMode();
   _drawContent();
 }
 
 void AdvancedChangeSignalsMenu::_toggleInSignal() {
-  AdvancedSignals.toggleInSignal();
+  AdvancedSignals.toggleInSignalMode();
   _drawContent();
 }
 
 void AdvancedChangeSignalsMenu::_toggleOutSignal() {
-  AdvancedSignals.toggleOutSignal();
+  AdvancedSignals.toggleOutSignalMode();
   _drawContent();
 }
 
 void AdvancedChangeSignalsMenu::_toggleWaitSignal() {
-  AdvancedSignals.toggleWaitSignal();
+  AdvancedSignals.toggleWaitSignalMode();
   _drawContent();
 }
 
 void AdvancedChangeSignalsMenu::_toggleInterruptSignal() {
-  AdvancedSignals.toggleInterruptSignal();
+  AdvancedSignals.toggleInterruptSignalMode();
   _drawContent();
 }
 

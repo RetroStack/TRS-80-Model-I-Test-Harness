@@ -51,11 +51,14 @@ void SignalOscilloscope::loop() {
     // Clear gap columns (increased gap - clear 2 pixels after current position)
     int gapX1 = (_plotPosition + 1) % plotWidth;
     int gapX2 = (_plotPosition + 2) % plotWidth;
-    clearPlotColumn(gapX1);
-    clearPlotColumn(gapX2);
+    int gapX3 = (_plotPosition + 3) % plotWidth;
+    clearPlotColumn(gapX1, false);
+    clearPlotColumn(gapX2, false);
+    clearPlotColumn(gapX3, true);
 
     // Move to next position (skip the gap)
     _plotPosition = (_plotPosition + 1) % plotWidth;
+    clearPlotColumn(gapX1, true);
 
     // Draw all signals at current position with continuous lines
     drawSignalColumn(_plotPosition, stateData);
@@ -151,7 +154,7 @@ void SignalOscilloscope::_drawContent() {
   gfx.endWrite();
 }
 
-void SignalOscilloscope::clearPlotColumn(int x) {
+void SignalOscilloscope::clearPlotColumn(int x, bool clearGap) {
   Adafruit_GFX& gfx = M1Shield.getGFX();
   uint16_t contentLeft = _getContentLeft();
   uint16_t contentTop = _getContentTop();
@@ -163,7 +166,11 @@ void SignalOscilloscope::clearPlotColumn(int x) {
   int plotHeight = contentHeight - 20;
 
   // Clear only this single vertical column (creates the gap)
-  gfx.drawFastVLine(plotX, plotY, plotHeight, M1Shield.convertColor(0x0000));
+  if (clearGap) {
+    gfx.drawFastVLine(plotX, plotY, plotHeight, M1Shield.convertColor(0x0000));
+  } else {
+    gfx.drawFastVLine(plotX, plotY, plotHeight, M1Shield.convertColor(0xF800));
+  }
 }
 
 void SignalOscilloscope::drawSignalColumn(int x, uint64_t stateData) {

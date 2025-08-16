@@ -6,6 +6,7 @@
 #include "./BoardRevisionMenu.h"
 #include "./about/AboutConsole.h"
 #include "./advanced/AdvancedMenu.h"
+#include "./advanced/AdvancedSignalController.h"
 #include "./cassette/CassetteMenu.h"
 #include "./dram/DRAMMenu.h"
 #include "./keyboard/KeyboardTester.h"
@@ -55,6 +56,7 @@ Screen* MainMenu::_getSelectedMenuItemScreen(int index) {
 
     case 7:  // Advanced
       Globals.logger.infoF(F("Opening Advanced Menu"));
+      AdvancedSignals.begin();  // Start signal controller when entering Advanced system
       return new AdvancedMenu();
 
     case 8:  // About

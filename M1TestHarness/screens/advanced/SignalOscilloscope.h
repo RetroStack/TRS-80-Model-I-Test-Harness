@@ -43,7 +43,7 @@ class SignalOscilloscope : public ContentScreen {
 
   // Private methods
   void drawSignalLabels();
-  void clearPlotColumn(int x);
+  void clearPlotColumn(int x, bool clearGap);
   void drawSignalColumn(int x, uint64_t stateData);
   uint16_t getSignalColor(int signalIndex, bool state);
   bool extractSignalFromState(uint64_t stateData, int signalIndex);

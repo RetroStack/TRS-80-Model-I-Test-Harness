@@ -7,7 +7,7 @@
 #include "../../globals.h"
 
 // Global instance
-AdvancedSignalController& AdvancedSignals = AdvancedSignalController::getInstance();
+AdvancedSignalController AdvancedSignals;
 
 AdvancedSignalController::AdvancedSignalController() {
   // Initialize state variables
@@ -17,15 +17,22 @@ AdvancedSignalController::AdvancedSignalController() {
   _addressCountDuration = 0;  // Default to 1s
   _dataMode = 0;              // Default to 0x00
   _dataCountDuration = 0;     // Default to 1s
-  _rasSignal = false;
-  _casSignal = false;
-  _muxSignal = false;
-  _readSignal = false;
-  _writeSignal = false;
-  _inSignal = false;
-  _outSignal = false;
-  _waitSignal = false;
-  _interruptSignal = false;
+
+  // Initialize individual signal modes - default to floating (0) when test signal is active
+  _rasSignalMode = 0;  // 0=floating, 1=off/low, 2=on/high
+  _casSignalMode = 0;
+  _muxSignalMode = 0;
+  _readSignalMode = 0;
+  _writeSignalMode = 0;
+  _inSignalMode = 0;
+  _outSignalMode = 0;
+  _waitSignalMode = 0;
+  _interruptSignalMode = 0;
+
+  // Initialize signal direction controls - default to read mode (floating) when test signal is
+  // active
+  _addressBusWriteMode = false;  // Start in read/floating mode for input monitoring
+  _dataBusWriteMode = false;     // Start in read/floating mode for input monitoring
 
   // Initialize timing variables
   _lastAddressUpdate = 0;
@@ -108,6 +115,71 @@ void AdvancedSignalController::loop() {
   }
 }
 
+// Configuration getters
+bool AdvancedSignalController::isTestSignalActive() const {
+  return _testSignalActive;
+}
+
+uint8_t AdvancedSignalController::getAddressMode() const {
+  return _addressMode;
+}
+
+uint8_t AdvancedSignalController::getAddressCountDuration() const {
+  return _addressCountDuration;
+}
+
+uint8_t AdvancedSignalController::getDataMode() const {
+  return _dataMode;
+}
+
+uint8_t AdvancedSignalController::getDataCountDuration() const {
+  return _dataCountDuration;
+}
+
+uint8_t AdvancedSignalController::getRasSignalMode() const {
+  return _rasSignalMode;
+}
+
+uint8_t AdvancedSignalController::getCasSignalMode() const {
+  return _casSignalMode;
+}
+
+uint8_t AdvancedSignalController::getMuxSignalMode() const {
+  return _muxSignalMode;
+}
+
+uint8_t AdvancedSignalController::getReadSignalMode() const {
+  return _readSignalMode;
+}
+
+uint8_t AdvancedSignalController::getWriteSignalMode() const {
+  return _writeSignalMode;
+}
+
+uint8_t AdvancedSignalController::getInSignalMode() const {
+  return _inSignalMode;
+}
+
+uint8_t AdvancedSignalController::getOutSignalMode() const {
+  return _outSignalMode;
+}
+
+uint8_t AdvancedSignalController::getWaitSignalMode() const {
+  return _waitSignalMode;
+}
+
+uint8_t AdvancedSignalController::getInterruptSignalMode() const {
+  return _interruptSignalMode;
+}
+
+bool AdvancedSignalController::getAddressBusWriteMode() const {
+  return _addressBusWriteMode;
+}
+
+bool AdvancedSignalController::getDataBusWriteMode() const {
+  return _dataBusWriteMode;
+}
+
 // Configuration setters
 void AdvancedSignalController::setTestSignalActive(bool active) {
   _testSignalActive = active;
@@ -115,6 +187,25 @@ void AdvancedSignalController::setTestSignalActive(bool active) {
   if (_testSignalActive) {
     Model1LowLevel::writeTEST(LOW);
     Globals.logger.infoF(F("Test signal activated - hardware controls enabled"));
+
+    // Set default signal directions to read mode (floating) for input monitoring
+    _addressBusWriteMode = false;
+    _dataBusWriteMode = false;
+
+    // Set all individual signals to floating mode (0) by default
+    _rasSignalMode = 0;
+    _casSignalMode = 0;
+    _muxSignalMode = 0;
+    _readSignalMode = 0;
+    _writeSignalMode = 0;
+    _inSignalMode = 0;
+    _outSignalMode = 0;
+    _waitSignalMode = 0;
+    _interruptSignalMode = 0;
+
+    // Configure all signals as inputs (floating) by default
+    _configureSignalDirections();
+
     // Reset timing when activating
     _lastAddressUpdate = 0;
     _lastDataUpdate = 0;
@@ -144,50 +235,136 @@ void AdvancedSignalController::setDataCountDuration(uint8_t duration) {
   Globals.logger.infoF(F("Data count duration set to %d"), _dataCountDuration);
 }
 
-void AdvancedSignalController::setRasSignal(bool state) {
-  _rasSignal = state;
-  Globals.logger.infoF(_rasSignal ? F("RAS Signal enabled") : F("RAS Signal disabled"));
+void AdvancedSignalController::setRasSignalMode(uint8_t mode) {
+  _rasSignalMode = mode;
+  if (mode == 0) {
+    Globals.logger.infoF(F("RAS Signal mode: floating"));
+  } else if (mode == 1) {
+    Globals.logger.infoF(F("RAS Signal mode: off"));
+  } else {
+    Globals.logger.infoF(F("RAS Signal mode: on"));
+  }
+  _configureSignalDirections();
+  _applySignalsToModel1();
 }
 
-void AdvancedSignalController::setCasSignal(bool state) {
-  _casSignal = state;
-  Globals.logger.infoF(_casSignal ? F("CAS Signal enabled") : F("CAS Signal disabled"));
+void AdvancedSignalController::setCasSignalMode(uint8_t mode) {
+  _casSignalMode = mode;
+  if (mode == 0) {
+    Globals.logger.infoF(F("CAS Signal mode: floating"));
+  } else if (mode == 1) {
+    Globals.logger.infoF(F("CAS Signal mode: off"));
+  } else {
+    Globals.logger.infoF(F("CAS Signal mode: on"));
+  }
+  _configureSignalDirections();
+  _applySignalsToModel1();
 }
 
-void AdvancedSignalController::setMuxSignal(bool state) {
-  _muxSignal = state;
-  Globals.logger.infoF(_muxSignal ? F("MUX Signal enabled") : F("MUX Signal disabled"));
+void AdvancedSignalController::setMuxSignalMode(uint8_t mode) {
+  _muxSignalMode = mode;
+  if (mode == 0) {
+    Globals.logger.infoF(F("MUX Signal mode: floating"));
+  } else if (mode == 1) {
+    Globals.logger.infoF(F("MUX Signal mode: off"));
+  } else {
+    Globals.logger.infoF(F("MUX Signal mode: on"));
+  }
+  _configureSignalDirections();
+  _applySignalsToModel1();
 }
 
-void AdvancedSignalController::setReadSignal(bool state) {
-  _readSignal = state;
-  Globals.logger.infoF(_readSignal ? F("Read Signal enabled") : F("Read Signal disabled"));
+void AdvancedSignalController::setReadSignalMode(uint8_t mode) {
+  _readSignalMode = mode;
+  if (mode == 0) {
+    Globals.logger.infoF(F("Read Signal mode: floating"));
+  } else if (mode == 1) {
+    Globals.logger.infoF(F("Read Signal mode: off"));
+  } else {
+    Globals.logger.infoF(F("Read Signal mode: on"));
+  }
+  _configureSignalDirections();
+  _applySignalsToModel1();
 }
 
-void AdvancedSignalController::setWriteSignal(bool state) {
-  _writeSignal = state;
-  Globals.logger.infoF(_writeSignal ? F("Write Signal enabled") : F("Write Signal disabled"));
+void AdvancedSignalController::setWriteSignalMode(uint8_t mode) {
+  _writeSignalMode = mode;
+  if (mode == 0) {
+    Globals.logger.infoF(F("Write Signal mode: floating"));
+  } else if (mode == 1) {
+    Globals.logger.infoF(F("Write Signal mode: off"));
+  } else {
+    Globals.logger.infoF(F("Write Signal mode: on"));
+  }
+  _configureSignalDirections();
+  _applySignalsToModel1();
 }
 
-void AdvancedSignalController::setInSignal(bool state) {
-  _inSignal = state;
-  Globals.logger.infoF(_inSignal ? F("In Signal enabled") : F("In Signal disabled"));
+void AdvancedSignalController::setInSignalMode(uint8_t mode) {
+  _inSignalMode = mode;
+  if (mode == 0) {
+    Globals.logger.infoF(F("IN Signal mode: floating"));
+  } else if (mode == 1) {
+    Globals.logger.infoF(F("IN Signal mode: off"));
+  } else {
+    Globals.logger.infoF(F("IN Signal mode: on"));
+  }
+  _configureSignalDirections();
+  _applySignalsToModel1();
 }
 
-void AdvancedSignalController::setOutSignal(bool state) {
-  _outSignal = state;
-  Globals.logger.infoF(_outSignal ? F("Out Signal enabled") : F("Out Signal disabled"));
+void AdvancedSignalController::setOutSignalMode(uint8_t mode) {
+  _outSignalMode = mode;
+  if (mode == 0) {
+    Globals.logger.infoF(F("OUT Signal mode: floating"));
+  } else if (mode == 1) {
+    Globals.logger.infoF(F("OUT Signal mode: off"));
+  } else {
+    Globals.logger.infoF(F("OUT Signal mode: on"));
+  }
+  _configureSignalDirections();
+  _applySignalsToModel1();
 }
 
-void AdvancedSignalController::setWaitSignal(bool state) {
-  _waitSignal = state;
-  Globals.logger.infoF(_waitSignal ? F("Wait Signal enabled") : F("Wait Signal disabled"));
+void AdvancedSignalController::setWaitSignalMode(uint8_t mode) {
+  _waitSignalMode = mode;
+  if (mode == 0) {
+    Globals.logger.infoF(F("WAIT Signal mode: floating"));
+  } else if (mode == 1) {
+    Globals.logger.infoF(F("WAIT Signal mode: off"));
+  } else {
+    Globals.logger.infoF(F("WAIT Signal mode: on"));
+  }
+  _configureSignalDirections();
+  _applySignalsToModel1();
 }
 
-void AdvancedSignalController::setInterruptSignal(bool state) {
-  _interruptSignal = state;
-  Globals.logger.infoF(_interruptSignal ? F("Interrupt Signal enabled")
-                                        : F("Interrupt Signal disabled"));
+void AdvancedSignalController::setInterruptSignalMode(uint8_t mode) {
+  _interruptSignalMode = mode;
+  if (mode == 0) {
+    Globals.logger.infoF(F("INTERRUPT Signal mode: floating"));
+  } else if (mode == 1) {
+    Globals.logger.infoF(F("INTERRUPT Signal mode: off"));
+  } else {
+    Globals.logger.infoF(F("INTERRUPT Signal mode: on"));
+  }
+  _configureSignalDirections();
+  _applySignalsToModel1();
+}
+
+// Signal direction setters
+void AdvancedSignalController::setAddressBusWriteMode(bool writeMode) {
+  _addressBusWriteMode = writeMode;
+  _configureSignalDirections();
+  Globals.logger.infoF(_addressBusWriteMode ? F("Address bus set to WRITE mode")
+                                            : F("Address bus set to READ mode (floating)"));
+}
+
+void AdvancedSignalController::setDataBusWriteMode(bool writeMode) {
+  _dataBusWriteMode = writeMode;
+  _configureSignalDirections();
+  Globals.logger.infoF(_dataBusWriteMode ? F("Data bus set to WRITE mode")
+                                         : F("Data bus set to read mode (floating)"));
 }
 
 // Toggle methods
@@ -211,40 +388,49 @@ void AdvancedSignalController::toggleDataCountDuration() {
   setDataCountDuration((_dataCountDuration + 1) % 5);  // Cycle through 0-4
 }
 
-void AdvancedSignalController::toggleRasSignal() {
-  setRasSignal(!_rasSignal);
+void AdvancedSignalController::toggleRasSignalMode() {
+  setRasSignalMode((_rasSignalMode + 1) % 3);
 }
 
-void AdvancedSignalController::toggleCasSignal() {
-  setCasSignal(!_casSignal);
+void AdvancedSignalController::toggleCasSignalMode() {
+  setCasSignalMode((_casSignalMode + 1) % 3);
 }
 
-void AdvancedSignalController::toggleMuxSignal() {
-  setMuxSignal(!_muxSignal);
+void AdvancedSignalController::toggleMuxSignalMode() {
+  setMuxSignalMode((_muxSignalMode + 1) % 3);
 }
 
-void AdvancedSignalController::toggleReadSignal() {
-  setReadSignal(!_readSignal);
+void AdvancedSignalController::toggleReadSignalMode() {
+  setReadSignalMode((_readSignalMode + 1) % 3);
 }
 
-void AdvancedSignalController::toggleWriteSignal() {
-  setWriteSignal(!_writeSignal);
+void AdvancedSignalController::toggleWriteSignalMode() {
+  setWriteSignalMode((_writeSignalMode + 1) % 3);
 }
 
-void AdvancedSignalController::toggleInSignal() {
-  setInSignal(!_inSignal);
+void AdvancedSignalController::toggleInSignalMode() {
+  setInSignalMode((_inSignalMode + 1) % 3);
 }
 
-void AdvancedSignalController::toggleOutSignal() {
-  setOutSignal(!_outSignal);
+void AdvancedSignalController::toggleOutSignalMode() {
+  setOutSignalMode((_outSignalMode + 1) % 3);
 }
 
-void AdvancedSignalController::toggleWaitSignal() {
-  setWaitSignal(!_waitSignal);
+void AdvancedSignalController::toggleWaitSignalMode() {
+  setWaitSignalMode((_waitSignalMode + 1) % 3);
 }
 
-void AdvancedSignalController::toggleInterruptSignal() {
-  setInterruptSignal(!_interruptSignal);
+void AdvancedSignalController::toggleInterruptSignalMode() {
+  setInterruptSignalMode((_interruptSignalMode + 1) % 3);
+}
+
+// Toggle signal direction methods
+void AdvancedSignalController::toggleAddressBusWriteMode() {
+  setAddressBusWriteMode(!_addressBusWriteMode);
+}
+
+void AdvancedSignalController::toggleDataBusWriteMode() {
+  setDataBusWriteMode(!_dataBusWriteMode);
 }
 
 // Helper methods for menu display
@@ -322,6 +508,133 @@ const __FlashStringHelper* AdvancedSignalController::getDataCountDurationString(
   }
 }
 
+// Signal direction display helpers
+const __FlashStringHelper* AdvancedSignalController::getAddressBusWriteModeString() const {
+  return _addressBusWriteMode ? F("Write") : F("Read");
+}
+
+const __FlashStringHelper* AdvancedSignalController::getDataBusWriteModeString() const {
+  return _dataBusWriteMode ? F("Write") : F("Read");
+}
+
+// Individual signal mode display helpers
+const __FlashStringHelper* AdvancedSignalController::getRasSignalModeString() const {
+  switch (_rasSignalMode) {
+    case 0:
+      return F("Float");
+    case 1:
+      return F("Off");
+    case 2:
+      return F("On");
+    default:
+      return F("Float");
+  }
+}
+
+const __FlashStringHelper* AdvancedSignalController::getCasSignalModeString() const {
+  switch (_casSignalMode) {
+    case 0:
+      return F("Float");
+    case 1:
+      return F("Off");
+    case 2:
+      return F("On");
+    default:
+      return F("Float");
+  }
+}
+
+const __FlashStringHelper* AdvancedSignalController::getMuxSignalModeString() const {
+  switch (_muxSignalMode) {
+    case 0:
+      return F("Float");
+    case 1:
+      return F("Off");
+    case 2:
+      return F("On");
+    default:
+      return F("Float");
+  }
+}
+
+const __FlashStringHelper* AdvancedSignalController::getReadSignalModeString() const {
+  switch (_readSignalMode) {
+    case 0:
+      return F("Float");
+    case 1:
+      return F("Off");
+    case 2:
+      return F("On");
+    default:
+      return F("Float");
+  }
+}
+
+const __FlashStringHelper* AdvancedSignalController::getWriteSignalModeString() const {
+  switch (_writeSignalMode) {
+    case 0:
+      return F("Float");
+    case 1:
+      return F("Off");
+    case 2:
+      return F("On");
+    default:
+      return F("Float");
+  }
+}
+
+const __FlashStringHelper* AdvancedSignalController::getInSignalModeString() const {
+  switch (_inSignalMode) {
+    case 0:
+      return F("Float");
+    case 1:
+      return F("Off");
+    case 2:
+      return F("On");
+    default:
+      return F("Float");
+  }
+}
+
+const __FlashStringHelper* AdvancedSignalController::getOutSignalModeString() const {
+  switch (_outSignalMode) {
+    case 0:
+      return F("Float");
+    case 1:
+      return F("Off");
+    case 2:
+      return F("On");
+    default:
+      return F("Float");
+  }
+}
+
+const __FlashStringHelper* AdvancedSignalController::getWaitSignalModeString() const {
+  switch (_waitSignalMode) {
+    case 0:
+      return F("Float");
+    case 1:
+      return F("Off");
+    case 2:
+      return F("On");
+    default:
+      return F("Float");
+  }
+}
+
+const __FlashStringHelper* AdvancedSignalController::getInterruptSignalModeString() const {
+  switch (_interruptSignalMode) {
+    case 0:
+      return F("Float");
+    case 1:
+      return F("Off");
+    case 2:
+      return F("On");
+    default:
+      return F("Float");
+  }
+}
+
 // Private helper methods
 unsigned long AdvancedSignalController::_getDurationMs(uint8_t durationIndex) {
   switch (durationIndex) {
@@ -379,14 +692,65 @@ void AdvancedSignalController::_applySignalsToModel1() {
   Model1LowLevel::writeAddressBus(_currentAddressValue);
   Model1LowLevel::writeDataBus(_currentDataValue);
 
-  // Apply signal states
-  Model1LowLevel::writeRAS(_rasSignal);
-  Model1LowLevel::writeCAS(_casSignal);
-  Model1LowLevel::writeMUX(_muxSignal);
-  Model1LowLevel::writeRD(_readSignal);
-  Model1LowLevel::writeWR(_writeSignal);
-  Model1LowLevel::writeIN(_inSignal);
-  Model1LowLevel::writeOUT(_outSignal);
-  Model1LowLevel::writeWAIT(_waitSignal);
-  Model1LowLevel::writeINT(_interruptSignal);
+  // Apply signal states based on mode (0=floating, 1=off/low, 2=on/high)
+  // Only apply signals that are not in floating mode
+  if (_rasSignalMode != 0) {
+    Model1LowLevel::writeRAS(_rasSignalMode == 2);
+  }
+  if (_casSignalMode != 0) {
+    Model1LowLevel::writeCAS(_casSignalMode == 2);
+  }
+  if (_muxSignalMode != 0) {
+    Model1LowLevel::writeMUX(_muxSignalMode == 2);
+  }
+  if (_readSignalMode != 0) {
+    Model1LowLevel::writeRD(_readSignalMode == 2);
+  }
+  if (_writeSignalMode != 0) {
+    Model1LowLevel::writeWR(_writeSignalMode == 2);
+  }
+  if (_inSignalMode != 0) {
+    Model1LowLevel::writeIN(_inSignalMode == 2);
+  }
+  if (_outSignalMode != 0) {
+    Model1LowLevel::writeOUT(_outSignalMode == 2);
+  }
+  if (_waitSignalMode != 0) {
+    Model1LowLevel::writeWAIT(_waitSignalMode == 2);
+  }
+  if (_interruptSignalMode != 0) {
+    Model1LowLevel::writeINT(_interruptSignalMode == 2);
+  }
+}
+
+void AdvancedSignalController::_configureSignalDirections() {
+  // Configure address bus direction (all 16 pins together)
+  if (_addressBusWriteMode) {
+    // Set address bus as output for writing/driving
+    Model1LowLevel::configWriteAddressBus(0xFFFF);  // All pins as OUTPUT
+  } else {
+    // Set address bus as input for reading/floating
+    Model1LowLevel::configWriteAddressBus(0x0000);  // All pins as INPUT
+  }
+
+  // Configure data bus direction (all 8 pins together)
+  if (_dataBusWriteMode) {
+    // Set data bus as output for writing/driving
+    Model1LowLevel::configWriteDataBus(0xFF);  // All pins as OUTPUT
+  } else {
+    // Set data bus as input for reading/floating
+    Model1LowLevel::configWriteDataBus(0x00);  // All pins as INPUT
+  }
+
+  // Configure individual signal directions based on mode
+  // 0=floating (INPUT), 1&2=driven (OUTPUT)
+  Model1LowLevel::configWriteRAS(_rasSignalMode == 0 ? INPUT : OUTPUT);
+  Model1LowLevel::configWriteCAS(_casSignalMode == 0 ? INPUT : OUTPUT);
+  Model1LowLevel::configWriteMUX(_muxSignalMode == 0 ? INPUT : OUTPUT);
+  Model1LowLevel::configWriteRD(_readSignalMode == 0 ? INPUT : OUTPUT);
+  Model1LowLevel::configWriteWR(_writeSignalMode == 0 ? INPUT : OUTPUT);
+  Model1LowLevel::configWriteIN(_inSignalMode == 0 ? INPUT : OUTPUT);
+  Model1LowLevel::configWriteOUT(_outSignalMode == 0 ? INPUT : OUTPUT);
+  Model1LowLevel::configWriteWAIT(_waitSignalMode == 0 ? INPUT : OUTPUT);
+  Model1LowLevel::configWriteINT(_interruptSignalMode == 0 ? INPUT : OUTPUT);
 }

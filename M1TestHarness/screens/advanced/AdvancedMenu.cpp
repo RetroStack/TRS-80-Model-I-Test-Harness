@@ -19,22 +19,6 @@ AdvancedMenu::AdvancedMenu() : MenuScreen() {
   Globals.logger.infoF(F("Advanced Menu initialized"));
 }
 
-bool AdvancedMenu::open() {
-  // Start the Advanced Signal Controller when entering Advanced menu system
-  AdvancedSignals.begin();
-
-  // Call parent implementation
-  return MenuScreen::open();
-}
-
-void AdvancedMenu::close() {
-  // Call parent implementation
-  MenuScreen::close();
-
-  // Stop the Advanced Signal Controller when leaving Advanced menu system
-  AdvancedSignals.end();
-}
-
 void AdvancedMenu::loop() {
   // Call parent loop first
   MenuScreen::loop();
@@ -52,6 +36,7 @@ Screen *AdvancedMenu::_getSelectedMenuItemScreen(int index) {
 
     case -1:  // Back to Main
       Globals.logger.infoF(F("Returning to main menu from Advanced Menu"));
+      AdvancedSignals.end();  // Stop signal controller when leaving Advanced system
       return new MainMenu();
 
     default:
