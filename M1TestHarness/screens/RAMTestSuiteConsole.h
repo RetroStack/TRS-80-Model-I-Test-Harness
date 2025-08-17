@@ -34,6 +34,8 @@ class RAMTestSuiteConsole : public ConsoleScreen {
  public:
   RAMTestSuiteConsole();
 
+  void close() override;
+
   // Public method for specialized test suites
   void runSpecializedTest(uint16_t start, uint16_t length, const char *const icRefs[]);
 

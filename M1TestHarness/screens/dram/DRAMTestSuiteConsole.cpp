@@ -28,27 +28,13 @@ void DRAMTestSuiteConsole::_executeOnce() {
   println(F("IC References: Z17,Z16,Z18,Z19,Z15,Z20,Z14,Z13"));
   println();
 
-  setTextColor(0xFFE0, 0x0000);  // Yellow
-  println(F("This test will comprehensively verify"));
-  println(F("the 16KB dynamic RAM expansion using"));
-  println(F("multiple test patterns and algorithms."));
-  println();
-
-  setTextColor(0x07FF, 0x0000);  // Cyan
-  println(F("Tests include:"));
-  println(F("- Pattern tests (0x55, 0xAA, checkerboard)"));
-  println(F("- Walking ones/zeros bit tests"));
-  println(F("- March algorithms (C-, SS, LA)"));
-  println(F("- Moving inversion tests"));
-  println(F("- Address uniqueness verification"));
-  println(F("- Data retention testing"));
-  println(F("- Read destructive fault detection"));
-  println();
-
   setTextColor(0xF81F, 0x0000);  // Magenta
   println(F("Starting DRAM comprehensive test..."));
   println();
 
+  delay(5000);
+
+  cls();
   setTextColor(0xFFFF, 0x0000);  // White
 
   // Local DRAM constants - only exist when test is running
@@ -58,13 +44,6 @@ void DRAMTestSuiteConsole::_executeOnce() {
 
   // Run the comprehensive test suite on DRAM
   runSpecializedTest(start, length, icRefs);
-
-  println();
-  setTextColor(0x07E0, 0x0000);  // Green
-  println(F("DRAM testing completed!"));
-  println();
-  setTextColor(0xF81F, 0x0000);  // Magenta
-  println(F("Tests finished!"));
 }
 
 Screen *DRAMTestSuiteConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {

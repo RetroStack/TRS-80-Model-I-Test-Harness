@@ -28,23 +28,6 @@ void VRAMTestSuiteConsole::_executeOnce() {
   println(F("IC References: Z48,Z47,Z46,Z45,Z61,Z62,Z?,Z63"));
   println();
 
-  setTextColor(0xFFE0, 0x0000);  // Yellow
-  println(F("This test will comprehensively verify"));
-  println(F("the 1KB video RAM that stores the"));
-  println(F("character data displayed on screen."));
-  println();
-
-  setTextColor(0x07FF, 0x0000);  // Cyan
-  println(F("Tests include:"));
-  println(F("- Character pattern tests"));
-  println(F("- Walking ones/zeros bit tests"));
-  println(F("- March algorithms (C-, SS, LA)"));
-  println(F("- Moving inversion tests"));
-  println(F("- Address uniqueness verification"));
-  println(F("- Display memory retention testing"));
-  println(F("- Video refresh interference tests"));
-  println();
-
   setTextColor(0xF800, 0x0000);  // Red
   println(F("WARNING: Screen may flicker during"));
   println(F("video memory testing!"));
@@ -54,6 +37,9 @@ void VRAMTestSuiteConsole::_executeOnce() {
   println(F("Starting VRAM comprehensive test..."));
   println();
 
+  delay(5000);
+
+  cls();
   setTextColor(0xFFFF, 0x0000);  // White
 
   // Local VRAM constants - only exist when test is running
@@ -63,13 +49,6 @@ void VRAMTestSuiteConsole::_executeOnce() {
 
   // Run the comprehensive test suite on VRAM
   runSpecializedTest(start, length, icRefs);
-
-  println();
-  setTextColor(0x07E0, 0x0000);  // Green
-  println(F("VRAM testing completed!"));
-  println();
-  setTextColor(0xF81F, 0x0000);  // Magenta
-  println(F("Tests finished!"));
 }
 
 Screen *VRAMTestSuiteConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {

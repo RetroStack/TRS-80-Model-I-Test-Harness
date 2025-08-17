@@ -20,6 +20,14 @@ RAMTestSuiteConsole::RAMTestSuiteConsole() : ConsoleScreen() {
   Globals.logger.infoF(F("RAM Test Suite base class initialized"));
 }
 
+void RAMTestSuiteConsole::close() {
+  // Turn off LED indicator when leaving the screen
+  M1Shield.setLEDColor(COLOR_OFF);
+
+  // Call parent implementation
+  ConsoleScreen::close();
+}
+
 void RAMTestSuiteConsole::runSpecializedTest(uint16_t start, uint16_t length,
                                              const char *const icRefs[]) {
   runAndEvaluate(start, length, icRefs);
@@ -474,8 +482,6 @@ void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
   M1Shield.setLEDColor(COLOR_BLUE);  // Initialize test suite
   setTextColor(0xFFFF, 0x0000);      // White
 
-  println(F("=== START MEMORY TEST SUITE ==="));
-
   // Initialize aggregate totals - no intermediate storage needed
   uint32_t totalBitErrors[8] = {};
   uint32_t totalErrorsOverall = 0;
@@ -648,8 +654,4 @@ void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
     // Errors found
     M1Shield.setLEDColor(COLOR_RED);
   }
-
-  // Keep it visible for 2 seconds
-  delay(2000);
-  M1Shield.setLEDColor(COLOR_OFF);
 }
