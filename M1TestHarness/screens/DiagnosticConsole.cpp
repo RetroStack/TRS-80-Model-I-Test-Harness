@@ -67,8 +67,7 @@ struct ControlBusVerificationResult {
 };
 
 struct UnifiedCrosstalkResult {
-  uint64_t crosstalkSourceMask;       // 64-bit mask showing which signals cause crosstalk
-  uint64_t crosstalkDestinationMask;  // 64-bit mask showing which signals are affected by crosstalk
+  uint64_t crosstalkMatrix[36];  // Detailed mapping: crosstalkMatrix[source] = destination_mask
   bool hasIssues;
 
   // Signal mapping for interpretation:
@@ -191,6 +190,10 @@ static AddressBusVerificationResult verifyAddressBus() {
 
 static UnifiedCrosstalkResult verifyUnifiedCrosstalk() {
   UnifiedCrosstalkResult result = {0};
+  // Initialize the crosstalk matrix
+  for (int i = 0; i < 36; i++) {
+    result.crosstalkMatrix[i] = 0;
+  }
   bool issuesFound = false;
 
   // Signal bit positions in the 64-bit unified space
@@ -423,8 +426,8 @@ static UnifiedCrosstalkResult verifyUnifiedCrosstalk() {
 
       if (confirmedIssues >= (CONFIRM_LOOPS * 0.8)) {
         issuesFound = true;
-        result.crosstalkSourceMask |= (1ULL << sourcePos);
-        result.crosstalkDestinationMask |= unexpectedChanges;
+        // Store detailed source-to-destination mapping
+        result.crosstalkMatrix[sourcePos] = unexpectedChanges;
       }
     }
 
@@ -473,8 +476,8 @@ static ControlBusVerificationResult verifyControlBus() {
   const int INDEX_WR = 4;
   const int INDEX_IN = 5;
   const int INDEX_OUT = 6;
-  const int INDEX_SYS_RES = 7;
-  const int INDEX_INT_ACK = 8;
+  // INDEX_SYS_RES = 7;     // Read-only signal, not tested for stuck conditions
+  // INDEX_INT_ACK = 8;     // Read-only signal, not tested for stuck conditions
   const int INDEX_INT = 9;
   const int INDEX_TEST = 10;
   const int INDEX_WAIT = 11;
@@ -736,7 +739,6 @@ ResetButtonTestResult DiagnosticConsole::verifyResetButton() {
   // Wait up to 5 seconds for button press
   unsigned long startTime = millis();
   bool buttonDetected = false;
-  bool signalWentLow = false;
 
   while ((millis() - startTime) < 5000) {  // 5 second timeout
     bool currentState = Model1LowLevel::readSYS_RES();
@@ -744,7 +746,6 @@ ResetButtonTestResult DiagnosticConsole::verifyResetButton() {
     if (currentState == LOW && initialState == HIGH) {
       // SYS_RES signal went from HIGH to LOW - button was pressed!
       buttonDetected = true;
-      signalWentLow = true;
 
       setTextColor(0x07E0, 0x0000);  // Green
       print(F("Reset button detected!"));
@@ -949,7 +950,7 @@ void DiagnosticConsole::_executeOnce() {
   if (dataResult.hasIssues) {
     setTextColor(0xF800, 0x0000);  // Red
     if (dataResult.stuckHigh) {
-      print(F("  Stuck High bits: D"));
+      print(F("  Stuck HIGH bits: D"));
       for (uint8_t i = 0; i < 8; i++) {
         if (dataResult.stuckHigh & (1 << i)) {
           print(i);
@@ -959,7 +960,7 @@ void DiagnosticConsole::_executeOnce() {
       println();
     }
     if (dataResult.stuckLow) {
-      print(F("  Stuck Low bits: D"));
+      print(F("  Stuck LOW bits: D"));
       for (uint8_t i = 0; i < 8; i++) {
         if (dataResult.stuckLow & (1 << i)) {
           print(i);
@@ -978,7 +979,7 @@ void DiagnosticConsole::_executeOnce() {
   if (addrResult.hasIssues) {
     setTextColor(0xF800, 0x0000);  // Red
     if (addrResult.stuckHigh) {
-      print(F("  Stuck High bits: A"));
+      print(F("  Stuck HIGH bits: A"));
       for (uint16_t i = 0; i < 16; i++) {
         if (addrResult.stuckHigh & (1 << i)) {
           print(i);
@@ -988,7 +989,7 @@ void DiagnosticConsole::_executeOnce() {
       println();
     }
     if (addrResult.stuckLow) {
-      print(F("  Stuck Low bits: A"));
+      print(F("  Stuck LOW bits: A"));
       for (uint16_t i = 0; i < 16; i++) {
         if (addrResult.stuckLow & (1 << i)) {
           print(i);
@@ -1006,22 +1007,39 @@ void DiagnosticConsole::_executeOnce() {
   println(F("Control Bus Results:"));
   if (controlResult.hasIssues) {
     setTextColor(0xF800, 0x0000);  // Red
+
+    // Helper function to get control signal name
+    auto getControlSignalName = [](int bitIndex) -> String {
+      const char* names[] = {"RAS", "MUX",     "CAS",     "RD",  "WR",   "IN",
+                             "OUT", "SYS_RES", "INT_ACK", "INT", "TEST", "WAIT"};
+      if (bitIndex >= 0 && bitIndex < 12) {
+        return String(names[bitIndex]);
+      }
+      return "UNK" + String(bitIndex);
+    };
+
     if (controlResult.stuckLow) {
-      print(F("  Stuck LOW bits: "));
+      print(F("  Stuck LOW signals: "));
+      bool first = true;
       for (int i = 0; i < 12; i++) {
         if (bitRead(controlResult.stuckLow, i)) {
-          print(i);
-          print(F(" "));
+          if (!first)
+            print(F(", "));
+          print(getControlSignalName(i));
+          first = false;
         }
       }
       println();
     }
     if (controlResult.stuckHigh) {
-      print(F("  Stuck HIGH bits: "));
+      print(F("  Stuck HIGH signals: "));
+      bool first = true;
       for (int i = 0; i < 12; i++) {
         if (bitRead(controlResult.stuckHigh, i)) {
-          print(i);
-          print(F(" "));
+          if (!first)
+            print(F(", "));
+          print(getControlSignalName(i));
+          first = false;
         }
       }
       println();
@@ -1051,10 +1069,35 @@ void DiagnosticConsole::_executeOnce() {
       return "UNK" + String(bitPos);
     };
 
-    print(F("  Crosstalk source signals: "));
+    // Display detailed source-to-destination mappings
+    println(F("  Detailed crosstalk analysis:"));
+    for (uint8_t sourcePos = 0; sourcePos < 36; sourcePos++) {
+      if (crosstalkResult.crosstalkMatrix[sourcePos] != 0) {
+        setTextColor(0xFFE0, 0x0000);  // Yellow
+        print(F("    "));
+        print(getSignalName(sourcePos));
+        print(F(" -> "));
+
+        setTextColor(0xF800, 0x0000);  // Red
+        bool firstDest = true;
+        for (uint8_t destPos = 0; destPos < 36; destPos++) {
+          if (crosstalkResult.crosstalkMatrix[sourcePos] & (1ULL << destPos)) {
+            if (!firstDest)
+              print(F(", "));
+            print(getSignalName(destPos));
+            firstDest = false;
+          }
+        }
+        println();
+      }
+    }
+
+    // Display summary
+    setTextColor(0xF800, 0x0000);  // Red
+    print(F("  Summary - Source signals: "));
     bool firstSource = true;
     for (uint8_t i = 0; i < 36; i++) {
-      if (crosstalkResult.crosstalkSourceMask & (1ULL << i)) {
+      if (crosstalkResult.crosstalkMatrix[i] != 0) {
         if (!firstSource)
           print(F(", "));
         print(getSignalName(i));
@@ -1065,10 +1108,18 @@ void DiagnosticConsole::_executeOnce() {
       print(F("None"));
     println();
 
-    print(F("  Affected signals: "));
+    print(F("  Summary - Affected signals: "));
     bool firstDest = true;
     for (uint8_t i = 0; i < 36; i++) {
-      if (crosstalkResult.crosstalkDestinationMask & (1ULL << i)) {
+      // Check if this signal is affected by any source
+      bool isAffected = false;
+      for (uint8_t sourcePos = 0; sourcePos < 36; sourcePos++) {
+        if (crosstalkResult.crosstalkMatrix[sourcePos] & (1ULL << i)) {
+          isAffected = true;
+          break;
+        }
+      }
+      if (isAffected) {
         if (!firstDest)
           print(F(", "));
         print(getSignalName(i));
@@ -1137,9 +1188,13 @@ void DiagnosticConsole::_executeOnce() {
   // ========== COMPREHENSIVE TEST SIGNAL DEACTIVATION ==========
   setTextColor(0x07FF, 0x0000);  // Cyan
   print(F("Deactivating TEST signal..."));
+  Model1LowLevel::configWriteTEST(OUTPUT);
+  Model1LowLevel::writeTEST(HIGH);  // Deactivate TEST signal (release BUSREQ)
+  delay(SETTLE_DELAY);
 
+  // Verify signal is deactivated
   Model1LowLevel::configWriteTEST(INPUT);
-  Model1LowLevel::writeTEST(LOW);  // Deactivate TEST signal (release BUSREQ)
+  Model1LowLevel::writeTEST(LOW);  // No pull-up
   delay(SETTLE_DELAY);
 
   // Verify TEST signal deactivation with multiple confirmations
@@ -1178,7 +1233,7 @@ void DiagnosticConsole::_executeOnce() {
     setTextColor(0xF800, 0x0000);  // Red
     println(F("*** SYSTEM HALTED ***"));
     println(F("Fix hardware before retrying"));
-    println(F("Menu system will not work!"));
+    println(F("Test Harness will not work!"));
     println();
     setTextColor(0xFFE0, 0x0000);  // Yellow
     println(F("Press RESET to restart"));
@@ -1201,8 +1256,7 @@ void DiagnosticConsole::_executeOnce() {
   setProgressValue(100);  // All tests complete
 
   // Final LED status indication
-  bool overallPass = !dataResult.hasIssues && !addrResult.hasIssues && !crosstalkResult.hasIssues &&
-                     !controlResult.hasIssues && !resetResult.hasIssues;
+  // Use previously calculated overallPass result
 
   // Show result
   if (overallPass) {

@@ -6,7 +6,7 @@
 #include "./CassetteMenu.h"
 
 CassetteTestSuiteConsole::CassetteTestSuiteConsole() : ConsoleScreen() {
-  setTitleF(F("Cassette Test Suite"));
+  setTitleF(F("Cass. Tests"));
   setConsoleBackground(0x0000);
   setTextColor(0xFFFF, 0x0000);
 

@@ -9,7 +9,7 @@
 #include "./CassetteTestSuiteConsole.h"
 
 CassetteMenu::CassetteMenu() : MenuScreen() {
-  setTitleF(F("Cassette Interface"));
+  setTitleF(F("Cassette"));
 
   // Create menu items dynamically - they'll be copied by _setMenuItems and these will be freed
   // automatically

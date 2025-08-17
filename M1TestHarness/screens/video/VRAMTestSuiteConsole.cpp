@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 #include "../../globals.h"
-#include "../MainMenu.h"
+#include "./VideoMenu.h"
 
 VRAMTestSuiteConsole::VRAMTestSuiteConsole() : RAMTestSuiteConsole() {
   setTitleF(F("VRAM Tests"));
@@ -53,8 +53,8 @@ void VRAMTestSuiteConsole::_executeOnce() {
 
 Screen *VRAMTestSuiteConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.infoF(F("Returning to main menu from VRAM Tests"));
-    return new MainMenu();
+    Globals.logger.infoF(F("Returning to Video Menu from VRAM Tests"));
+    return new VideoMenu();
   }
 
   return nullptr;
