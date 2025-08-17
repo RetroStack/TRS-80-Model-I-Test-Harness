@@ -171,7 +171,7 @@ void HardwareDetectionConsole::detectDRAMSize() {
 
 void HardwareDetectionConsole::displayResults() {
   println();
-  setTextColor(0x07E0, 0x0000);  // Green
+  setTextColor(0xFFFF, 0x0000);  // White
   println(F("=== DETECTION RESULTS ==="));
 
   setTextColor(0xFFFF, 0x0000);  // White

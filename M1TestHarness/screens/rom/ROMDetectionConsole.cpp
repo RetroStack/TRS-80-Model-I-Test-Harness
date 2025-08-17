@@ -20,7 +20,7 @@ ROMDetectionConsole::ROMDetectionConsole() : ConsoleScreen() {
 
 void ROMDetectionConsole::_executeOnce() {
   cls();
-  setTextColor(0x07E0, 0x0000);  // Green
+  setTextColor(0xFFFF, 0x0000);  // White
   println(F("=== ROM DETECTION CONSOLE ==="));
   println();
   setTextColor(0xFFFF, 0x0000);

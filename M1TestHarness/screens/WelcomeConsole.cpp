@@ -12,7 +12,7 @@ WelcomeConsole::WelcomeConsole() : ConsoleScreen() {
   setTextSize(2);
 
   clearButtonItems();
-  
+
   // Enable auto-forward after 5 seconds
   setAutoForward(true, 5000);
 
@@ -36,7 +36,7 @@ void WelcomeConsole::_executeOnce() {
   println(F("the Model 1 through the edge connector"));
   println();
 
-  setTextColor(0x07FF, 0x0000);  // White
+  setTextColor(0xFFFF, 0x0000);  // White
   println(F("More info available at:"));
   setTextColor(0xFFE0, 0x0000);  // Yellow
   println(F("www.github.com/RetroStack/"));
@@ -56,11 +56,11 @@ void WelcomeConsole::_executeOnce() {
   println(F("components or traces."));
   println();
 
-  setTextColor(0x07E0, 0x0000);  // Green
+  setTextColor(0x07FF, 0x0000);  // Cyan
   println(F("Press any key to start the"));
   println(F("high-level diagnostics."));
   println();
-  
+
   setTextColor(0x07FF, 0x0000);  // Cyan
   println(F("(Auto-forward in 5 seconds)"));
 }
@@ -72,5 +72,3 @@ Screen *WelcomeConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t
 
   return nullptr;
 }
-
-

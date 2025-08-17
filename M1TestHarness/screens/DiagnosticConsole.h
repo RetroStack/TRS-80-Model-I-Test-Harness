@@ -3,6 +3,9 @@
 
 #include <ConsoleScreen.h>
 
+// Forward declaration of result structures
+struct ResetButtonTestResult;
+
 class DiagnosticConsole : public ConsoleScreen {
  private:
  public:
@@ -13,6 +16,7 @@ class DiagnosticConsole : public ConsoleScreen {
 
  private:
   void _executeOnce();
+  ResetButtonTestResult verifyResetButton();
 };
 
 #endif  // DIAGNOSTIC_CONSOLE_H

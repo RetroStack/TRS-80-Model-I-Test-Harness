@@ -78,6 +78,13 @@ struct UnifiedCrosstalkResult {
   // Bits 36-63: Reserved for future expansion
 };
 
+struct ResetButtonTestResult {
+  bool buttonPressed;  // Whether the reset button was pressed during test
+  bool signalActive;   // Whether RST signal went active-low when pressed
+  bool testCompleted;  // Whether the test completed (not timed out)
+  bool hasIssues;      // Overall test result (false = pass, true = fail/inconclusive)
+};
+
 static DataBusVerificationResult verifyDataBus() {
   uint8_t stuckHigh = 0;
   uint8_t stuckLow = 0;
@@ -664,6 +671,126 @@ static ControlBusVerificationResult verifyControlBus() {
   return result;
 }
 
+ResetButtonTestResult DiagnosticConsole::verifyResetButton() {
+  ResetButtonTestResult result;
+  result.buttonPressed = false;
+  result.signalActive = false;
+  result.testCompleted = false;
+  result.hasIssues = false;  // Default to inconclusive
+
+  // SYS_RES is read-only, so we just monitor it
+  delay(SETTLE_DELAY);
+
+  // Check initial state - SYS_RES should be inactive (HIGH) normally
+  bool initialState = Model1LowLevel::readSYS_RES();
+  if (initialState == LOW) {
+    // SYS_RES is already active - give user time to release button
+    setTextColor(0xFFE0, 0x0000);  // Yellow
+    println();
+    println(F("SYS_RES signal already active!"));
+    println(F("Please release the reset button..."));
+    println();
+
+    // Wait up to 5 seconds for user to release button
+    unsigned long releaseStartTime = millis();
+    bool buttonReleased = false;
+
+    while ((millis() - releaseStartTime) < 5000) {  // 5 second timeout
+      if (Model1LowLevel::readSYS_RES() == HIGH) {
+        setTextColor(0x07E0, 0x0000);  // Green
+        println(F("Reset button released. Continuing..."));
+        buttonReleased = true;
+        initialState = HIGH;  // OK, continue with test
+        break;
+      }
+
+      delay(100);  // Small delay to avoid excessive polling
+    }
+
+    if (!buttonReleased) {
+      // Signal stuck low after 5 seconds - this is the failure case
+      setTextColor(0xF800, 0x0000);  // Red
+      println(F("ERROR: SYS_RES signal stuck LOW!"));
+      println(F("Reset signal is permanently active."));
+      println(F("Check hardware connections."));
+      result.hasIssues = true;
+      result.testCompleted = false;
+      result.buttonPressed = false;
+      result.signalActive = false;
+      return result;
+    }
+
+    println();  // Add some spacing before continuing
+  }
+
+  // Prompt user to press reset button
+  setTextColor(0x07FF, 0x0000);  // Cyan
+  println();
+  println(F("Please press and hold the RESET"));
+  println(F("button on the TRS-80 Model 1..."));
+  println();
+  setTextColor(0xFFE0, 0x0000);  // Yellow
+  println(F("Waiting for reset button press"));
+  println(F("(timeout in 5 seconds)"));
+
+  // Wait up to 5 seconds for button press
+  unsigned long startTime = millis();
+  bool buttonDetected = false;
+  bool signalWentLow = false;
+
+  while ((millis() - startTime) < 5000) {  // 5 second timeout
+    bool currentState = Model1LowLevel::readSYS_RES();
+
+    if (currentState == LOW && initialState == HIGH) {
+      // SYS_RES signal went from HIGH to LOW - button was pressed!
+      buttonDetected = true;
+      signalWentLow = true;
+
+      setTextColor(0x07E0, 0x0000);  // Green
+      print(F("Reset button detected!"));
+      println();
+
+      // Wait a moment to confirm the signal stays low
+      delay(100);
+      if (Model1LowLevel::readSYS_RES() == LOW) {
+        result.signalActive = true;
+      }
+
+      // Ask user to release button
+      setTextColor(0x07FF, 0x0000);  // Cyan
+      println(F("Please release the reset button..."));
+
+      // Wait for button release (signal goes back HIGH)
+      unsigned long releaseStartTime = millis();
+      while ((millis() - releaseStartTime) < 5000) {  // 5 second timeout for release
+        if (Model1LowLevel::readSYS_RES() == HIGH) {
+          setTextColor(0x07E0, 0x0000);  // Green
+          println(F("Reset button released."));
+          result.testCompleted = true;
+          result.hasIssues = false;  // Test passed!
+          break;
+        }
+        delay(50);
+      }
+      break;
+    }
+
+    delay(100);  // Small delay to avoid excessive polling
+  }
+
+  if (!buttonDetected) {
+    setTextColor(0xFFE0, 0x0000);  // Yellow
+    println();
+    println(F("Timeout - no reset button press"));
+    println(F("detected within 5 seconds."));
+    result.testCompleted = false;  // Timed out
+    result.hasIssues = false;      // Not a hardware issue, just inconclusive
+  }
+
+  result.buttonPressed = buttonDetected;
+  return result;
+}
+
 void DiagnosticConsole::_executeOnce() {
   cls();
   setTextSize(1);
@@ -707,7 +834,7 @@ void DiagnosticConsole::_executeOnce() {
     println(F("*** SYSTEM HALTED ***"));
     println(F("Fix hardware before retrying"));
     println();
-    setTextColor(0x07E0, 0x0000);  // Yellow
+    setTextColor(0xFFE0, 0x0000);  // Yellow
     println(F("Press RESET to restart"));
 
     // Block progression - endless loop with pulsing red LED
@@ -763,7 +890,7 @@ void DiagnosticConsole::_executeOnce() {
     println(F("*** SYSTEM HALTED ***"));
     println(F("Fix hardware before retrying"));
     println();
-    setTextColor(0x07E0, 0x0000);  // Yellow
+    setTextColor(0xFFE0, 0x0000);  // Yellow
     println(F("Press RESET to restart"));
 
     // Block progression - endless loop with pulsing red LED
@@ -806,17 +933,21 @@ void DiagnosticConsole::_executeOnce() {
   auto crosstalkResult = verifyUnifiedCrosstalk();
   println(F(" done"));
   setProgressValue(85);
+
+  print(F("Testing reset button..."));
+  setProgressValue(87);                // Starting reset button test
+  M1Shield.setLEDColor(COLOR_YELLOW);  // Switch to yellow for reset test
+  auto resetResult = verifyResetButton();
+  setProgressValue(90);
   println();
 
-  setTextColor(0x07E0, 0x0000);  // Green
-  println(F("=== RESULTS ==="));
-  println();
   setProgressValue(90);  // All tests complete, starting results
+  cls();
 
-  setTextColor(0x07E0, 0x0000);  // Green
-  println(F("Data Bus Test:"));
-  setTextColor(0xFFFF, 0x0000);
+  setTextColor(0xFFFF, 0x0000);  // White
+  println(F("Data Bus Results:"));
   if (dataResult.hasIssues) {
+    setTextColor(0xF800, 0x0000);  // Red
     if (dataResult.stuckHigh) {
       print(F("  Stuck High bits: D"));
       for (uint8_t i = 0; i < 8; i++) {
@@ -838,13 +969,14 @@ void DiagnosticConsole::_executeOnce() {
       println();
     }
   } else {
+    setTextColor(0x07E0, 0x0000);  // Green
     println(F("  PASS"));
   }
 
-  setTextColor(0x07E0, 0x0000);  // Green
-  println(F("Address Bus Test:"));
-  setTextColor(0xFFFF, 0x0000);
+  setTextColor(0xFFFF, 0x0000);  // White
+  println(F("Address Bus Results:"));
   if (addrResult.hasIssues) {
+    setTextColor(0xF800, 0x0000);  // Red
     if (addrResult.stuckHigh) {
       print(F("  Stuck High bits: A"));
       for (uint16_t i = 0; i < 16; i++) {
@@ -866,13 +998,14 @@ void DiagnosticConsole::_executeOnce() {
       println();
     }
   } else {
+    setTextColor(0x07E0, 0x0000);  // Green
     println(F("  PASS"));
   }
 
-  setTextColor(0x07E0, 0x0000);  // Green
-  println(F("Control Bus Verification:"));
-  setTextColor(0xFFFF, 0x0000);
+  setTextColor(0xFFFF, 0x0000);  // White
+  println(F("Control Bus Results:"));
   if (controlResult.hasIssues) {
+    setTextColor(0xF800, 0x0000);  // Red
     if (controlResult.stuckLow) {
       print(F("  Stuck LOW bits: "));
       for (int i = 0; i < 12; i++) {
@@ -894,13 +1027,14 @@ void DiagnosticConsole::_executeOnce() {
       println();
     }
   } else {
+    setTextColor(0x07E0, 0x0000);  // Green
     println(F("  PASS"));
   }
 
-  setTextColor(0x07E0, 0x0000);  // Green
-  println(F("Unified Crosstalk Test:"));
-  setTextColor(0xFFFF, 0x0000);
+  setTextColor(0xFFFF, 0x0000);  // White
+  println(F("Crosstalk Results:"));
   if (crosstalkResult.hasIssues) {
+    setTextColor(0xF800, 0x0000);  // Red
     // Helper function to get signal name
     auto getSignalName = [](uint8_t bitPos) -> String {
       if (bitPos < 8)
@@ -945,14 +1079,40 @@ void DiagnosticConsole::_executeOnce() {
       print(F("None"));
     println();
   } else {
+    setTextColor(0x07E0, 0x0000);  // Green
     println(F("  PASS"));
+  }
+
+  setTextColor(0xFFFF, 0x0000);  // White
+  println(F("Reset Button Test:"));
+  if (resetResult.hasIssues) {
+    // Only real hardware issue: signal stuck low
+    setTextColor(0xF800, 0x0000);  // Red
+    println(F("  FAIL (signal stuck)"));
+    setTextColor(0xFFFF, 0x0000);
+    println(F("  SYS_RES signal stuck LOW."));
+    println(F("  Reset circuit malfunction."));
+  } else if (!resetResult.testCompleted) {
+    // Inconclusive: timeout, but not a hardware issue
+    setTextColor(0xFFE0, 0x0000);  // Yellow
+    println(F("  INCONCLUSIVE (timeout)"));
+    setTextColor(0xFFFF, 0x0000);
+    println(F("  User did not press reset"));
+    println(F("  button within 5 seconds."));
+  } else {
+    // Test completed successfully
+    setTextColor(0x07E0, 0x0000);  // Green
+    println(F("  PASS"));
+    setTextColor(0xFFFF, 0x0000);
+    println(F("  Reset button works correctly."));
+    println(F("  SYS_RES signal detected."));
   }
 
   // Overall summary
   println();
   setProgressValue(95);  // Final results processing
   bool overallPass = !dataResult.hasIssues && !addrResult.hasIssues && !crosstalkResult.hasIssues &&
-                     !controlResult.hasIssues;
+                     !controlResult.hasIssues && !resetResult.hasIssues;
 
   if (overallPass) {
     M1Shield.setLEDColor(COLOR_GREEN);  // Success indicator
@@ -1020,7 +1180,7 @@ void DiagnosticConsole::_executeOnce() {
     println(F("Fix hardware before retrying"));
     println(F("Menu system will not work!"));
     println();
-    setTextColor(0x07E0, 0x0000);  // Yellow
+    setTextColor(0xFFE0, 0x0000);  // Yellow
     println(F("Press RESET to restart"));
 
     // Block progression - endless loop with pulsing red LED
@@ -1042,7 +1202,7 @@ void DiagnosticConsole::_executeOnce() {
 
   // Final LED status indication
   bool overallPass = !dataResult.hasIssues && !addrResult.hasIssues && !crosstalkResult.hasIssues &&
-                     !controlResult.hasIssues;
+                     !controlResult.hasIssues && !resetResult.hasIssues;
 
   // Show result
   if (overallPass) {

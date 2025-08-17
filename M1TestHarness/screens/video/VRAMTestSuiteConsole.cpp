@@ -19,7 +19,7 @@ VRAMTestSuiteConsole::VRAMTestSuiteConsole() : RAMTestSuiteConsole() {
 
 void VRAMTestSuiteConsole::_executeOnce() {
   cls();
-  setTextColor(0x07E0, 0x0000);  // Green
+  setTextColor(0xFFFF, 0x0000);  // White
   println(F("=== VRAM TEST SUITE ==="));
   println();
   setTextColor(0xFFFF, 0x0000);
