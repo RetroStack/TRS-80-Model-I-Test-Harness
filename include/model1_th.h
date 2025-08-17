@@ -79,7 +79,7 @@ void invalidateStateCache();
 
 
 /**
- * Print a human‑readable version of Model1.getState() output.
+ * Print a human-readable version of Model1.getState() output.
  * It is robust against overlong fields (ADDR, DATA, etc.) and will not
  * corrupt the stack if the model starts emitting wider bitfields.
  *

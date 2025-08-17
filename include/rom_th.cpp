@@ -57,7 +57,7 @@ void handleInput(const char* input) {
 }
 
 void getROMStartAddress() {
-  println(TO_LCD, F("Which ROMs (0‑3)?  Separate by commas or 'a' for all:"));
+  println(TO_LCD, F("Which ROMs (0-3)?  Separate by commas or 'a' for all:"));
   print(TO_LCD, F("> "));
   serialFlush();
 
@@ -66,7 +66,7 @@ void getROMStartAddress() {
   uint8_t paramCount = readSerialInputParse(params, MAX_INPUT_PARAMETERS);
   serialFlush();
 
-  /* ---- “a” or “A” means all ROMs ---- */
+  /* ---- "a" or "A" means all ROMs ---- */
   if (paramCount > 0 && (params[0][0] == 'a' || params[0][0] == 'A')) {
     for (uint8_t romNum = 0; romNum < 4; ++romNum) {
       uint16_t addr = rom.getROMStartAddress(romNum);
@@ -75,12 +75,12 @@ void getROMStartAddress() {
     return;
   }
 
-  /* ---- otherwise process each comma‑separated token ---- */
+  /* ---- otherwise process each comma-separated token ---- */
   for (uint8_t i = 0; i < paramCount; ++i) {
     if (params[i] == nullptr || params[i][0] == '\0')  // empty field
       continue;
 
-    uint16_t romNum = strToUint16(params[i]);  // 0‑3 expected
+    uint16_t romNum = strToUint16(params[i]);  // 0-3 expected
     if (romNum < 4) {
       uint16_t addr = rom.getROMStartAddress((uint8_t)romNum);
       println(TO_LCD, F("ROM "), romNum, F(" Start Address: "), addr, Hex);
@@ -93,7 +93,7 @@ void getROMStartAddress() {
 // Get ROM length for specified ROMs
 // Get ROM length for specified ROMs
 void getROMLength() {
-  println(TO_LCD, F("Enter ROM numbers for length (0‑3), comma‑separated, or 'a' for all:"));
+  println(TO_LCD, F("Enter ROM numbers for length (0-3), comma-separated, or 'a' for all:"));
   print(TO_LCD, F("> "));
   serialFlush();
 
@@ -104,7 +104,7 @@ void getROMLength() {
   if (tokCount == 0)
     return;  // user hit <Enter> only
 
-  /* ---- “a” / “A”  →  all ROMs ---- */
+  /* ---- "a" / "A"  ->  all ROMs ---- */
   if (tolower(tokens[0][0]) == 'a') {
     for (uint8_t romNum = 0; romNum < 4; ++romNum) {
       uint16_t len = rom.getROMLength(romNum);
@@ -113,12 +113,12 @@ void getROMLength() {
     return;
   }
 
-  /* ---- otherwise, handle each comma‑separated token ---- */
+  /* ---- otherwise, handle each comma-separated token ---- */
   for (uint8_t i = 0; i < tokCount; ++i) {
     if (tokens[i] == nullptr || tokens[i][0] == '\0')
       continue;  // empty field
 
-    uint16_t romNum = strToUint16(tokens[i]);  // 0‑3 expected
+    uint16_t romNum = strToUint16(tokens[i]);  // 0-3 expected
     if (romNum < 4) {
       uint16_t len = rom.getROMLength((uint8_t)romNum);
       println(TO_LCD, F("ROM "), romNum, F(" Length: "), len, Dec);
@@ -136,7 +136,7 @@ void bytesRead() {
   print(TO_LCD, F("> "));
   serialFlush();
 
-  /* ---- get “start, length” ---- */
+  /* ---- get "start, length" ---- */
   char* tokens[MAX_INPUT_PARAMETERS];
   uint8_t nTok = readSerialInputParse(tokens, MAX_INPUT_PARAMETERS);
   serialFlush();
@@ -153,7 +153,7 @@ void bytesRead() {
   println(TO_LCD, F("Start: "), start, Hex);
   println(TO_LCD, F("Length: "), length, Hex);
 
-  /* ---- perform byte‑read operation ---- */
+  /* ---- perform byte-read operation ---- */
   println(TO_LCD, F("[ROM] Reading bytes from ROM..."));
   Model1.printMemoryContents(logger, start, length,
                              BOTH,   // display mode
@@ -169,10 +169,10 @@ void checksumsForROMs() {
   }
 }
 
-// Dump selected ROMs (0‑3) or all (“a”)
+// Dump selected ROMs (0-3) or all ("a")
 void dumpROM() {
   println(TO_LCD, F("[ROM] Dump ROM"));
-  println(TO_LCD, F("Enter ROM numbers to dump (0‑3), comma‑separated, or 'a' for all:"));
+  println(TO_LCD, F("Enter ROM numbers to dump (0-3), comma-separated, or 'a' for all:"));
   print(TO_LCD, F("> "));
   serialFlush();
 
@@ -183,7 +183,7 @@ void dumpROM() {
 
   bool validInput = false;
 
-  /* ---- “a” / “A” → dump all ROMs ---- */
+  /* ---- "a" / "A" -> dump all ROMs ---- */
   if (tokCount > 0 && (tokens[0][0] == 'a' || tokens[0][0] == 'A')) {
     validInput = true;
     for (uint8_t romNum = 0; romNum < 4; ++romNum) {
@@ -191,7 +191,7 @@ void dumpROM() {
       rom.printROMContents(romNum);
     }
   }
-  /* ---- otherwise, handle each comma‑separated token ---- */
+  /* ---- otherwise, handle each comma-separated token ---- */
   else {
     for (uint8_t i = 0; i < tokCount; ++i) {
       if (tokens[i] == nullptr || tokens[i][0] == '\0')
@@ -209,7 +209,7 @@ void dumpROM() {
   }
 
   if (!validInput)
-    println(TO_LCD, F("No valid ROMs selected.  Please enter 0‑3 or 'a' for all."));
+    println(TO_LCD, F("No valid ROMs selected.  Please enter 0-3 or 'a' for all."));
 
   serialFlush();
   inputPrompt("Press ? for menu.");

@@ -80,22 +80,22 @@ uint8_t inputPrompt(const LCDDisplay &display, const __FlashStringHelper *str) {
  *  strToUint16()
  *  --------------------------------------------------------------
  *  Accepts numbers in these forms (with whitespace allowed anywhere):
- *    1234              ← decimal
- *    0x3C00 / 0X3C00   ← hexadecimal
- *    3C00h / 3C00H     ← hexadecimal with ‘h’ suffix
- *    0b11001100 / 0B11001100 ← binary
+ *    1234              <- decimal
+ *    0x3C00 / 0X3C00   <- hexadecimal
+ *    3C00h / 3C00H     <- hexadecimal with 'h' suffix
+ *    0b11001100 / 0B11001100 <- binary
  *
  *  All whitespace characters are stripped before parsing,
  *  so strings like "  0x3C00  " or "3C 00 h" are handled.
  */
 
-/**  Safe, non‑destructive string→uint16 converter  */
+/**  Safe, non-destructive string->uint16 converter  */
 uint16_t strToUint16(const char *src) {
   /* ---- 1.  build a clean, compact copy ---- */
-  char buf[12];  // big enough for “0xFFFF\0”
+  char buf[12];  // big enough for "0xFFFF\0"
   uint8_t i = 0;
   while (*src && i < sizeof(buf) - 1) {
-    if (!isspace((uint8_t)*src))  // drop all white‑space
+    if (!isspace((uint8_t)*src))  // drop all white-space
       buf[i++] = *src;
     ++src;
   }
@@ -131,20 +131,20 @@ uint16_t strToUint16(const char *src) {
  * ------------------------------------------------------------------
  * Prints a decorated separator line
  *
- *   • label     : C‑string to output (no surrounding spaces added).
- *   • sep       : single filler character (default '-').
- *   • width     : total visible width (default 80).
- *                 – width == 0 → no automatic padding after label.
- *   • alignment : -1 = flush‑left, 0 = centred, 1 = flush‑right.
+ *   - label     : C-string to output (no surrounding spaces added).
+ *   - sep       : single filler character (default '-').
+ *   - width     : total visible width (default 80).
+ *                 - width == 0 -> no automatic padding after label.
+ *   - alignment : -1 = flush-left, 0 = centred, 1 = flush-right.
  *                 Ignored if leading > 0.
- *   • leading   : exact # of leading seps. When >0, alignment is ignored.
+ *   - leading   : exact # of leading seps. When >0, alignment is ignored.
  *
- * SRAM‑friendly: streams bytes directly, no large buffers.
+ * SRAM-friendly: streams bytes directly, no large buffers.
  */
 void printSeparator(const char *label, char sep, uint8_t width, int8_t alignment, uint8_t leading) {
-  uint8_t len = strlen(label);  // label length 0‑255
+  uint8_t len = strlen(label);  // label length 0-255
 
-  /* ───── explicit leading mode ───── */
+  /* ----- explicit leading mode ----- */
   if (leading > 0) {
     /* print the requested leading seps */
     for (uint8_t i = 0; i < leading; ++i)
@@ -167,9 +167,9 @@ void printSeparator(const char *label, char sep, uint8_t width, int8_t alignment
     return;
   }
 
-  /* ───── alignment modes (leading == 0) ───── */
+  /* ---- alignment modes (leading == 0) ---- */
   switch (alignment) {
-    /* flush‑left: label first, then trailing filler (if any) */
+    /* flush-left: label first, then trailing filler (if any) */
     case -1: {
       print(label);
       if (width > 0 && width > len) {
@@ -197,11 +197,11 @@ void printSeparator(const char *label, char sep, uint8_t width, int8_t alignment
       return;
     }
 
-    /* flush‑right: all padding before label */
+    /* flush-right: all padding before label */
     case 1:
     default: {
       if (width == 0 || width < len) {
-        /* width too small or disabled → no padding */
+        /* width too small or disabled -> no padding */
         print(label);
         println();
         return;
@@ -459,10 +459,10 @@ void printSeparator(LCDDisplay display, const char *label, char sep, uint8_t wid
 /* ------------------------------------------------------------------
  *  removeSpaces()
  *  -----------------------------------------------------------------
- *  ‑ str must point to a writable, NUL‑terminated char array
- *    (don’t pass a string literal stored in flash/PROGMEM).
- *  ‑ All space characters are stripped and the string is re‑terminated.
- *  ‑ Works in O(n) time, 0 B extra RAM.
+ *  - str must point to a writable, NUL-terminated char array
+ *    (don't pass a string literal stored in flash/PROGMEM).
+ *  - All space characters are stripped and the string is re-terminated.
+ *  - Works in O(n) time, 0 B extra RAM.
  */
 void removeSpaces(char *str) {
   char *src = str; /* read pointer  */
@@ -474,7 +474,7 @@ void removeSpaces(char *str) {
     }
     ++src;
   }
-  *dst = '\0'; /* re‑terminate */
+  *dst = '\0'; /* re-terminate */
 }
 
 // Strip all whitespace characters (spaces, tabs, newlines, etc.)
@@ -496,12 +496,12 @@ void removeWhitespaces(char *str) {
  *  tokenises the line on commas, and stores up to  maxParams
  *  pointers in  outParams[]. Doesn't remove whitespaces.
  *
- *  @param  outParams   Caller‑allocated array of char*.
+ *  @param  outParams   Caller-allocated array of char*.
  *  @param  maxParams   Size of that array (usually MAX_INPUT_PARAMETERS).
- *  @return             Number of tokens actually stored (0‑maxParams).
+ *  @return             Number of tokens actually stored (0-maxParams).
  */
 
-/**  Reads a line, strips all white‑space, splits on “,”,
+/**  Reads a line, strips all white-space, splits on ",",
  *   and returns the number of tokens copied into out[]          */
 uint8_t readSerialInputParse(char *out[], uint8_t max) {
   /* -------- read a full line into inputBuffer -------- */
@@ -523,7 +523,7 @@ uint8_t readSerialInputParse(char *out[], uint8_t max) {
     }
   }
 
-  /* -------- compact white‑space once, globally -------- */
+  /* -------- compact white-space once, globally -------- */
   removeWhitespaces(inputBuffer);
 
   /* -------- split on commas -------- */

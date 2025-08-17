@@ -54,7 +54,7 @@ bool VideoMenu::open() {
 
 Screen *VideoMenu::_getSelectedMenuItemScreen(int index) {
   switch (index) {
-    case 0:  // Mirror→M1Terminal (toggle)
+    case 0:  // Mirror->M1Terminal (toggle)
       Globals.logger.infoF(F("Opening M1 Terminal Screen"));
       return new M1Terminal();
 

@@ -6,22 +6,22 @@
 #include <Adafruit_ST7789.h>
 
 /* --------------------------------------------------------------
- *  Pin defaults — override with -D flags or before this include
+ *  Pin defaults -- override with -D flags or before this include
  * -------------------------------------------------------------- */
 #ifndef LCD_TFT_CS
-#define LCD_TFT_CS  9     // Chip‑select
+#define LCD_TFT_CS  9     // Chip-select
 #endif
 #ifndef LCD_TFT_DC
 #define LCD_TFT_DC   8     // Data/Command
 #endif
 #ifndef LCD_TFT_RST
-#define LCD_TFT_RST  -1     // Reset (‑1 → tied HIGH)
+#define LCD_TFT_RST  -1     // Reset (-1 -> tied HIGH)
 #endif
 
 extern Adafruit_ST7789 lcd;          // concrete driver
 
-bool lcdInit(uint8_t rotation = 3,    // Adafruit_GFX rotation 0‑3
-             uint16_t w = 240,        // panel width  (edit for 240×320 etc.)
+bool lcdInit(uint8_t rotation = 3,    // Adafruit_GFX rotation 0-3
+             uint16_t w = 240,        // panel width  (edit for 240x320 etc.)
              uint16_t h = 320);       // panel height
 
 void lcdClear(uint16_t colour = ST77XX_BLACK);

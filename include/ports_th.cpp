@@ -112,10 +112,10 @@ void writePort() {
 }
 
 /***********************************************************************
- *  scanPorts()  –  dump I/O map 0x00‑0xFF, 3 ports per line
+ *  scanPorts()  -  dump I/O map 0x00-0xFF, 3 ports per line
  **********************************************************************/
 void scanPorts() {
-  printSeparator(F("PORT SCAN: 0x00‑0xFF"), '=', 64, 0);
+  printSeparator(F("PORT SCAN: 0x00-0xFF"), '=', 64, 0);
 
   static const char hdr[] PROGMEM =
       "Port  Hex  ASCII  Binary     Port  Hex  ASCII  Binary     Port  Hex  ASCII  Binary";
@@ -124,25 +124,25 @@ void scanPorts() {
   println(hdr);
   println(rule);
 
-  for (uint16_t row = 0; row < 256; row += 3)  // walk 0x00‑0xFF
+  for (uint16_t row = 0; row < 256; row += 3)  // walk 0x00-0xFF
   {
     for (uint8_t col = 0; col < 3 && (row + col) < 256; ++col) {
       uint8_t port = uint8_t(row + col);
       uint8_t value = Model1.readIO(port);
 
-      /* Port number “0xNN” */
+      /* Port number "0xNN" */
       print(F("0x"));
       if (port < 0x10)
         print('0');
       print(port, Hex);
 
-      /* Hex value “0xNN” */
+      /* Hex value "0xNN" */
       print(F(" 0x"));
       if (value < 0x10)
         print('0');
       print(value, Hex);
 
-      /* ASCII column – always 5 chars */
+      /* ASCII column - always 5 chars */
       print(F("  "));
       if (value >= 32 && value <= 126) {
         print('\'');
@@ -152,7 +152,7 @@ void scanPorts() {
         print(F(".  "));
       }
 
-      /* Binary column – 8 bits MSB→LSB */
+      /* Binary column - 8 bits MSB->LSB */
       print(' ');
       // for (int8_t bit = 7; bit >= 0; --bit)
       //   print((value >> bit) & 1, Bin);  // your base enum
@@ -195,7 +195,7 @@ void rs232PortInfo() {
 /* ======== Private helpers ============================================ */
 namespace detail {
 
-/* ---- E8/E9/EA/EB  (RS‑232 board) ------------------------------------ */
+/* ---- E8/E9/EA/EB  (RS-232 board) ------------------------------------ */
 void printModemStatus() {
   const uint8_t e8 = Model1.readIO(0xE8);
   const uint8_t e9 = Model1.readIO(0xE9);
@@ -260,7 +260,7 @@ void printModemStatus() {
           (eb >= 32 && eb < 127 ? (char)eb : '.'), F("')"));
 }
 
-/* translate 3‑bit DIP combination (Model‑1) into baud rate */
+/* translate 3-bit DIP combination (Model-1) into baud rate */
 void printBaud(uint8_t swBits) {
   static const uint16_t baudLut[8] PROGMEM = {110, 150, 300, 600, 1200, 2400, 4800, 9600};
   if (swBits < 8) {
@@ -282,10 +282,10 @@ void printCassetteStatus() {
   print(F("        Cassette Voltage (bits 0-1): "));
   switch (voltageBits) {
     case 0b00:
-      println(F("00 - ≈ 0.85V"));
+      println(F("00 - ~ 0.85V"));
       break;
     case 0b01:
-      println(F("01 - ≈ 0.46V"));
+      println(F("01 - ~ 0.46V"));
       break;
     case 0b10:
       println(F("10 - 0V (ground)"));

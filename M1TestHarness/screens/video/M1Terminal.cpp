@@ -58,7 +58,7 @@ constexpr uint16_t TERMINAL_PADDING = 3;
  * Scanline: 0-7 (top to bottom)
  * ```
  *
- * @note Total size: 2 fonts × 128 chars × 8 bytes = 2,048 bytes in PROGMEM
+ * @note Total size: 2 fonts x 128 chars x 8 bytes = 2,048 bytes in PROGMEM
  */
 static const unsigned char PROGMEM characters[CHAR_FONTS][CHAR_COUNT][CHAR_HEIGHT] = {
     {{14, 17, 1, 13, 21, 21, 14, 0},  {4, 10, 17, 17, 31, 17, 17, 0},
@@ -227,7 +227,7 @@ static const unsigned char PROGMEM characters[CHAR_FONTS][CHAR_COUNT][CHAR_HEIGH
  * graphicIndex = characterCode % 64  // Maps 128-191 to 0-63
  * ```
  *
- * @note Total size: 64 chars × 3 bytes = 192 bytes in PROGMEM
+ * @note Total size: 64 chars x 3 bytes = 192 bytes in PROGMEM
  */
 static const unsigned char PROGMEM graphics[][GRAPHICS_HEIGHT] = {
     {0, 0, 0},   {56, 0, 0},   {7, 0, 0},   {63, 0, 0},
@@ -407,7 +407,7 @@ void M1Terminal::_updateXY(uint16_t terminalX, uint16_t terminalY, uint8_t curre
   uint8_t previousGraphicIndex = previousCharIndex % 64;
 
   // Render all scanlines for this character position
-  // Graphics: 3 base lines × 4 repetitions = 12 total lines
+  // Graphics: 3 base lines x 4 repetitions = 12 total lines
   for (int16_t graphicY = 0, charY = 0; graphicY < GRAPHICS_HEIGHT; graphicY++) {
     for (int16_t i = 0; i < GRAPHICS_HEIGHT_REPEAT; i++, charY++) {
       // Extract pixel patterns for current and previous characters
@@ -438,7 +438,7 @@ void M1Terminal::_updateXY(uint16_t terminalX, uint16_t terminalY, uint8_t curre
  * 1. Calculate absolute screen coordinates within content area
  * 2. Iterate through all pixels in the scanline (MSB to LSB)
  * 3. Compare each pixel bit between current and previous patterns
- * 4. Update only pixels that have changed state (on→off or off→on)
+ * 4. Update only pixels that have changed state (on->off or off->on)
  *
  * ## Coordinate System
  * - **terminalX/Y**: Character position in pixels relative to content area
@@ -521,11 +521,11 @@ void M1Terminal::_updatePixelLine(Adafruit_GFX &gfx, uint8_t currentPixelLine,
  *
  * ## Coordinate Conversion
  * ```
- * Buffer Index → Grid Position:
+ * Buffer Index -> Grid Position:
  * x = index % TERM_COLS  (0-63)
  * y = index / TERM_COLS  (0-15)
  *
- * Grid Position → Pixel Position:
+ * Grid Position -> Pixel Position:
  * pixelX = (x - _horizontalScrollOffset) * CHAR_WIDTH
  * pixelY = (y - _verticalScrollOffset) * CHAR_FULL_HEIGHT
  * ```
@@ -795,7 +795,7 @@ void M1Terminal::_nextFont() {
  * ## Video Memory Mapping
  * - **Model1 Range**: 0x3C00-0x3FFF (1024 bytes)
  * - **Local Buffer**: _bufferedVidMem[1024]
- * - **Character Layout**: Same 64×16 grid as TRS-80 Model I
+ * - **Character Layout**: Same 64x16 grid as TRS-80 Model I
  *
  * ## Fallback Behavior
  * If Model1 test signal is not active or memory reading fails, the method
@@ -896,7 +896,7 @@ void M1Terminal::loop() {
  * by _updateNext() during subsequent loop() calls.
  *
  * @note Called automatically when screen becomes active
- * @note Actual rendering occurs incrementally via loop() → _updateNext()
+ * @note Actual rendering occurs incrementally via loop() -> _updateNext()
  * @see loop() For ongoing rendering process
  */
 void M1Terminal::_drawContent() {
@@ -936,10 +936,10 @@ void M1Terminal::_drawContent() {
  * when the terminal is the active screen.
  *
  * ## Input Mapping
- * - **BUTTON_RIGHT**: Scroll viewport right (→ key equivalent)
- * - **BUTTON_LEFT**: Scroll viewport left (← key equivalent)
- * - **BUTTON_UP**: Scroll viewport up (↑ key equivalent)
- * - **BUTTON_DOWN**: Scroll viewport down (↓ key equivalent)
+ * - **BUTTON_RIGHT**: Scroll viewport right (-> key equivalent)
+ * - **BUTTON_LEFT**: Scroll viewport left (<- key equivalent)
+ * - **BUTTON_UP**: Scroll viewport up (up key equivalent)
+ * - **BUTTON_DOWN**: Scroll viewport down (down key equivalent)
  * - **BUTTON_LEFT + BUTTON_RIGHT**: Switch font
  * - **BUTTON_MENU**: Exit terminal (M key equivalent)
  *
@@ -978,13 +978,13 @@ Screen *M1Terminal::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t off
     return nullptr;
   }
 
-  // Scroll right (Right button / → key)
+  // Scroll right (Right button / -> key)
   if (action & RIGHT_ANY) {
     _scrollRight();
     return nullptr;
   }
 
-  // Scroll left (Left button / ← key)
+  // Scroll left (Left button / <- key)
   if (action & LEFT_ANY) {
     if (_horizontalScrollOffset == 0) {
       _nextFont();
@@ -994,7 +994,7 @@ Screen *M1Terminal::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t off
     return nullptr;
   }
 
-  // Scroll up (Up button / ↑ key)
+  // Scroll up (Up button / up key)
   if (action & UP_ANY) {
     if (_verticalScrollOffset == 0) {
       _nextFont();
@@ -1004,7 +1004,7 @@ Screen *M1Terminal::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t off
     return nullptr;
   }
 
-  // Scroll down (Down button / ↓ key)
+  // Scroll down (Down button / down key)
   if (action & DOWN_ANY) {
     _scrollDown();
     return nullptr;

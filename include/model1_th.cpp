@@ -521,10 +521,10 @@ void printFont() {
 
 // optimize version of ORIG
 uint16_t getMemorySize_orig_opt() {
-  constexpr uint16_t PAGE = 0x0100;  // 256‑byte page
+  constexpr uint16_t PAGE = 0x0100;  // 256-byte page
   constexpr uint8_t MAX_BAD = 10;
 
-  /* ── Testable RAM spans (high→low) ──────────────────────────────
+  /* -- Testable RAM spans (high->low) ------------------------------
      Stored in PROGMEM so they never touch SRAM or the stack.     */
   static const uint16_t spanTop[] PROGMEM = {0xFFFF, 0xBFFF, 0x7FFF, 0x4FFF};
   static const uint16_t spanBottom[] PROGMEM = {0xC000, 0x8000, 0x5000, 0x4000};
@@ -534,7 +534,7 @@ uint16_t getMemorySize_orig_opt() {
   uint8_t badCount = 0;
   uint16_t badPages[MAX_BAD];
 
-  /* ── Probe every page ────────────────────────────────────────── */
+  /* -- Probe every page ------------------------------------------ */
   for (uint8_t i = 0; i < SPAN_CNT; ++i) {
     uint16_t top = pgm_read_word(spanTop + i);
     uint16_t bottom = pgm_read_word(spanBottom + i);
@@ -547,7 +547,7 @@ uint16_t getMemorySize_orig_opt() {
       bool ok = (Model1.readMemory(addr) == patt);
       Model1.writeMemory(addr, orig);  // restore
 
-      if (!ok) {  // first failure ⇒ stop
+      if (!ok) {  // first failure => stop
         if (badCount < MAX_BAD)
           badPages[badCount++] = addr;
         goto finished;
@@ -561,7 +561,7 @@ uint16_t getMemorySize_orig_opt() {
 finished:
   uint16_t bytes = highestGood ? uint16_t((highestGood & 0xFF00U) + PAGE) : 0;
 
-  /* ── Report ──────────────────────────────────────────────────── */
+  /* -- Report ---------------------------------------------------- */
   if (badCount) {
     println(TO_LCD, F("Bad page(s): "), badCount);
     for (uint8_t i = 0; i < badCount; ++i)
@@ -569,25 +569,25 @@ finished:
   } else {
     println(TO_LCD, F("No bad pages detected"));
   }
-  println(TO_LCD, F("RAM size   : "), bytes);  // 0, 4 K, 16 K, 32 K, 48 K
+  println(TO_LCD, F("RAM size   : "), bytes);  // 0, 4 K, 16 K, 32 K, 48 K
   return bytes;
 }
 
 // AI generated function to get memory size - ORIG
 uint16_t getMemorySize() {
-  constexpr uint16_t PAGE = 0x0100;  // probe one 256‑byte page
+  constexpr uint16_t PAGE = 0x0100;  // probe one 256-byte page
   constexpr uint8_t MAX_BAD = 10;    // how many pages to list
 
-  // Testable RAM ranges, high→low order
+  // Testable RAM ranges, high->low order
   struct Span {
     uint16_t top;
     uint16_t bottom;
   };
   const Span spans[] = {
-      {0xFFFF, 0xC000},  // 48 K bank (16 K)
-      {0xBFFF, 0x8000},  // 32 K bank (16 K)
-      {0x7FFF, 0x5000},  // 16 K bank (12 K)
-      {0x4FFF, 0x4000}   // 4 K bank  ( 4 K)
+      {0xFFFF, 0xC000},  // 48 K bank (16 K)
+      {0xBFFF, 0x8000},  // 32 K bank (16 K)
+      {0x7FFF, 0x5000},  // 16 K bank (12 K)
+      {0x4FFF, 0x4000}   // 4 K bank  ( 4 K)
   };
 
   uint16_t highestGood = 0;
@@ -606,7 +606,7 @@ uint16_t getMemorySize() {
       if (!ok) {
         if (badCount < MAX_BAD)
           badPages[badCount++] = addr;
-        // first failure within this span → RAM ends just above it
+        // first failure within this span -> RAM ends just above it
         goto finished;
       }
 
@@ -1008,14 +1008,14 @@ void triggerInterrupt() {
 
   // TODO: may have to avoid the library
   const unsigned long start = millis();  // mark start time
-  const unsigned long timeoutMs = 1000;  // 1 000 ms timeout
+  const unsigned long timeoutMs = 1000;  // 1 000 ms timeout
 
   while (!Model1.readInterruptAcknowledgeSignal()) {
     if (millis() - start >= timeoutMs) {
       println(TO_LCD, F("*ERR* Timeout waiting for INTAK*"));
-      return;  // give up after 1 s
+      return;  // give up after 1 s
     }
-    delay(10);  // small sleep to avoid busy‑wait
+    delay(10);  // small sleep to avoid busy-wait
   }
 
   println(TO_LCD, F("Interrupt triggered!"));

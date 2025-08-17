@@ -143,12 +143,12 @@ bool handleGlobalCommandBool(char c) {
   }
 }
 
-/*  menu.cpp ──────────────────────────────────────────────────────
+/*  menu.cpp ------------------------------------------------------
     Compact breadcrumb generator for AVR boards (e.g. Mega2560).
-    All labels live in flash; only ~96 B stack used at runtime.
+    All labels live in flash; only ~96 B stack used at runtime.
 */
 
-/* ───────── Flash‑resident label strings ───────── */
+/* --------- Flash-resident label strings --------- */
 const char lbl_MAIN[] PROGMEM = "MAIN";
 const char lbl_VIDEO[] PROGMEM = "VIDEO";
 const char lbl_VIDEO_TESTS[] PROGMEM = "TESTS";
@@ -171,7 +171,7 @@ static inline const char *getLabel(NodeID id) {
   return (const char *)pgm_read_word(&nodeLabelTable[(uint8_t)id]);
 }
 
-/* ───────── Public API ───────── */
+/* --------- Public API --------- */
 void showBreadcrumb() {
   static char bc[96];  // Make static to avoid stack allocation
   uint8_t pos = 0;
@@ -188,7 +188,7 @@ void showBreadcrumb() {
     bc[pos++] = ']';
   bc[pos] = '\0';
 
-  /* Centre the breadcrumb in an 80‑char separator line */
+  /* Centre the breadcrumb in an 80-char separator line */
   printSeparator(bc, '-', 64, 0, 0);
 }
 

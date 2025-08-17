@@ -3,7 +3,7 @@
 #include "./globals.h"
 #include "./screens/WelcomeConsole.h"
 
-// First, tell the system which display you have
+// First, tell the system which dis        // advance destination Y by the row height and compute next row's heightlay you have
 // For ST7789 240x320 displays (most common, landscape becomes 320x240)
 #include <Display_ST7789_320x240.h>
 Display_ST7789_320x240 displayProvider;

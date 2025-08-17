@@ -9,7 +9,7 @@ void showMenu() {
   println(TO_LCD, F("c) Character test"));
   println(TO_LCD, F("g) Graphics test"));
   println(TO_LCD, F("m) Character mode, 64 or 32"));
-  println(TO_LCD, F("t) TESTS →"));
+  println(TO_LCD, F("t) TESTS ->"));
   println(TO_LCD, F("x) Back to main menu"));
   println(TO_LCD, F("B) Bus pin statuses"));
   println(TO_LCD, F("C) Clear screen"));
@@ -31,13 +31,13 @@ void handleInput(const char* input) {
       Menu::push(Menu::NodeID::VIDEO_TESTS);
       break;
     case 'd':
-      println(TO_LCD, F("[VIDEO] Display test – TODO"));
+      println(TO_LCD, F("[VIDEO] Display test - TODO"));
       break;
     case 'c':
-      println(TO_LCD, F("[VIDEO] Character test – TODO"));
+      println(TO_LCD, F("[VIDEO] Character test - TODO"));
       break;
     case 'g':
-      println(TO_LCD, F("[VIDEO] Graphics test – TODO"));
+      println(TO_LCD, F("[VIDEO] Graphics test - TODO"));
       break;
     case 'm':
       toggleCharacterMode();
@@ -74,16 +74,16 @@ void handleTestsInput(const char* input) {
   char c = input[0];
   switch (c) {
     case '1':
-      println(TO_LCD, F("[VIDEO] Pixel test – TODO"));
+      println(TO_LCD, F("[VIDEO] Pixel test - TODO"));
       break;
     case '2':
-      println(TO_LCD, F("[VIDEO] Line test – TODO"));
+      println(TO_LCD, F("[VIDEO] Line test - TODO"));
       break;
     case '3':
-      println(TO_LCD, F("[VIDEO] Pattern test – TODO"));
+      println(TO_LCD, F("[VIDEO] Pattern test - TODO"));
       break;
     case '4':
-      println(TO_LCD, F("[VIDEO] Color test – TODO"));
+      println(TO_LCD, F("[VIDEO] Color test - TODO"));
       break;
     case 'x':
       Menu::pop();

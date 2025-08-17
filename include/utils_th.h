@@ -84,7 +84,7 @@ constexpr BinFormatType Bin;
 inline void println() {
   Serial.println();
 }
-inline void print() {}  // no‑op end of recursion
+inline void print() {}  // no-op end of recursion
 
 /* ----------------------------------------------------------------
  *  Print Functions - Generic Variadic Helpers

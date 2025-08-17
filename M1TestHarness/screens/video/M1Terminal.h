@@ -33,12 +33,12 @@
  *
  * ```
  * Full 64x16 Grid:           Scrollable View:
- * ┌─────────────────────┐    ┌──────────────────────┐
- * │ Character Grid      │    │ Viewport (adaptive)  │
- * │ 64 columns          │ →  │ ← → H. Scrollable    │
- * │ 16 rows             │    │ ↑ ↓ V. Scrollable    │
- * │ 1024 total chars    │    │ Size: Content Area   │
- * └─────────────────────┘    └──────────────────────┘
+ * +---------------------+    +----------------------+
+ * | Character Grid      |    | Viewport (adaptive)  |
+ * | 64 columns          | -> | <- -> H. Scrollable  |
+ * | 16 rows             |    | up down V. Scrollable|
+ * | 1024 total chars    |    | Size: Content Area   |
+ * +---------------------+    +----------------------+
  * ```
  *
  * ## Buffer Management

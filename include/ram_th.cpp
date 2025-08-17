@@ -21,7 +21,7 @@ void showMenu() {
   println(TO_LCD, F("g) Game upload (alninvbh)"));
   println(TO_LCD, F("r) Memory -> serial port (HEX)"));
   println(TO_LCD, F("R) Memory -> serial port (ASCII)"));
-  println(TO_LCD, F("t) TESTS →"));
+  println(TO_LCD, F("t) TESTS ->"));
   println(TO_LCD, F("u) Upload data from serial port [TODO]"));
   println(TO_LCD, F("x) Back to main menu"));
   println(TO_LCD, F("B) Bus pin statuses"));
@@ -379,7 +379,7 @@ void bytesReadWrite() {
   print(TO_LCD, F("> "));
   serialFlush();
 
-  /* ---- get “start, length” ---- */
+  /* ---- get "start, length" ---- */
   char *tokens[MAX_INPUT_PARAMETERS];
   uint8_t nTok = readSerialInputParse(tokens, MAX_INPUT_PARAMETERS);
   serialFlush();
@@ -423,14 +423,14 @@ void bytesReadWrite() {
   }
 
   if (!isWrite) {
-    /* ---- perform byte‑read operation ---- */
+    /* ---- perform byte-read operation ---- */
     println(TO_LCD, F("[RAM] Reading bytes from RAM..."));
     Model1.printMemoryContents(logger, start, length,
                                BOTH,   // display mode
                                false,  // relative?
                                16);    // bytes per line
   } else {
-    /* ---- perform byte‑write operation ---- */
+    /* ---- perform byte-write operation ---- */
     println(TO_LCD, F("[RAM] Writing bytes to RAM..."));
     // Convert the data string to uint8_t, every two characters is a byte
     // tokens[2] is the data string
@@ -512,7 +512,7 @@ void fillMemoryPattern() {
     return;
   }
 
-  uint8_t fill_data[64];  // 64‑byte max pattern (adjust if needed)
+  uint8_t fill_data[64];  // 64-byte max pattern (adjust if needed)
   uint8_t fill_data_len = 0;
 
   for (size_t i = 0; i < patLen && fill_data_len < sizeof(fill_data); i += 2) {
@@ -528,7 +528,7 @@ void fillMemoryPattern() {
   /* ---------- Fill memory ---------- */
   printSeparator(TO_LCD, F("[RAM] Filling memory"), '-', 30, 0);
 
-  // Option A – your existing helper repeats the pattern internally:
+  // Option A - your existing helper repeats the pattern internally:
   Model1.fillMemory(fill_data, fill_data_len, start_address, end_address);
 
   // manual loop
@@ -583,13 +583,13 @@ void gameUpload() {
 }
 
 void readHex() {
-  println(TO_LCD, F("[RAM] readHex() – TODO"));
+  println(TO_LCD, F("[RAM] readHex() - TODO"));
 }
 void readAscii() {
-  println(TO_LCD, F("[RAM] readAscii() – TODO"));
+  println(TO_LCD, F("[RAM] readAscii() - TODO"));
 }
 void uploadData() {
-  println(TO_LCD, F("[RAM] uploadData() – TODO"));
+  println(TO_LCD, F("[RAM] uploadData() - TODO"));
 }
 
 #define INIT_TEST_RESULT TestResult result = {}
