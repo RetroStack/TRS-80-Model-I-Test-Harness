@@ -71,7 +71,6 @@ void KeyboardTester::loop() {
   // Update keyboard status every CHECK_DELAY ms for responsive key detection
   if (currentTime - _lastUpdate > CHECK_DELAY) {
     _lastUpdate = currentTime;
-    M1Shield.setLEDColor(COLOR_OFF);
     displayKeyboardStatus();  // Update status display and track key presses
   }
 
@@ -97,6 +96,7 @@ void KeyboardTester::displayKeyboardStatus() {
   // Use keyboard iterator to get all key changes
   KeyboardChangeIterator it = Globals.keyboard.changes();
   bool anyPressed = false;
+  bool anyNewKeyTested = false;
   while (it.hasNext()) {
     uint8_t row = it.row();
     uint8_t col = it.column();
@@ -117,6 +117,9 @@ void KeyboardTester::displayKeyboardStatus() {
 
       // Mark key as just-pressed and tested when pressed
       if (it.wasJustPressed()) {
+        if (!_keyTested[row][col]) {
+          anyNewKeyTested = true;  // Track if we discovered a new key
+        }
         _keyTested[row][col] = true;
         _keyJustPressed[row][col] = true;
       }
@@ -137,9 +140,32 @@ void KeyboardTester::displayKeyboardStatus() {
     it.next();
   }
 
-  if (anyPressed) {
+  // Enhanced LED feedback for keyboard testing
+  if (anyNewKeyTested) {
+    // Flash green when a new key is discovered/tested
+    M1Shield.setLEDColor(COLOR_GREEN);
+  } else if (anyPressed) {
+    // White for any key currently pressed
     M1Shield.setLEDColor(COLOR_WHITE);
+  } else {
+    // Blue for idle/waiting state
+    M1Shield.setLEDColor(COLOR_BLUE);
   }
+
+  // Calculate and update testing progress
+  uint16_t totalKeys = 64;  // 8x8 matrix
+  uint16_t testedKeys = 0;
+  for (int row = 0; row < 8; row++) {
+    for (int col = 0; col < 8; col++) {
+      if (_keyTested[row][col]) {
+        testedKeys++;
+      }
+    }
+  }
+
+  // Update progress (0-100%)
+  uint8_t progress = (testedKeys * 100) / totalKeys;
+  setProgressValue(progress);
 
   _drawContent();
 }
