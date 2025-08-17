@@ -1,29 +1,29 @@
-#include "./ROMContentViewerConsole.h"
+#include "./DRAMContentViewerConsole.h"
 
 #include <Arduino.h>
 
 #include "../../globals.h"
-#include "./ROMMenu.h"
+#include "./DRAMMenu.h"
 
-ROMContentViewerConsole::ROMContentViewerConsole() : ConsoleScreen() {
-  setTitleF(F("ROM Viewer"));
+DRAMContentViewerConsole::DRAMContentViewerConsole() : ConsoleScreen() {
+  setTitleF(F("DRAM Viewer"));
   setConsoleBackground(0x0000);
   setTextColor(0xFFFF, 0x0000);
 
-  _currentAddress = 0x0000;
+  _currentAddress = 0x4000;  // DRAM starts at 0x4000
 
   // Set button labels for navigation
   const __FlashStringHelper *buttons[] = {F("M:Exit"), F("UP:Prev"), F("DN:Next")};
   setButtonItemsF(buttons, 3);
 
-  Globals.logger.infoF(F("ROM Content Viewer initialized"));
+  Globals.logger.infoF(F("DRAM Content Viewer initialized"));
 }
 
-void ROMContentViewerConsole::_executeOnce() {
-  displayROMContent();
+void DRAMContentViewerConsole::_executeOnce() {
+  displayDRAMContent();
 }
 
-void ROMContentViewerConsole::displayROMContent() {
+void DRAMContentViewerConsole::displayDRAMContent() {
   cls();
   setTextColor(0xFFFF, 0x0000);  // White
 
@@ -54,7 +54,7 @@ void ROMContentViewerConsole::displayROMContent() {
     String hexPart = "";
     for (uint16_t byte = 0; byte < bytesPerLine; byte++) {
       uint16_t address = lineAddress + byte;
-      if (address < 0x3000)  // ROM size limit
+      if (address >= 0x4000 && address <= 0x7FFF)  // DRAM range (16KB)
       {
         uint8_t value = Model1.readMemory(address);
         if (value < 0x10)
@@ -70,7 +70,7 @@ void ROMContentViewerConsole::displayROMContent() {
     String asciiPart = " ";
     for (uint16_t byte = 0; byte < bytesPerLine; byte++) {
       uint16_t address = lineAddress + byte;
-      if (address < 0x3000) {
+      if (address >= 0x4000 && address <= 0x7FFF) {
         uint8_t value = Model1.readMemory(address);
         // Standard hex editor convention:
         // 0x00-0x1F: Control characters -> "."
@@ -101,20 +101,21 @@ void ROMContentViewerConsole::displayROMContent() {
   Model1.deactivateTestSignal();
 }
 
-Screen *ROMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
+Screen *DRAMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX,
+                                              uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.infoF(F("Returning to ROM Menu"));
-    return new ROMMenu();
+    Globals.logger.infoF(F("Returning to DRAM Menu"));
+    return new DRAMMenu();
   }
 
   if (action & UP_ANY) {
     uint16_t linesPerPage = getLinesPerPage();
     uint16_t bytesPerLine = getBytesPerLine();
     uint16_t pageSize = bytesPerLine * linesPerPage;
-    // Ensure we don't go below ROM start (0x0000) and have a full page to go back
-    if (_currentAddress >= pageSize) {
+    // Ensure we don't go below DRAM start (0x4000) and have a full page to go back
+    if (_currentAddress >= 0x4000 + pageSize) {
       _currentAddress -= pageSize;
-      displayROMContent();
+      displayDRAMContent();
     }
     return nullptr;
   }
@@ -123,10 +124,10 @@ Screen *ROMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX
     uint16_t linesPerPage = getLinesPerPage();
     uint16_t bytesPerLine = getBytesPerLine();
     uint16_t pageSize = bytesPerLine * linesPerPage;
-    // Ensure the next page fits entirely within ROM (0x0000-0x2FFF, 12KB)
-    if (_currentAddress + pageSize <= 0x3000) {
+    // Ensure the next page fits entirely within DRAM (0x4000-0x7FFF, 16KB)
+    if (_currentAddress + pageSize <= 0x8000) {
       _currentAddress += pageSize;
-      displayROMContent();
+      displayDRAMContent();
     }
     return nullptr;
   }
@@ -134,7 +135,7 @@ Screen *ROMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX
   return nullptr;
 }
 
-uint16_t ROMContentViewerConsole::getLinesPerPage() const {
+uint16_t DRAMContentViewerConsole::getLinesPerPage() const {
   // Account for header (2 lines: title + blank line)
   // Use the ConsoleScreen's internal dimensions and line height
   uint16_t availableHeight = _getContentHeight();
@@ -156,7 +157,7 @@ uint16_t ROMContentViewerConsole::getLinesPerPage() const {
   return calculatedLines;
 }
 
-uint16_t ROMContentViewerConsole::getBytesPerLine() const {
+uint16_t DRAMContentViewerConsole::getBytesPerLine() const {
   // Get available content width
   uint16_t contentWidth = _getContentWidth();
 

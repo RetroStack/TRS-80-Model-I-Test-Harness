@@ -6,6 +6,7 @@
 #include "../../globals.h"
 #include "../MainMenu.h"
 #include "./M1Terminal.h"
+#include "./VRAMContentViewerConsole.h"
 #include "./VRAMTestSuiteConsole.h"
 #include "./test_screens/VideoTestScreensMenu.h"
 
@@ -14,9 +15,10 @@ VideoMenu::VideoMenu() : MenuScreen() {
 
   // Create menu items dynamically - they'll be copied by _setMenuItems and these will be freed
   // automatically
-  const __FlashStringHelper *menuItems[] = {F("Mirror"), F("VRAM Test Suite"), F("Character Mode"),
-                                            F("Character Gen"), F("Test Screens")};
-  setMenuItemsF(menuItems, 5);
+  const __FlashStringHelper *menuItems[] = {F("Mirror"),          F("VRAM Viewer"),
+                                            F("VRAM Test Suite"), F("Character Mode"),
+                                            F("Character Gen"),   F("Test Screens")};
+  setMenuItemsF(menuItems, 6);
 
   _charGen = 0;  // Initialize to "unknown"; can't be determined
   _is64CharMode =
@@ -49,19 +51,23 @@ Screen *VideoMenu::_getSelectedMenuItemScreen(int index) {
       Globals.logger.infoF(F("Opening M1 Terminal Screen"));
       return new M1Terminal();
 
-    case 1:  // VRAM Test Suite
+    case 1:  // VRAM Viewer
+      Globals.logger.infoF(F("Opening VRAM Content Viewer"));
+      return new VRAMContentViewerConsole();
+
+    case 2:  // VRAM Test Suite
       Globals.logger.infoF(F("Opening VRAM Test Suite"));
       return new VRAMTestSuiteConsole();
 
-    case 2:  // Character Mode (toggle 64/32)
+    case 3:  // Character Mode (toggle 64/32)
       toggleCharacterMode();
       return nullptr;  // Stay on this screen
 
-    case 3:  // Character Gen (toggle A/B)
+    case 4:  // Character Gen (toggle A/B)
       toggleCharacterGen();
       return nullptr;  // Stay on this screen
 
-    case 4:  // Test Screens
+    case 5:  // Test Screens
       Globals.logger.infoF(F("Opening Video Test Screens"));
       return new VideoTestScreensMenu();
 
@@ -76,9 +82,9 @@ Screen *VideoMenu::_getSelectedMenuItemScreen(int index) {
 
 const __FlashStringHelper *VideoMenu::_getMenuItemConfigValueF(uint8_t index) {
   switch (index) {
-    case 2:  // Character Mode
+    case 3:  // Character Mode
       return _is64CharMode ? F("64 chars") : F("32 chars");
-    case 3:  // Character Gen
+    case 4:  // Character Gen
       if (_charGen == 0) {
         return F("Unknown");  // If we don't know the state yet
       } else if (_charGen == 1) {
