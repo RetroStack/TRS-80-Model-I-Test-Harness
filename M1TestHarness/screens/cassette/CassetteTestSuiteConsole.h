@@ -15,8 +15,15 @@ class CassetteTestSuiteConsole : public ConsoleScreen {
   void showConnectionInstructions();
   void runAllTests();
   void testRemoteControl();
-  void testDataInputOutput();
-  void testFlipFlopBehavior();
+  void testDataOutput();
+  void testDataInput();
+  void testCassettePinConfiguration();
+  void testAnalogCassetteInterface();
   void testPatternIntegrity();
+  void testTimingAndFrequency();
+  void testVoltageRange();
+  void testSignalIntegrity();
+  void testCrosstalk();
+  void testEndurance();
 };
 #endif  // CASSETTE_TEST_SUITE_CONSOLE_H
