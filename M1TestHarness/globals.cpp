@@ -7,6 +7,8 @@ GlobalsClass Globals;
 
 GlobalsClass::GlobalsClass() {
   boardRevision = UNKNOWN;
+  hasLowerCaseMod = false;
+  dramSizeKB = 0;
 
   Model1.setLogger(logger);
 
@@ -48,4 +50,20 @@ const __FlashStringHelper* GlobalsClass::getBoardRevisionString(BOARD_REVISION r
     default:
       return F("Unknown");
   }
+}
+
+bool GlobalsClass::getHasLowerCaseMod() const {
+  return hasLowerCaseMod;
+}
+
+void GlobalsClass::setHasLowerCaseMod(bool hasLowerCase) {
+  hasLowerCaseMod = hasLowerCase;
+}
+
+uint16_t GlobalsClass::getDRAMSizeKB() const {
+  return dramSizeKB;
+}
+
+void GlobalsClass::setDRAMSizeKB(uint16_t sizeKB) {
+  dramSizeKB = sizeKB;
 }

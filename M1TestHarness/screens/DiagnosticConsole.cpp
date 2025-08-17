@@ -6,7 +6,7 @@
 #include <Model1LowLevel.h>
 
 #include "../globals.h"
-#include "./MainMenu.h"
+#include "./HardwareDetectionConsole.h"
 #include "Model1LowLevel.h"
 
 constexpr uint16_t SETTLE_DELAY = 10;
@@ -972,8 +972,8 @@ void DiagnosticConsole::_executeOnce() {
   println();
 
   setTextColor(0x07E0, 0x0000);  // Yellow
-  println(F("Press any key to move to"));
-  println(F("the next screen."));
+  println(F("Press any key to continue to"));
+  println(F("hardware detection."));
 
   // ========== COMPREHENSIVE TEST SIGNAL DEACTIVATION ==========
   setTextColor(0x07FF, 0x0000);  // Cyan
@@ -1055,7 +1055,7 @@ void DiagnosticConsole::_executeOnce() {
 
 Screen* DiagnosticConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_ANY) {
-    return new MainMenu();
+    return new HardwareDetectionConsole();
   }
 
   return nullptr;

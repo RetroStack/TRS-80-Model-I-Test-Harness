@@ -4,6 +4,7 @@
 
 #include "../globals.h"
 #include "./BoardRevisionMenu.h"
+#include "./HardwareDetectionConsole.h"
 #include "./about/AboutConsole.h"
 #include "./advanced/AdvancedMenu.h"
 #include "./advanced/AdvancedSignalController.h"
@@ -16,8 +17,8 @@
 MainMenu::MainMenu() {
   setTitleF(F("Main Menu"));
   const __FlashStringHelper* menuItems[] = {
-      F("Board Revision"), F("One-Step Tests"), F("DRAM"),     F("ROM"),  F("Cassette"),
-      F("Video"),          F("Keyboard"),       F("Advanced"), F("About")};
+      F("Board Revision"), F("Hardware Detection"), F("DRAM"),     F("ROM"),  F("Cassette"),
+      F("Video"),          F("Keyboard"),           F("Advanced"), F("About")};
   setMenuItemsF(menuItems, 9);
 
   Globals.logger.infoF(F("Main Menu initialized"));
@@ -29,10 +30,9 @@ Screen* MainMenu::_getSelectedMenuItemScreen(int index) {
       Globals.logger.infoF(F("Opening Board Revision Menu"));
       return new BoardRevisionMenu(BoardRevisionSource::MAIN_MENU);
 
-    case 1:  // One-Step Tests
-      Globals.logger.infoF(F("Opening One-Step Tests Console"));
-      return nullptr;
-      // return new OneStepTestsScreen();
+    case 1:  // Hardware Detection
+      Globals.logger.infoF(F("Opening Hardware Detection Console"));
+      return new HardwareDetectionConsole();
 
     case 2:  // DRAM
       Globals.logger.infoF(F("Opening DRAM Menu"));

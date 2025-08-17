@@ -27,6 +27,8 @@ enum BOARD_REVISION {
 class GlobalsClass {
  private:
   BOARD_REVISION boardRevision;
+  bool hasLowerCaseMod;
+  uint16_t dramSizeKB;
 
  public:
   Cassette cassette;
@@ -42,6 +44,12 @@ class GlobalsClass {
   BOARD_REVISION getBoardRevision() const;
   void setBoardRevision(BOARD_REVISION rev);
   const __FlashStringHelper* getBoardRevisionString(BOARD_REVISION rev) const;
+
+  bool getHasLowerCaseMod() const;
+  void setHasLowerCaseMod(bool hasLowerCase);
+
+  uint16_t getDRAMSizeKB() const;
+  void setDRAMSizeKB(uint16_t sizeKB);
 };
 
 extern GlobalsClass Globals;
