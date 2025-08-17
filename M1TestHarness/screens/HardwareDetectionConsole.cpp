@@ -14,6 +14,9 @@ HardwareDetectionConsole::HardwareDetectionConsole() : ConsoleScreen() {
 
   clearButtonItems();
 
+  // Enable auto-forward after 5 seconds
+  setAutoForward(true, 5000);
+
   Globals.logger.infoF(F("Hardware Detection Console initialized"));
 }
 
@@ -40,6 +43,22 @@ void HardwareDetectionConsole::_executeOnce() {
   println();
   println(F("Detection complete! Press MENU to"));
   println(F("continue to main menu."));
+  println();
+
+  setTextColor(0x07FF, 0x0000);  // Cyan
+  println(F("(Auto-forward in 5 seconds)"));
+}
+
+Screen *HardwareDetectionConsole::actionTaken(ActionTaken action, uint8_t offsetX,
+                                              uint8_t offsetY) {
+  if (action & (BUTTON_ANY | BUTTON_MENU)) {
+    // Turn off LED when exiting
+    M1Shield.setLEDColor(COLOR_OFF);
+    Globals.logger.infoF(F("Returning to Main Menu from Hardware Detection"));
+    return new MainMenu();
+  }
+
+  return nullptr;
 }
 
 void HardwareDetectionConsole::detectBoardRevision() {
@@ -170,16 +189,4 @@ void HardwareDetectionConsole::displayResults() {
   setTextColor(0xFFE0, 0x0000);  // Yellow
   print(Globals.getDRAMSizeKB());
   println(F("KB"));
-}
-
-Screen *HardwareDetectionConsole::actionTaken(ActionTaken action, uint8_t offsetX,
-                                              uint8_t offsetY) {
-  if (action & BUTTON_MENU) {
-    // Turn off LED when exiting
-    M1Shield.setLEDColor(COLOR_OFF);
-    Globals.logger.infoF(F("Returning to Main Menu from Hardware Detection"));
-    return new MainMenu();
-  }
-
-  return nullptr;
 }

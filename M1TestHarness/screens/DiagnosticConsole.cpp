@@ -21,6 +21,9 @@ DiagnosticConsole::DiagnosticConsole() : ConsoleScreen() {
 
   clearButtonItems();
 
+  // Enable auto-forward after 5 seconds
+  setAutoForward(true, 5000);
+
   Globals.logger.infoF(F("Diagnostic Screen initialized"));
 }
 
@@ -971,10 +974,6 @@ void DiagnosticConsole::_executeOnce() {
   }
   println();
 
-  setTextColor(0x07E0, 0x0000);  // Yellow
-  println(F("Press any key to continue to"));
-  println(F("hardware detection."));
-
   // ========== COMPREHENSIVE TEST SIGNAL DEACTIVATION ==========
   setTextColor(0x07FF, 0x0000);  // Cyan
   print(F("Deactivating TEST signal..."));
@@ -1038,7 +1037,7 @@ void DiagnosticConsole::_executeOnce() {
   setTextColor(0x07E0, 0x0000);  // Green
   println(F("TEST signal verification"));
   println(F("completed successfully."));
-  
+
   setProgressValue(100);  // All tests complete
 
   // Final LED status indication
@@ -1051,10 +1050,18 @@ void DiagnosticConsole::_executeOnce() {
   } else {
     M1Shield.setLEDColor(COLOR_YELLOW);
   }
+
+  setTextColor(0x07E0, 0x0000);  // Green
+  println(F("Press any key to continue to"));
+  println(F("hardware detection."));
+  println();
+
+  setTextColor(0x07FF, 0x0000);  // Cyan
+  println(F("(Auto-forward in 5 seconds)"));
 }
 
 Screen* DiagnosticConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
-  if (action & BUTTON_ANY) {
+  if (action & (BUTTON_ANY | BUTTON_MENU)) {
     return new HardwareDetectionConsole();
   }
 
