@@ -27,13 +27,14 @@ void ROMContentViewerConsole::displayROMContent() {
   cls();
   setTextColor(0xFFFF, 0x0000);  // White
 
-  // Get dynamic lines per page based on available screen space
+  // Get dynamic dimensions based on available screen space
   uint16_t linesPerPage = getLinesPerPage();
+  uint16_t bytesPerLine = getBytesPerLine();
 
   // Display hex dump
   Model1.activateTestSignal();
   for (uint16_t line = 0; line < linesPerPage; line++) {
-    uint16_t lineAddress = _currentAddress + (line * BYTES_PER_LINE);
+    uint16_t lineAddress = _currentAddress + (line * bytesPerLine);
 
     // Build complete line as a single string
     String completeLine = "";
@@ -51,7 +52,7 @@ void ROMContentViewerConsole::displayROMContent() {
 
     // Hex bytes
     String hexPart = "";
-    for (uint16_t byte = 0; byte < BYTES_PER_LINE; byte++) {
+    for (uint16_t byte = 0; byte < bytesPerLine; byte++) {
       uint16_t address = lineAddress + byte;
       if (address < 0x3000)  // ROM size limit
       {
@@ -67,7 +68,7 @@ void ROMContentViewerConsole::displayROMContent() {
 
     // ASCII representation
     String asciiPart = " ";
-    for (uint16_t byte = 0; byte < BYTES_PER_LINE; byte++) {
+    for (uint16_t byte = 0; byte < bytesPerLine; byte++) {
       uint16_t address = lineAddress + byte;
       if (address < 0x3000) {
         uint8_t value = Model1.readMemory(address);
@@ -104,8 +105,9 @@ Screen *ROMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX
 
   if (action & UP_ANY) {
     uint16_t linesPerPage = getLinesPerPage();
-    if (_currentAddress >= BYTES_PER_LINE * linesPerPage) {
-      _currentAddress -= BYTES_PER_LINE * linesPerPage;
+    uint16_t bytesPerLine = getBytesPerLine();
+    if (_currentAddress >= bytesPerLine * linesPerPage) {
+      _currentAddress -= bytesPerLine * linesPerPage;
       displayROMContent();
     }
     return nullptr;
@@ -113,8 +115,9 @@ Screen *ROMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX
 
   if (action & DOWN_ANY) {
     uint16_t linesPerPage = getLinesPerPage();
-    if (_currentAddress + (BYTES_PER_LINE * linesPerPage * 2) < 0x3000) {
-      _currentAddress += BYTES_PER_LINE * linesPerPage;
+    uint16_t bytesPerLine = getBytesPerLine();
+    if (_currentAddress + (bytesPerLine * linesPerPage * 2) < 0x3000) {
+      _currentAddress += bytesPerLine * linesPerPage;
       displayROMContent();
     }
     return nullptr;
@@ -143,4 +146,34 @@ uint16_t ROMContentViewerConsole::getLinesPerPage() const {
     calculatedLines = 5;
 
   return calculatedLines;
+}
+
+uint16_t ROMContentViewerConsole::getBytesPerLine() const {
+  // Get available content width
+  uint16_t contentWidth = _getContentWidth();
+
+  // Calculate character width for default text size
+  uint16_t charWidth = 6;  // Default size 1 character width
+  uint16_t maxChars = contentWidth / charWidth;
+
+  // Format: "XXXX: " (6 chars) + hex bytes (3 chars each) + " " (1 char) + ASCII (1 char each)
+  // Total per byte: 4 characters (3 hex + 1 ASCII)
+  // Fixed overhead: 7 characters (address + ": " + space between hex and ASCII)
+
+  // Calculate: maxChars = 7 + (4 * bytesPerLine)
+  // Solve for bytesPerLine: (maxChars - 7) / 4
+  uint16_t calculatedBytes = (maxChars > 7) ? (maxChars - 7) / 4 : 8;
+
+  // Ensure reasonable bounds: minimum 8, maximum 32
+  if (calculatedBytes < 8)
+    calculatedBytes = 8;
+  else if (calculatedBytes > 32)
+    calculatedBytes = 32;
+
+  // Prefer multiples of 8 for better alignment
+  calculatedBytes = (calculatedBytes / 8) * 8;
+  if (calculatedBytes == 0)
+    calculatedBytes = 8;
+
+  return calculatedBytes;
 }

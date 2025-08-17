@@ -7,7 +7,6 @@
 class ROMContentViewerConsole : public ConsoleScreen {
  private:
   uint16_t _currentAddress;
-  static const uint16_t BYTES_PER_LINE = 16;
 
  public:
   ROMContentViewerConsole();
@@ -19,6 +18,7 @@ class ROMContentViewerConsole : public ConsoleScreen {
  private:
   void displayROMContent();
   uint16_t getLinesPerPage() const;
+  uint16_t getBytesPerLine() const;
 };
 
 #endif  // ROM_CONTENT_VIEWER_CONSOLE_H
