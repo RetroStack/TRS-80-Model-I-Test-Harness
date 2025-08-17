@@ -1,6 +1,7 @@
 #include "./RAMTestSuiteConsole.h"
 
 #include <Arduino.h>
+#include <M1Shield.h>
 #include <Model1.h>
 
 #include "../globals.h"
@@ -470,7 +471,8 @@ TestResult RAMTestSuiteConsole::runAddressUniquenessTest(uint16_t start, uint16_
 void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
                                          const char *const icRefs[]) {
   Model1.activateTestSignal();
-  setTextColor(0xFFFF, 0x0000);  // White
+  M1Shield.setLEDColor(COLOR_BLUE);  // Initialize test suite
+  setTextColor(0xFFFF, 0x0000);      // White
 
   println(F("=== START MEMORY TEST SUITE ==="));
 
@@ -482,6 +484,7 @@ void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
   TestResult tempResult;
 
   setProgressValue(5);
+  M1Shield.setLEDColor(COLOR_CYAN);  // Basic write tests
   tempResult = runRepeatedWriteTest(start, length, true);
   totalErrorsOverall += tempResult.totalErrors;
   for (uint8_t b = 0; b < 8; b++)
@@ -494,6 +497,7 @@ void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
     totalBitErrors[b] += tempResult.bitErrors[b];
 
   setProgressValue(15);
+  M1Shield.setLEDColor(COLOR_MAGENTA);  // Read tests
   tempResult = runRepeatedReadTest(start, length, true);
   totalErrorsOverall += tempResult.totalErrors;
   for (uint8_t b = 0; b < 8; b++)
@@ -506,6 +510,7 @@ void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
     totalBitErrors[b] += tempResult.bitErrors[b];
 
   setProgressValue(25);
+  M1Shield.setLEDColor(COLOR_CYAN);  // Pattern tests
   tempResult = runCheckerboardTest(start, length, true);
   totalErrorsOverall += tempResult.totalErrors;
   for (uint8_t b = 0; b < 8; b++)
@@ -518,6 +523,7 @@ void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
     totalBitErrors[b] += tempResult.bitErrors[b];
 
   setProgressValue(35);
+  M1Shield.setLEDColor(COLOR_MAGENTA);  // Walking bit tests
   tempResult = runWalkingOnesTest(start, length);
   totalErrorsOverall += tempResult.totalErrors;
   for (uint8_t b = 0; b < 8; b++)
@@ -530,12 +536,14 @@ void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
     totalBitErrors[b] += tempResult.bitErrors[b];
 
   setProgressValue(45);
+  M1Shield.setLEDColor(COLOR_CYAN);  // March tests (algorithmic)
   tempResult = runMarchCTest(start, length);
   totalErrorsOverall += tempResult.totalErrors;
   for (uint8_t b = 0; b < 8; b++)
     totalBitErrors[b] += tempResult.bitErrors[b];
 
   setProgressValue(50);
+  M1Shield.setLEDColor(COLOR_MAGENTA);  // Moving inversion tests
   tempResult = runMovingInversionTest(start, length, 0x00);
   totalErrorsOverall += tempResult.totalErrors;
   for (uint8_t b = 0; b < 8; b++)
@@ -554,6 +562,7 @@ void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
     totalBitErrors[b] += tempResult.bitErrors[b];
 
   setProgressValue(65);
+  M1Shield.setLEDColor(COLOR_CYAN);  // Advanced march tests
   tempResult = runMarchSSTest(start, length);
   totalErrorsOverall += tempResult.totalErrors;
   for (uint8_t b = 0; b < 8; b++)
@@ -566,6 +575,7 @@ void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
     totalBitErrors[b] += tempResult.bitErrors[b];
 
   setProgressValue(75);
+  M1Shield.setLEDColor(COLOR_MAGENTA);  // Destructive/stress tests
   tempResult = runReadDestructiveTest(start, length, 0xAA, 5);
   totalErrorsOverall += tempResult.totalErrors;
   for (uint8_t b = 0; b < 8; b++)
@@ -578,6 +588,7 @@ void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
     totalBitErrors[b] += tempResult.bitErrors[b];
 
   setProgressValue(85);
+  M1Shield.setLEDColor(COLOR_CYAN);  // Address uniqueness tests
   tempResult = runAddressUniquenessTest(start, length, 0x55);
   totalErrorsOverall += tempResult.totalErrors;
   for (uint8_t b = 0; b < 8; b++)
@@ -590,6 +601,7 @@ void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
     totalBitErrors[b] += tempResult.bitErrors[b];
 
   setProgressValue(95);
+  M1Shield.setLEDColor(COLOR_MAGENTA);  // Final retention test
   tempResult = runRetentionTest(start, length, 0xFF, 1000, 5);
   totalErrorsOverall += tempResult.totalErrors;
   for (uint8_t b = 0; b < 8; b++)
@@ -627,4 +639,17 @@ void RAMTestSuiteConsole::runAndEvaluate(uint16_t start, uint16_t length,
   setTextColor(0xFFFF, 0x0000);  // White
 
   Model1.deactivateTestSignal();
+
+  // Final LED status indication based on test results
+  if (totalErrorsOverall == 0) {
+    // All tests passed
+    M1Shield.setLEDColor(COLOR_GREEN);
+  } else {
+    // Errors found
+    M1Shield.setLEDColor(COLOR_RED);
+  }
+
+  // Keep it visible for 2 seconds
+  delay(2000);
+  M1Shield.setLEDColor(COLOR_OFF);
 }
