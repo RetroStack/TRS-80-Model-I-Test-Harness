@@ -86,16 +86,16 @@ void ROMContentViewerConsole::displayROMContent() {
       }
     }
 
-    // Print address in magenta
-    setTextColor(0xF81F, 0x0000);  // Magenta
+    // Print address in yellow
+    setTextColor(0xFFE0, 0x0000);  // Yellow
     print(addressPart);
 
     // Print hex bytes in cyan
     setTextColor(0x07FF, 0x0000);  // Cyan
     print(hexPart);
 
-    // Print ASCII in yellow
-    setTextColor(0xFFE0, 0x0000);  // Yellow
+    // Print ASCII in white
+    setTextColor(0xFFFF, 0x0000);  // White
     println(asciiPart);
   }
   Model1.deactivateTestSignal();
