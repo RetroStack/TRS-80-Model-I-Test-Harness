@@ -27,6 +27,10 @@ void DRAMContentViewerConsole::displayDRAMContent() {
   cls();
   setTextColor(0xFFFF, 0x0000);  // White
 
+  // Get current DRAM size from globals
+  uint16_t dramSizeKB = Globals.getDRAMSizeKB();
+  uint16_t dramEndAddress = 0x4000 + (dramSizeKB * 1024) - 1;
+
   // Get dynamic dimensions based on available screen space
   uint16_t linesPerPage = getLinesPerPage();
   uint16_t bytesPerLine = getBytesPerLine();
@@ -54,7 +58,7 @@ void DRAMContentViewerConsole::displayDRAMContent() {
     String hexPart = "";
     for (uint16_t byte = 0; byte < bytesPerLine; byte++) {
       uint16_t address = lineAddress + byte;
-      if (address >= 0x4000 && address <= 0x7FFF)  // DRAM range (16KB)
+      if (address >= 0x4000 && address <= dramEndAddress)  // Use selected DRAM size
       {
         uint8_t value = Model1.readMemory(address);
         if (value < 0x10)
@@ -70,7 +74,7 @@ void DRAMContentViewerConsole::displayDRAMContent() {
     String asciiPart = " ";
     for (uint16_t byte = 0; byte < bytesPerLine; byte++) {
       uint16_t address = lineAddress + byte;
-      if (address >= 0x4000 && address <= 0x7FFF) {
+      if (address >= 0x4000 && address <= dramEndAddress) {
         uint8_t value = Model1.readMemory(address);
         // Standard hex editor convention:
         // 0x00-0x1F: Control characters -> "."
@@ -124,8 +128,13 @@ Screen *DRAMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offset
     uint16_t linesPerPage = getLinesPerPage();
     uint16_t bytesPerLine = getBytesPerLine();
     uint16_t pageSize = bytesPerLine * linesPerPage;
-    // Ensure the next page fits entirely within DRAM (0x4000-0x7FFF, 16KB)
-    if (_currentAddress + pageSize <= 0x8000) {
+    
+    // Get current DRAM size and calculate end address
+    uint16_t dramSizeKB = Globals.getDRAMSizeKB();
+    uint16_t dramEndAddress = 0x4000 + (dramSizeKB * 1024);
+    
+    // Ensure the next page fits entirely within selected DRAM size
+    if (_currentAddress + pageSize <= dramEndAddress) {
       _currentAddress += pageSize;
       displayDRAMContent();
     }

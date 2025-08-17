@@ -160,7 +160,7 @@ void HardwareDetectionConsole::detectDRAMSize() {
     detectedSize = 16;
   }
 
-  Globals.setDRAMSizeKB(detectedSize);
+  Globals.setDetectedDRAMSizeKB(detectedSize);  // Also store as detected size
 
   setTextColor(0xFFE0, 0x0000);  // Yellow
   print(detectedSize);

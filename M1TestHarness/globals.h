@@ -29,6 +29,7 @@ class GlobalsClass {
   BOARD_REVISION boardRevision;
   bool hasLowerCaseMod;
   uint16_t dramSizeKB;
+  uint16_t detectedDRAMSizeKB;  // Store originally detected DRAM size
 
  public:
   Cassette cassette;
@@ -50,6 +51,9 @@ class GlobalsClass {
 
   uint16_t getDRAMSizeKB() const;
   void setDRAMSizeKB(uint16_t sizeKB);
+
+  uint16_t getDetectedDRAMSizeKB() const;
+  void setDetectedDRAMSizeKB(uint16_t sizeKB);
 };
 
 extern GlobalsClass Globals;

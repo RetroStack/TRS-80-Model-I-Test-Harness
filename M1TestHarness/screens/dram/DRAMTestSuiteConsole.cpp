@@ -22,9 +22,16 @@ void DRAMTestSuiteConsole::_executeOnce() {
   setTextColor(0xFFFF, 0x0000);  // White
   println(F("=== DRAM TEST SUITE ==="));
   println();
+  
+  // Get current DRAM size from globals
+  uint16_t dramSizeKB = Globals.getDRAMSizeKB();
+  
   setTextColor(0xFFFF, 0x0000);
-  println(F("Testing Dynamic RAM (16KB)"));
-  println(F("Memory Range: 0x4000-0x7FFF"));
+  print(F("Testing Dynamic RAM ("));
+  print(dramSizeKB);
+  println(F("KB)"));
+  print(F("Memory Range: 0x4000-0x"));
+  println(0x4000 + (dramSizeKB * 1024) - 1, HEX);
   println(F("IC References: Z17,Z16,Z18,Z19,Z15,Z20,Z14,Z13"));
   println();
 
@@ -37,9 +44,9 @@ void DRAMTestSuiteConsole::_executeOnce() {
   cls();
   setTextColor(0xFFFF, 0x0000);  // White
 
-  // Local DRAM constants - only exist when test is running
-  const uint16_t start = 0x4000;      // DRAM start address
-  const uint16_t length = 1024 * 16;  // 16KB DRAM
+  // Local DRAM constants - use selected DRAM size
+  const uint16_t start = 0x4000;                    // DRAM start address
+  const uint16_t length = dramSizeKB * 1024;        // Selected DRAM size in bytes
   const char *const icRefs[] PROGMEM = {"Z17", "Z16", "Z18", "Z19", "Z15", "Z20", "Z14", "Z13"};
 
   // Run the comprehensive test suite on DRAM

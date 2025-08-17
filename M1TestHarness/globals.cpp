@@ -9,6 +9,7 @@ GlobalsClass::GlobalsClass() {
   boardRevision = UNKNOWN;
   hasLowerCaseMod = false;
   dramSizeKB = 0;
+  detectedDRAMSizeKB = 0;  // Initialize detected DRAM size
 
   Model1.setLogger(logger);
 
@@ -66,4 +67,15 @@ uint16_t GlobalsClass::getDRAMSizeKB() const {
 
 void GlobalsClass::setDRAMSizeKB(uint16_t sizeKB) {
   dramSizeKB = sizeKB;
+}
+
+uint16_t GlobalsClass::getDetectedDRAMSizeKB() const {
+  return detectedDRAMSizeKB;
+}
+
+void GlobalsClass::setDetectedDRAMSizeKB(uint16_t sizeKB) {
+  detectedDRAMSizeKB = sizeKB;
+  if (dramSizeKB == 0) {
+    dramSizeKB = sizeKB;  // Set current size if not already set
+  }
 }
