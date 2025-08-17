@@ -5,8 +5,9 @@
 
 class VideoMenu : public MenuScreen {
  private:
-  uint8_t _charGen;    // Track current character generator (0 = unknown, 1 = A, 2 = B)
-  bool _is64CharMode;  // Track current character mode state
+  uint8_t _charGen;        // Track current character generator (0 = unknown, 1 = A, 2 = B)
+  bool _is64CharMode;      // Track current character mode state
+  bool _hasLowerCaseMod;   // Track current lower-case mod state
 
  public:
   VideoMenu();
@@ -19,6 +20,7 @@ class VideoMenu : public MenuScreen {
  private:
   void toggleCharacterMode();
   void toggleCharacterGen();
+  void toggleLowerCaseMod();
 };
 
 #endif  // VIDEO_MENU_H

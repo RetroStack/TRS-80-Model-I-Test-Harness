@@ -17,12 +17,14 @@ VideoMenu::VideoMenu() : MenuScreen() {
   // automatically
   const __FlashStringHelper *menuItems[] = {F("Mirror"),          F("VRAM Viewer"),
                                             F("VRAM Test Suite"), F("Character Mode"),
-                                            F("Character Gen"),   F("Test Screens")};
-  setMenuItemsF(menuItems, 6);
+                                            F("Character Gen"),   F("Lower-case Mod"),
+                                            F("Test Screens")};
+  setMenuItemsF(menuItems, 7);
 
   _charGen = 0;  // Initialize to "unknown"; can't be determined
   _is64CharMode =
       true;  // Initialize to 64-character mode (default assumption; will be set when opened)
+  _hasLowerCaseMod = false;  // Initialize to false; will be read from globals when opened
 
   Globals.logger.infoF(F("Video Menu initialized"));
 }
@@ -36,6 +38,11 @@ bool VideoMenu::open() {
   _is64CharMode = Globals.cassette.is64CharacterMode();
   Globals.logger.info(_is64CharMode ? F("Initial character mode detected: 64 characters")
                                     : F("Initial character mode detected: 32 characters"));
+
+  // Read and store the current lower-case mod state from globals
+  _hasLowerCaseMod = Globals.getHasLowerCaseMod();
+  Globals.logger.info(_hasLowerCaseMod ? F("Lower-case mod state: Enabled")
+                                       : F("Lower-case mod state: Disabled"));
 
   // Deactivate test signal after reading
   Model1.deactivateTestSignal();
@@ -67,7 +74,11 @@ Screen *VideoMenu::_getSelectedMenuItemScreen(int index) {
       toggleCharacterGen();
       return nullptr;  // Stay on this screen
 
-    case 5:  // Test Screens
+    case 5:  // Lower-case Mod (toggle)
+      toggleLowerCaseMod();
+      return nullptr;  // Stay on this screen
+
+    case 6:  // Test Screens
       Globals.logger.infoF(F("Opening Video Test Screens"));
       return new VideoTestScreensMenu();
 
@@ -92,6 +103,8 @@ const __FlashStringHelper *VideoMenu::_getMenuItemConfigValueF(uint8_t index) {
       } else {
         return F("Gen B");
       }
+    case 5:  // Lower-case Mod
+      return _hasLowerCaseMod ? F("Enabled") : F("Disabled");
   }
   return nullptr;  // No config value for other indices
 }
@@ -145,6 +158,24 @@ void VideoMenu::toggleCharacterGen() {
   // Deactivate test signal after operation
   Model1.deactivateTestSignal();
   Globals.logger.infoF(F("Test signal deactivated after character generator toggle"));
+
+  // Redraw the menu to show updated config value
+  _drawContent();
+}
+
+void VideoMenu::toggleLowerCaseMod() {
+  // Get current state from globals
+  _hasLowerCaseMod = Globals.getHasLowerCaseMod();
+  
+  // Toggle the state
+  _hasLowerCaseMod = !_hasLowerCaseMod;
+  
+  // Update globals with new state
+  Globals.setHasLowerCaseMod(_hasLowerCaseMod);
+  
+  // Log the change
+  Globals.logger.info(_hasLowerCaseMod ? F("Lower-case mod toggled: Enabled") 
+                                       : F("Lower-case mod toggled: Disabled"));
 
   // Redraw the menu to show updated config value
   _drawContent();
