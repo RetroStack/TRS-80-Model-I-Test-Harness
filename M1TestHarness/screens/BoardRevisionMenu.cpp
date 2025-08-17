@@ -29,7 +29,7 @@ Screen *BoardRevisionMenu::_getSelectedMenuItemScreen(int index) {
   Screen *returnScreen = nullptr;
 
   // Determine the return screen based on source
-  if (_source == BoardRevisionSource::DIAGNOSTICS) {
+  if (_source == BoardRevisionSource::MAIN_MENU) {
     returnScreen = new MainMenu();
   } else {
     returnScreen = new MainMenu();

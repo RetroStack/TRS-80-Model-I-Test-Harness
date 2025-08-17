@@ -6,7 +6,7 @@
 #include "./DiagnosticConsole.h"
 
 WelcomeConsole::WelcomeConsole() : ConsoleScreen() {
-  setTitleF(F("Welcome"));
+  setTitleF(F("Test Harness"));
   setConsoleBackground(0x0000);
   setTextColor(0xFFFF, 0x0000);
   setTextSize(2);
@@ -20,12 +20,12 @@ void WelcomeConsole::_executeOnce() {
   cls();
   setTextColor(0x07E0, 0x0000);  // Green
   setTextSize(2);
-  println(F("TRS-80 MODEL 1 TEST HARNESS"));
+  println(F("TRS-80 MODEL 1"));
   println();
 
   setTextSize(1);
   setTextColor(0xFFFF, 0x0000);  // White
-  println(F("This test harness tests individual"));
+  println(F("This test harness verifies individual"));
   println(F("features of the TRS-80 Model 1."));
   println();
 

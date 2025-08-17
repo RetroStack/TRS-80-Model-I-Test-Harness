@@ -2,8 +2,8 @@
 #include <Arduino.h>
 
 #include "./globals.h"
-// #include "./screens/WelcomeConsole.h"
-#include "./screens/MainMenu.h"
+#include "./screens/WelcomeConsole.h"
+// #include "./screens/MainMenu.h"
 
 // First, tell the system which display you have
 // For ST7789 240x320 displays (most common, landscape becomes 320x240)
@@ -63,7 +63,7 @@ void setup() {
   Globals.logger.infoF(F("=== TRS-80 Model 1 Testharness ==="));
 
   // Start with the welcome console
-  M1Shield.setScreen(new MainMenu());
+  M1Shield.setScreen(new WelcomeConsole());
 }
 
 ISR(TIMER2_COMPA_vect) {

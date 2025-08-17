@@ -3,7 +3,7 @@
 
 #include <MenuScreen.h>
 
-enum class BoardRevisionSource { DIAGNOSTICS, MAIN_MENU };
+enum class BoardRevisionSource { MAIN_MENU };
 
 class BoardRevisionMenu : public MenuScreen {
  public:
