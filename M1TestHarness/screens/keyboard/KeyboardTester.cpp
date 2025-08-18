@@ -559,7 +559,6 @@ void KeyboardTester::drawMatrixCell(int x, int y, int width, int height, uint8_t
 
 Screen *KeyboardTester::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_MENU) {  // MENU
-    Globals.logger.infoF(F("Returning to main menu from Keyboard Tester"));
     return new MainMenu();
   }
 

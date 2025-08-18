@@ -15,7 +15,6 @@ ROMDetectionConsole::ROMDetectionConsole() : ConsoleScreen() {
   const __FlashStringHelper *buttons[] = {F("M:Back")};
   setButtonItemsF(buttons, 1);
 
-  Globals.logger.infoF(F("ROM Detection Demo initialized"));
 }
 
 void ROMDetectionConsole::_executeOnce() {
@@ -122,7 +121,6 @@ void ROMDetectionConsole::_executeOnce() {
 
 Screen *ROMDetectionConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.infoF(F("Returning to ROM Menu"));
     return new ROMMenu();
   }
 

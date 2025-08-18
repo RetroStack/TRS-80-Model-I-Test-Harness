@@ -26,8 +26,6 @@ SignalOscilloscope::SignalOscilloscope() : ContentScreen() {
   _currentPage = 0;
   _totalPages =
       1 + ((SIGNAL_COUNT + SIGNALS_PER_PAGE - 1) / SIGNALS_PER_PAGE);  // 1 overview + detail pages
-
-  Globals.logger.infoF(F("Signal Oscilloscope initialized with %d pages"), _totalPages);
 }
 
 void SignalOscilloscope::loop() {
@@ -72,7 +70,6 @@ void SignalOscilloscope::loop() {
 
 Screen* SignalOscilloscope::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.infoF(F("Returning to Advanced Menu from Signal Oscilloscope"));
     return new AdvancedMenu();
   }
 

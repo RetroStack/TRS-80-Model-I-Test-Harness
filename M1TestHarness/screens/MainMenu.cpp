@@ -20,47 +20,36 @@ MainMenu::MainMenu() {
       F("Board Revision"), F("Hardware Detection"), F("DRAM"),     F("ROM"),  F("Cassette"),
       F("Video"),          F("Keyboard"),           F("Advanced"), F("About")};
   setMenuItemsF(menuItems, 9);
-
-  Globals.logger.infoF(F("Main Menu initialized"));
 }
 
 Screen* MainMenu::_getSelectedMenuItemScreen(int index) {
   switch (index) {
     case 0:  // Board Revision
-      Globals.logger.infoF(F("Opening Board Revision Menu"));
       return new BoardRevisionMenu(BoardRevisionSource::MAIN_MENU);
 
     case 1:  // Hardware Detection
-      Globals.logger.infoF(F("Opening Hardware Detection Console"));
       return new HardwareDetectionConsole();
 
     case 2:  // DRAM
-      Globals.logger.infoF(F("Opening DRAM Menu"));
       return new DRAMMenu();
 
     case 3:  // ROM
-      Globals.logger.infoF(F("Opening ROM Menu"));
       return new ROMMenu();
 
     case 4:  // Cassette
-      Globals.logger.infoF(F("Opening Cassette Menu"));
       return new CassetteMenu();
 
     case 5:  // Video
-      Globals.logger.infoF(F("Opening Video Menu"));
       return new VideoMenu();
 
     case 6:  // Keyboard
-      Globals.logger.infoF(F("Opening Keyboard Menu"));
       return new KeyboardTester();
 
     case 7:  // Advanced
-      Globals.logger.infoF(F("Opening Advanced Menu"));
-      AdvancedSignals.begin();  // Start signal controller when entering Advanced system
+      AdvancedSignals.begin();
       return new AdvancedMenu();
 
     case 8:  // About
-      Globals.logger.infoF(F("Opening About Screen"));
       return new AboutConsole();
 
     default:

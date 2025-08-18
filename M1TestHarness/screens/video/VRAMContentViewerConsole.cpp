@@ -16,7 +16,6 @@ VRAMContentViewerConsole::VRAMContentViewerConsole() : ConsoleScreen() {
   const __FlashStringHelper *buttons[] = {F("M:Exit"), F("UP:Prev"), F("DN:Next")};
   setButtonItemsF(buttons, 3);
 
-  Globals.logger.infoF(F("VRAM Content Viewer initialized"));
 }
 
 void VRAMContentViewerConsole::_executeOnce() {
@@ -104,7 +103,6 @@ void VRAMContentViewerConsole::displayVRAMContent() {
 Screen *VRAMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX,
                                               uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.infoF(F("Returning to Video Menu"));
     return new VideoMenu();
   }
 

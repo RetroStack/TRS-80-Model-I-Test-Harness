@@ -21,7 +21,6 @@ DRAMMenu::DRAMMenu() : MenuScreen() {
   // Initialize DRAM size values - will be set properly in open()
   _currentDRAMSizeKB = 0;
 
-  Globals.logger.infoF(F("DRAM Menu screen initialized"));
 }
 
 bool DRAMMenu::open() {
@@ -42,11 +41,9 @@ Screen *DRAMMenu::_getSelectedMenuItemScreen(int index) {
       return nullptr;  // Stay on this screen
 
     case 1:  // DRAM Viewer
-      Globals.logger.infoF(F("Opening DRAM Content Viewer"));
       return new DRAMContentViewerConsole();
 
     case 2:  // DRAM Test Suite
-      Globals.logger.infoF(F("Opening DRAM Test Suite"));
       return new DRAMTestSuiteConsole();
 
     case -1:  // Back

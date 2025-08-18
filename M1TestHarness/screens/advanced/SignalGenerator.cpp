@@ -19,7 +19,6 @@ SignalGenerator::SignalGenerator() : MenuScreen() {
       F("Wait Signal"), F("Interrupt Signal")};
   setMenuItemsF(menuItems, 14);
 
-  Globals.logger.infoF(F("Signal Generator Menu initialized"));
 }
 
 bool SignalGenerator::open() {
@@ -92,7 +91,6 @@ Screen *SignalGenerator::_getSelectedMenuItemScreen(int index) {
       return nullptr;
 
     case -1:  // Back to menu
-      Globals.logger.infoF(F("Returning to Advanced Menu from Advanced Signal Change Menu"));
       return new AdvancedMenu();
 
     default:

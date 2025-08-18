@@ -16,7 +16,6 @@ DRAMContentViewerConsole::DRAMContentViewerConsole() : ConsoleScreen() {
   const __FlashStringHelper *buttons[] = {F("M:Exit"), F("UP:Prev"), F("DN:Next")};
   setButtonItemsF(buttons, 3);
 
-  Globals.logger.infoF(F("DRAM Content Viewer initialized"));
 }
 
 void DRAMContentViewerConsole::_executeOnce() {
@@ -108,7 +107,6 @@ void DRAMContentViewerConsole::displayDRAMContent() {
 Screen *DRAMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX,
                                               uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.infoF(F("Returning to DRAM Menu"));
     return new DRAMMenu();
   }
 

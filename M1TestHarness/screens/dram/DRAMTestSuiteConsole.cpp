@@ -13,8 +13,6 @@ DRAMTestSuiteConsole::DRAMTestSuiteConsole() : RAMTestSuiteConsole() {
   // Set button labels
   const __FlashStringHelper *buttons[] = {F("M:Menu")};
   setButtonItemsF(buttons, 1);
-
-  Globals.logger.infoF(F("DRAM Test Suite initialized"));
 }
 
 void DRAMTestSuiteConsole::_executeOnce() {
@@ -22,10 +20,19 @@ void DRAMTestSuiteConsole::_executeOnce() {
   setTextColor(0xFFFF, 0x0000);  // White
   println(F("=== DRAM TEST SUITE ==="));
   println();
-  
+
   // Get current DRAM size from globals
   uint16_t dramSizeKB = Globals.getDRAMSizeKB();
-  
+
+  // Validate DRAM size
+  if (dramSizeKB == 0) {
+    setTextColor(0xF800, 0x0000);  // Red
+    println(F("ERROR: DRAM size not configured"));
+    println(F("Please run Hardware Detection first"));
+    Globals.logger.errF(F("DRAM test attempted with zero DRAM size"));
+    return;
+  }
+
   setTextColor(0xFFFF, 0x0000);
   print(F("Testing Dynamic RAM ("));
   print(dramSizeKB);
@@ -45,8 +52,8 @@ void DRAMTestSuiteConsole::_executeOnce() {
   setTextColor(0xFFFF, 0x0000);  // White
 
   // Local DRAM constants - use selected DRAM size
-  const uint16_t start = 0x4000;                    // DRAM start address
-  const uint16_t length = dramSizeKB * 1024;        // Selected DRAM size in bytes
+  const uint16_t start = 0x4000;              // DRAM start address
+  const uint16_t length = dramSizeKB * 1024;  // Selected DRAM size in bytes
   const char *const icRefs[] PROGMEM = {"Z17", "Z16", "Z18", "Z19", "Z15", "Z20", "Z14", "Z13"};
 
   // Run the comprehensive test suite on DRAM
@@ -55,7 +62,6 @@ void DRAMTestSuiteConsole::_executeOnce() {
 
 Screen *DRAMTestSuiteConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.infoF(F("Returning to main menu from DRAM Tests"));
     return new DRAMMenu();
   }
 

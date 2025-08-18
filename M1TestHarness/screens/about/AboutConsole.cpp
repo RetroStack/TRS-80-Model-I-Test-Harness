@@ -8,7 +8,6 @@
 AboutConsole::AboutConsole() : ConsoleScreen() {
   setTitleF(F("About"));
 
-  Globals.logger.infoF(F("About screen initialized"));
 }
 
 void AboutConsole::_executeOnce() {

@@ -22,7 +22,6 @@ BoardRevisionMenu::BoardRevisionMenu(BoardRevisionSource source) : MenuScreen(),
   menuItems[9] = Globals.getBoardRevisionString(REV_TEC_50);
   setMenuItemsF(menuItems, 10);
 
-  Globals.logger.infoF(F("Board Revision screen initialized"));
 }
 
 Screen *BoardRevisionMenu::_getSelectedMenuItemScreen(int index) {

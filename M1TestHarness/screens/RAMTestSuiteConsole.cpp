@@ -17,7 +17,6 @@
   }
 
 RAMTestSuiteConsole::RAMTestSuiteConsole() : ConsoleScreen() {
-  Globals.logger.infoF(F("RAM Test Suite base class initialized"));
 }
 
 void RAMTestSuiteConsole::close() {

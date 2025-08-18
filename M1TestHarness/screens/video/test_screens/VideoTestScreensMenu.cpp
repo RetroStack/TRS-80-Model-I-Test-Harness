@@ -15,12 +15,10 @@ VideoTestScreensMenu::VideoTestScreensMenu() : MenuScreen() {
                                             F("Black"),          F("All @"), F("All 1st Char")};
   setMenuItemsF(menuItems, 6);
 
-  Globals.logger.infoF(F("Test Screens Menu initialized"));
 }
 
 Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
   if (index == -1) {
-    Globals.logger.infoF(F("Returning to Video Menu from Test Screens Menu"));
     return new VideoMenu();
   }
 
@@ -31,7 +29,6 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
   uint16_t videoAddress;
   switch (index) {
     case 0: {  // All Characters
-      Globals.logger.infoF(F("Opening All Characters Test Screen"));
 
       videoAddress = Globals.video.getAddress(0, 0);
       for (uint16_t i = 0; i < 1024; i++) {
@@ -41,7 +38,6 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
     }
 
     case 1: {  // Frame
-      Globals.logger.infoF(F("Opening Frame Test Screen"));
 
       Globals.video.cls();
       for (uint16_t i = 0; i < 64; i++) {
@@ -56,7 +52,6 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
     }
 
     case 2: {  // White
-      Globals.logger.infoF(F("Opening White Test Screen"));
       uint16_t address = Globals.video.getAddress(0, 0);
       for (uint16_t i = 0; i < 1024; i++) {
         Model1.writeMemory(address + i, 0xFF);
@@ -65,7 +60,6 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
     }
 
     case 3: {  // Black
-      Globals.logger.infoF(F("Opening Black Test Screen"));
       uint16_t address = Globals.video.getAddress(0, 0);
       for (uint16_t i = 0; i < 1024; i++) {
         Model1.writeMemory(address + i, 0x20);
@@ -74,7 +68,6 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
     }
 
     case 4: {  // All @
-      Globals.logger.infoF(F("Opening All @ Test Screen"));
       uint16_t address = Globals.video.getAddress(0, 0);
       for (uint16_t i = 0; i < 1024; i++) {
         Model1.writeMemory(address + i, 0x40);
@@ -83,7 +76,6 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
     }
 
     case 5: {  // All 1st Char
-      Globals.logger.infoF(F("Opening All 1st Char Test Screen"));
       uint16_t address = Globals.video.getAddress(0, 0);
       for (uint16_t i = 0; i < 1024; i++) {
         Model1.writeMemory(address + i, 0x00);

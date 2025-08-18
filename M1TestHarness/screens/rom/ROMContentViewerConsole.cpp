@@ -16,7 +16,6 @@ ROMContentViewerConsole::ROMContentViewerConsole() : ConsoleScreen() {
   const __FlashStringHelper *buttons[] = {F("M:Exit"), F("UP:Prev"), F("DN:Next")};
   setButtonItemsF(buttons, 3);
 
-  Globals.logger.infoF(F("ROM Content Viewer initialized"));
 }
 
 void ROMContentViewerConsole::_executeOnce() {
@@ -103,7 +102,6 @@ void ROMContentViewerConsole::displayROMContent() {
 
 Screen *ROMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.infoF(F("Returning to ROM Menu"));
     return new ROMMenu();
   }
 

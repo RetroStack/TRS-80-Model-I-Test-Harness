@@ -15,7 +15,6 @@ AdvancedMenu::AdvancedMenu() : MenuScreen() {
   const __FlashStringHelper *menuItems[] = {F("Oscilloscope"), F("Signal Generator")};
   setMenuItemsF(menuItems, 2);
 
-  Globals.logger.infoF(F("Advanced Menu initialized"));
 }
 
 void AdvancedMenu::loop() {
@@ -34,7 +33,6 @@ Screen *AdvancedMenu::_getSelectedMenuItemScreen(int index) {
       return new SignalGenerator();
 
     case -1:  // Back to Main
-      Globals.logger.infoF(F("Returning to main menu from Advanced Menu"));
       AdvancedSignals.end();  // Stop signal controller when leaving Advanced system
       return new MainMenu();
 

@@ -16,7 +16,6 @@ CassetteSongPlayerMenu::CassetteSongPlayerMenu() : MenuScreen() {
 
   initializeSongs();
 
-  Globals.logger.infoF(F("Cassette Song Player initialized"));
 }
 
 void CassetteSongPlayerMenu::initializeSongs() {
@@ -88,7 +87,6 @@ Screen *CassetteSongPlayerMenu::_getSelectedMenuItemScreen(int index) {
       return nullptr;
 
     case -1:  // Back to Main
-      Globals.logger.infoF(F("Returning to cassette menu from Song Player"));
       return new CassetteMenu();
 
     default:

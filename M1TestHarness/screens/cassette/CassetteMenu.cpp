@@ -18,7 +18,6 @@ CassetteMenu::CassetteMenu() : MenuScreen() {
 
   _remoteActive = false;  // Initialize remote as inactive
 
-  Globals.logger.infoF(F("Cassette Menu initialized"));
 }
 
 void CassetteMenu::close() {
@@ -43,11 +42,9 @@ void CassetteMenu::close() {
 Screen *CassetteMenu::_getSelectedMenuItemScreen(int index) {
   switch (index) {
     case 0:  // Test Suite
-      Globals.logger.infoF(F("Opening Test Suite"));
       return new CassetteTestSuiteConsole();
 
     case 1:  // Song Player
-      Globals.logger.infoF(F("Opening Song Player"));
       return new CassetteSongPlayerMenu();
 
     case 2:  // Remote Control (toggle)
@@ -55,7 +52,6 @@ Screen *CassetteMenu::_getSelectedMenuItemScreen(int index) {
       return nullptr;  // Stay on this screen
 
     case -1:  // Back to Main
-      Globals.logger.infoF(F("Returning to main menu from Cassette Menu"));
       return new MainMenu();
 
     default:

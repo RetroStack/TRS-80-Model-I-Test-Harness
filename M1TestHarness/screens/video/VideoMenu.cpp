@@ -15,38 +15,29 @@ VideoMenu::VideoMenu() : MenuScreen() {
 
   // Create menu items dynamically - they'll be copied by _setMenuItems and these will be freed
   // automatically
-  const __FlashStringHelper *menuItems[] = {F("Mirror"),          F("VRAM Viewer"),
-                                            F("VRAM Test Suite"), F("Character Mode"),
-                                            F("Character Gen"),   F("Lower-case Mod"),
-                                            F("Test Screens")};
+  const __FlashStringHelper *menuItems[] = {
+      F("Mirror"),        F("VRAM Viewer"),    F("VRAM Test Suite"), F("Character Mode"),
+      F("Character Gen"), F("Lower-case Mod"), F("Test Screens")};
   setMenuItemsF(menuItems, 7);
 
   _charGen = 0;  // Initialize to "unknown"; can't be determined
   _is64CharMode =
       true;  // Initialize to 64-character mode (default assumption; will be set when opened)
   _hasLowerCaseMod = false;  // Initialize to false; will be read from globals when opened
-
-  Globals.logger.infoF(F("Video Menu initialized"));
 }
 
 bool VideoMenu::open() {
   // Activate test signal to read initial hardware state
   Model1.activateTestSignal();
-  Globals.logger.infoF(F("Test signal activated for initial state reading"));
 
   // Read and store the current character mode state
   _is64CharMode = Globals.cassette.is64CharacterMode();
-  Globals.logger.info(_is64CharMode ? F("Initial character mode detected: 64 characters")
-                                    : F("Initial character mode detected: 32 characters"));
 
   // Read and store the current lower-case mod state from globals
   _hasLowerCaseMod = Globals.getHasLowerCaseMod();
-  Globals.logger.info(_hasLowerCaseMod ? F("Lower-case mod state: Enabled")
-                                       : F("Lower-case mod state: Disabled"));
 
   // Deactivate test signal after reading
   Model1.deactivateTestSignal();
-  Globals.logger.infoF(F("Test signal deactivated after initial state reading"));
 
   // Call parent implementation
   return MenuScreen::open();
@@ -55,15 +46,12 @@ bool VideoMenu::open() {
 Screen *VideoMenu::_getSelectedMenuItemScreen(int index) {
   switch (index) {
     case 0:  // Mirror->M1Terminal (toggle)
-      Globals.logger.infoF(F("Opening M1 Terminal Screen"));
       return new M1Terminal();
 
     case 1:  // VRAM Viewer
-      Globals.logger.infoF(F("Opening VRAM Content Viewer"));
       return new VRAMContentViewerConsole();
 
     case 2:  // VRAM Test Suite
-      Globals.logger.infoF(F("Opening VRAM Test Suite"));
       return new VRAMTestSuiteConsole();
 
     case 3:  // Character Mode (toggle 64/32)
@@ -79,11 +67,9 @@ Screen *VideoMenu::_getSelectedMenuItemScreen(int index) {
       return nullptr;  // Stay on this screen
 
     case 6:  // Test Screens
-      Globals.logger.infoF(F("Opening Video Test Screens"));
       return new VideoTestScreensMenu();
 
     case -1:  // Back to Main
-      Globals.logger.infoF(F("Returning to Main Menu from Video Menu"));
       return new MainMenu();
 
     default:
@@ -166,15 +152,15 @@ void VideoMenu::toggleCharacterGen() {
 void VideoMenu::toggleLowerCaseMod() {
   // Get current state from globals
   _hasLowerCaseMod = Globals.getHasLowerCaseMod();
-  
+
   // Toggle the state
   _hasLowerCaseMod = !_hasLowerCaseMod;
-  
+
   // Update globals with new state
   Globals.setHasLowerCaseMod(_hasLowerCaseMod);
-  
+
   // Log the change
-  Globals.logger.info(_hasLowerCaseMod ? F("Lower-case mod toggled: Enabled") 
+  Globals.logger.info(_hasLowerCaseMod ? F("Lower-case mod toggled: Enabled")
                                        : F("Lower-case mod toggled: Disabled"));
 
   // Redraw the menu to show updated config value

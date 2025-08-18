@@ -24,7 +24,6 @@ DiagnosticConsole::DiagnosticConsole() : ConsoleScreen() {
   // Enable auto-forward after 5 seconds
   setAutoForward(true, 5000);
 
-  Globals.logger.infoF(F("Diagnostic Screen initialized"));
 }
 
 bool DiagnosticConsole::open() {

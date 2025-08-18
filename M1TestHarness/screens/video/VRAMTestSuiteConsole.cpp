@@ -14,7 +14,6 @@ VRAMTestSuiteConsole::VRAMTestSuiteConsole() : RAMTestSuiteConsole() {
   const __FlashStringHelper *buttons[] = {F("M:Menu")};
   setButtonItemsF(buttons, 1);
 
-  Globals.logger.infoF(F("VRAM Test Suite initialized"));
 }
 
 void VRAMTestSuiteConsole::_executeOnce() {
@@ -53,7 +52,6 @@ void VRAMTestSuiteConsole::_executeOnce() {
 
 Screen *VRAMTestSuiteConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
   if (action & BUTTON_MENU) {
-    Globals.logger.infoF(F("Returning to Video Menu from VRAM Tests"));
     return new VideoMenu();
   }
 

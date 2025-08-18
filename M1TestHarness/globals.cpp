@@ -12,6 +12,7 @@ GlobalsClass::GlobalsClass() {
   detectedDRAMSizeKB = 0;  // Initialize detected DRAM size
 
   Model1.setLogger(logger);
+  M1Shield.setLogger(logger);
 
   cassette.setLogger(logger);
   keyboard.setLogger(logger);
