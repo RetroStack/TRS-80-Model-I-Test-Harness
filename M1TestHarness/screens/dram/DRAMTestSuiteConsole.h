@@ -23,7 +23,7 @@
 class DRAMTestSuiteConsole : public RAMTestSuiteConsole {
  public:
   DRAMTestSuiteConsole();
-  Screen *actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) override;
+  Screen *actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) override;
 
  protected:
   void _executeOnce() override;

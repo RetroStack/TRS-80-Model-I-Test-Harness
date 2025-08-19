@@ -1273,7 +1273,7 @@ void DiagnosticConsole::_executeOnce() {
   println(F("(Auto-forward in 5 seconds)"));
 }
 
-Screen* DiagnosticConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
+Screen* DiagnosticConsole::actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) {
   if (action & (BUTTON_ANY | BUTTON_MENU)) {
     return new HardwareDetectionConsole();
   }

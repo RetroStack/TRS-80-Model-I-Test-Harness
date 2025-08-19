@@ -15,7 +15,6 @@ DRAMContentViewerConsole::DRAMContentViewerConsole() : ConsoleScreen() {
   // Set button labels for navigation
   const __FlashStringHelper *buttons[] = {F("M:Exit"), F("UP:Prev"), F("DN:Next")};
   setButtonItemsF(buttons, 3);
-
 }
 
 void DRAMContentViewerConsole::_executeOnce() {
@@ -104,8 +103,7 @@ void DRAMContentViewerConsole::displayDRAMContent() {
   Model1.deactivateTestSignal();
 }
 
-Screen *DRAMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX,
-                                              uint8_t offsetY) {
+Screen *DRAMContentViewerConsole::actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) {
   if (action & BUTTON_MENU) {
     return new DRAMMenu();
   }
@@ -126,11 +124,11 @@ Screen *DRAMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offset
     uint16_t linesPerPage = getLinesPerPage();
     uint16_t bytesPerLine = getBytesPerLine();
     uint16_t pageSize = bytesPerLine * linesPerPage;
-    
+
     // Get current DRAM size and calculate end address
     uint16_t dramSizeKB = Globals.getDRAMSizeKB();
     uint16_t dramEndAddress = 0x4000 + (dramSizeKB * 1024);
-    
+
     // Ensure the next page fits entirely within selected DRAM size
     if (_currentAddress + pageSize <= dramEndAddress) {
       _currentAddress += pageSize;

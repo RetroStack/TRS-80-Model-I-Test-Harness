@@ -962,7 +962,7 @@ void M1Terminal::_drawContent() {
  * @note All scroll changes trigger automatic redraw
  * @note Returning the parent for the Menu button needs to be handled by a specific screen
  */
-Screen *M1Terminal::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
+Screen *M1Terminal::actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) {
   // Only process input when terminal is active
   if (!isActive()) {
     return nullptr;

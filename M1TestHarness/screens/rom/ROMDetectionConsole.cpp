@@ -119,7 +119,7 @@ void ROMDetectionConsole::_executeOnce() {
   M1Shield.setLEDColor(COLOR_OFF);
 }
 
-Screen *ROMDetectionConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
+Screen *ROMDetectionConsole::actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) {
   if (action & BUTTON_MENU) {
     return new ROMMenu();
   }

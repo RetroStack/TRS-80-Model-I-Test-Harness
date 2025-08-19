@@ -52,7 +52,7 @@ int AboutConsole::_freeMemory() {
   return &top - (__brkval ? __brkval : __heap_start);
 }
 
-Screen *AboutConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
+Screen *AboutConsole::actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) {
   if (action & BUTTON_ANY) {
     return new MainMenu();
   }

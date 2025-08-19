@@ -26,7 +26,7 @@ class KeyboardTester : public ContentScreen {
   bool open() override;
   void close() override;
   void loop() override;
-  Screen *actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) override;
+  Screen *actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) override;
 
  protected:
   void _drawContent() override;

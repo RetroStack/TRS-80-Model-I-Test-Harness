@@ -328,7 +328,7 @@ class M1Terminal : public ContentScreen {
    * @note Supports arrow key scrolling and terminal control
    * @note May trigger display scrolling or font switching
    */
-  Screen *actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) override;
+  Screen *actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) override;
 };
 
 #endif /* M1_TERMINAL_H */

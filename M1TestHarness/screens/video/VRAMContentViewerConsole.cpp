@@ -15,7 +15,6 @@ VRAMContentViewerConsole::VRAMContentViewerConsole() : ConsoleScreen() {
   // Set button labels for navigation
   const __FlashStringHelper *buttons[] = {F("M:Exit"), F("UP:Prev"), F("DN:Next")};
   setButtonItemsF(buttons, 3);
-
 }
 
 void VRAMContentViewerConsole::_executeOnce() {
@@ -100,8 +99,7 @@ void VRAMContentViewerConsole::displayVRAMContent() {
   Model1.deactivateTestSignal();
 }
 
-Screen *VRAMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX,
-                                              uint8_t offsetY) {
+Screen *VRAMContentViewerConsole::actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) {
   if (action & BUTTON_MENU) {
     return new VideoMenu();
   }

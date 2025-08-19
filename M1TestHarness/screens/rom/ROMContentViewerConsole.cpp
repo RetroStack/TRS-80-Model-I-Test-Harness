@@ -100,7 +100,7 @@ void ROMContentViewerConsole::displayROMContent() {
   Model1.deactivateTestSignal();
 }
 
-Screen *ROMContentViewerConsole::actionTaken(ActionTaken action, uint8_t offsetX, uint8_t offsetY) {
+Screen *ROMContentViewerConsole::actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) {
   if (action & BUTTON_MENU) {
     return new ROMMenu();
   }

@@ -16,7 +16,6 @@ HardwareDetectionConsole::HardwareDetectionConsole() : ConsoleScreen() {
 
   // Enable auto-forward after 5 seconds
   setAutoForward(true, 5000);
-
 }
 
 void HardwareDetectionConsole::_executeOnce() {
@@ -48,8 +47,7 @@ void HardwareDetectionConsole::_executeOnce() {
   println(F("(Auto-forward in 5 seconds)"));
 }
 
-Screen *HardwareDetectionConsole::actionTaken(ActionTaken action, uint8_t offsetX,
-                                              uint8_t offsetY) {
+Screen *HardwareDetectionConsole::actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) {
   if (action & (BUTTON_ANY | BUTTON_MENU)) {
     // Turn off LED when exiting
     M1Shield.setLEDColor(COLOR_OFF);
