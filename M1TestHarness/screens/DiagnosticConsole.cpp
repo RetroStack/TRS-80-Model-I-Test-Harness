@@ -732,7 +732,9 @@ ResetButtonTestResult DiagnosticConsole::verifyResetButton() {
   println();
   setTextColor(0xFFE0, 0x0000);  // Yellow
   println(F("Waiting for reset button press"));
-  println(F("(timeout in 5 seconds)"));
+  
+  // Use notification instead of manual println for timeout message
+  notifyF(F("timeout in 5 seconds"), 5000);
 
   // Wait up to 5 seconds for button press
   unsigned long startTime = millis();
@@ -1270,8 +1272,8 @@ void DiagnosticConsole::_executeOnce() {
   println(F("hardware detection."));
   println();
 
-  setTextColor(0x07FF, 0x0000);  // Cyan
-  println(F("(Auto-forward in 5 seconds)"));
+  // Use notification instead of manual println for auto-forward message
+  notifyF(F("Auto-forward in 5 seconds"), 5000);
 }
 
 Screen* DiagnosticConsole::actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) {

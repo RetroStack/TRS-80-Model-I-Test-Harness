@@ -15,7 +15,6 @@ WelcomeConsole::WelcomeConsole() : ConsoleScreen() {
 
   // Enable auto-forward after 5 seconds
   setAutoForward(true, 5000);
-
 }
 
 void WelcomeConsole::_executeOnce() {
@@ -59,9 +58,6 @@ void WelcomeConsole::_executeOnce() {
   println(F("Press any key to start the"));
   println(F("high-level diagnostics."));
   println();
-
-  setTextColor(0x07FF, 0x0000);  // Cyan
-  println(F("(Auto-forward in 5 seconds)"));
 }
 
 Screen *WelcomeConsole::actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) {

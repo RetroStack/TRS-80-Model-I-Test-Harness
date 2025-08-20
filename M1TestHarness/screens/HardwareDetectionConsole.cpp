@@ -43,8 +43,8 @@ void HardwareDetectionConsole::_executeOnce() {
   println(F("continue to main menu."));
   println();
 
-  setTextColor(0x07FF, 0x0000);  // Cyan
-  println(F("(Auto-forward in 5 seconds)"));
+  // Use notification instead of manual println for auto-forward message
+  notifyF(F("Auto-forward in 5 seconds"), 5000);
 }
 
 Screen *HardwareDetectionConsole::actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) {

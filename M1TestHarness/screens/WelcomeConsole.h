@@ -7,7 +7,7 @@ class WelcomeConsole : public ConsoleScreen {
  private:
  public:
   WelcomeConsole();
-  Screen *actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) override;
+  Screen *actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY);
 
  private:
   void _executeOnce();
