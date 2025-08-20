@@ -90,5 +90,5 @@ void CassetteMenu::toggleRemote() {
   Globals.logger.infoF(F("Test signal deactivated after remote toggle"));
 
   // Redraw the menu to show updated config value
-  _drawContent();
+  refreshMenu();
 }

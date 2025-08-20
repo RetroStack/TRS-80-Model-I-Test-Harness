@@ -156,70 +156,70 @@ bool SignalGenerator::_isMenuItemEnabled(uint8_t index) const {
 // Toggle methods implementation
 void SignalGenerator::_toggleAddressMode() {
   AdvancedSignals.toggleAddressMode();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleAddressCountDuration() {
   AdvancedSignals.toggleAddressCountDuration();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleDataMode() {
   AdvancedSignals.toggleDataMode();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleDataCountDuration() {
   AdvancedSignals.toggleDataCountDuration();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleRasSignal() {
   AdvancedSignals.toggleRasSignalMode();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleCasSignal() {
   AdvancedSignals.toggleCasSignalMode();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleMuxSignal() {
   AdvancedSignals.toggleMuxSignalMode();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleReadSignal() {
   AdvancedSignals.toggleReadSignalMode();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleWriteSignal() {
   AdvancedSignals.toggleWriteSignalMode();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleInSignal() {
   AdvancedSignals.toggleInSignalMode();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleOutSignal() {
   AdvancedSignals.toggleOutSignalMode();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleWaitSignal() {
   AdvancedSignals.toggleWaitSignalMode();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleInterruptSignal() {
   AdvancedSignals.toggleInterruptSignalMode();
-  _drawContent();
+  refreshMenu();
 }
 
 void SignalGenerator::_toggleTestSignal() {
   AdvancedSignals.toggleTestSignal();
-  _drawContent();
+  refreshMenu();
 }

@@ -92,7 +92,7 @@ Screen *VideoTestScreensMenu::_getSelectedMenuItemScreen(int index) {
   _currentTestScreen = index;
 
   // Redraw the menu to show updated config value
-  _drawContent();
+  refreshMenu();
 
   return nullptr;
 }

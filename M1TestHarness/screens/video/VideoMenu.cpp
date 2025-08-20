@@ -121,7 +121,7 @@ void VideoMenu::toggleCharacterMode() {
   Globals.logger.infoF(F("Test signal deactivated after character mode toggle"));
 
   // Redraw the menu to show updated config value
-  _drawContent();
+  refreshMenu();
 }
 
 void VideoMenu::toggleCharacterGen() {
@@ -146,7 +146,7 @@ void VideoMenu::toggleCharacterGen() {
   Globals.logger.infoF(F("Test signal deactivated after character generator toggle"));
 
   // Redraw the menu to show updated config value
-  _drawContent();
+  refreshMenu();
 }
 
 void VideoMenu::toggleLowerCaseMod() {
@@ -164,5 +164,5 @@ void VideoMenu::toggleLowerCaseMod() {
                                        : F("Lower-case mod toggled: Disabled"));
 
   // Redraw the menu to show updated config value
-  _drawContent();
+  refreshMenu();
 }

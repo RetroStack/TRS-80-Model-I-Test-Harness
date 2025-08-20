@@ -6,7 +6,7 @@
 class AboutConsole : public ConsoleScreen {
  public:
   AboutConsole();
-  Screen *actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY) override;
+  Screen *actionTaken(ActionTaken action, int8_t offsetX, int8_t offsetY);
 
  protected:
   void _executeOnce() override;

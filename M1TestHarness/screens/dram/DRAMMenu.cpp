@@ -20,7 +20,6 @@ DRAMMenu::DRAMMenu() : MenuScreen() {
 
   // Initialize DRAM size values - will be set properly in open()
   _currentDRAMSizeKB = 0;
-
 }
 
 bool DRAMMenu::open() {
@@ -72,18 +71,20 @@ const char *DRAMMenu::_getMenuItemConfigValue(uint8_t index) {
       // Get the originally detected size from Globals
       uint16_t detectedSize = Globals.getDetectedDRAMSizeKB();
 
+      // Clear buffer to prevent stale data
+      memset(_configBuffer, 0, sizeof(_configBuffer));
+
       // If this is a non-standard size and matches the originally detected size,
       // show it with "*" suffix
       if (!isStandardSize && _currentDRAMSizeKB == detectedSize) {
-        snprintf(_configBuffer, sizeof(_configBuffer), "%dKB*", _currentDRAMSizeKB);
+        snprintf(_configBuffer, sizeof(_configBuffer) - 1, "%dKB*", _currentDRAMSizeKB);
       } else {
-        snprintf(_configBuffer, sizeof(_configBuffer), "%dKB", _currentDRAMSizeKB);
+        snprintf(_configBuffer, sizeof(_configBuffer) - 1, "%dKB", _currentDRAMSizeKB);
       }
 
       return _configBuffer;
-    default:
-      return nullptr;
   }
+  return nullptr;
 }
 
 void DRAMMenu::toggleDRAMSize() {
@@ -136,5 +137,5 @@ void DRAMMenu::toggleDRAMSize() {
   Globals.logger.infoF(F("DRAM size toggled to: %d KB"), _currentDRAMSizeKB);
 
   // Redraw the menu to show updated config value
-  _drawContent();
+  refreshMenu();
 }
