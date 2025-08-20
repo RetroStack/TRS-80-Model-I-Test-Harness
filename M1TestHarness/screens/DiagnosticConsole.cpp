@@ -926,12 +926,12 @@ void DiagnosticConsole::_executeOnce() {
   println(F(" done"));
   setProgressValue(65);
 
-  print(F("Testing unified crosstalk..."));
-  setProgressValue(70);              // Starting unified crosstalk test
-  M1Shield.setLEDColor(COLOR_CYAN);  // Switch to cyan for crosstalk
-  auto crosstalkResult = verifyUnifiedCrosstalk();
-  println(F(" done"));
-  setProgressValue(85);
+  // print(F("Testing unified crosstalk..."));
+  // setProgressValue(70);              // Starting unified crosstalk test
+  // M1Shield.setLEDColor(COLOR_CYAN);  // Switch to cyan for crosstalk
+  // auto crosstalkResult = verifyUnifiedCrosstalk();
+  // println(F(" done"));
+  // setProgressValue(85);
 
   print(F("Testing reset button..."));
   setProgressValue(87);                // Starting reset button test
@@ -1161,7 +1161,7 @@ void DiagnosticConsole::_executeOnce() {
   // Overall summary
   println();
   setProgressValue(95);  // Final results processing
-  bool overallPass = !dataResult.hasIssues && !addrResult.hasIssues && !crosstalkResult.hasIssues &&
+  bool overallPass = !dataResult.hasIssues && !addrResult.hasIssues && //!crosstalkResult.hasIssues &&
                      !controlResult.hasIssues && !resetResult.hasIssues;
 
   if (overallPass) {

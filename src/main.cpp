@@ -5,5 +5,5 @@
  * compatibility with Arduino IDE. The actual implementation is in
  * the M1TestHarness folder for Arduino IDE compatibility.
  */
-
+#define PLATFORMIO_COMPILATION
 #include "../M1TestHarness/M1TestHarness.ino"

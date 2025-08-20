@@ -17,7 +17,6 @@ CassetteMenu::CassetteMenu() : MenuScreen() {
   setMenuItemsF(menuItems, 3);
 
   _remoteActive = false;  // Initialize remote as inactive
-
 }
 
 void CassetteMenu::close() {
@@ -91,4 +90,14 @@ void CassetteMenu::toggleRemote() {
 
   // Redraw the menu to show updated config value
   refreshMenu();
+}
+
+bool CassetteMenu::_isMenuItemEnabled(uint8_t index) const {
+  switch (index) {
+    case 0:          // Test Suite
+                     // TODO: Work in progress
+      return false;  // Test Suite is permanently disabled
+    default:
+      return true;
+  }
 }
